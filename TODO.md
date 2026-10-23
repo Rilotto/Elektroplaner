@@ -16,6 +16,7 @@
 ## Nächste Version
 - [ ] Treppen im Grundriss, mit automatischem Treppenauge/Aufgang in der Etage darüber
 - [ ] Fenster (und Öffnungen) duplizieren
+- [ ] Leitungsführung verbessern: Wege nie quer durch Räume, sondern entlang der Wände und durch Türen (Wegenetz mit kürzestem Weg zum Verteiler); Zuleitungen bündeln, gemeinsame Strecken nur einmal zeichnen mit Anzahl; Einspeisepunkt einer Schaltung automatisch an der Schaltstelle mit dem kürzesten Weg zum Verteiler; gilt auch für Verbindungen zwischen Schaltern, Klingel- und Netzwerkleitungen
 
 ## Phasen
 - [x] 1. Grundriss und Etagen
