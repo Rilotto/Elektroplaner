@@ -36,6 +36,12 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Senkrechte Installationszonen nach DIN 18015-3 einblendbar
 - Materialliste (Leitungen mit Ringen, Dosen je Montageart, Geräte, Rahmen, Ports, Verteilerbauteile) als CSV
 
+## Stand: Phase 5 – Netzwerk, Klingel, Außen, Eltako
+- Datenverteiler mit Patchpanel-Ansicht, Ports automatisch nach Etage und Raum, Portnummer an der Dose, Liste Dose ↔ Port mit Cat-7-Längen und CSV
+- Klingelanlage mit Klingeltrafo im Verteiler und J-Y(St)Y 2×2×0,8, Warnung ohne Trafo
+- Taster-Schaltungen mit Eltako-Aktor im Verteiler (Stromstoß, Treppenlicht, Dimmer, Zeitrelais), Schaltbild, Leitung 5-adrig oder zwei Leitungen nach Vorgabe
+- Außen: FI-Pflicht und NYY-Hinweis für Erdkabel
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).
