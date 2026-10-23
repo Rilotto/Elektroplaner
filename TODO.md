@@ -63,6 +63,7 @@
 - [ ] Dazu: Etagen-Leiste zeigt einen Farbpunkt an Etagen, auf denen der Stromkreis ebenfalls liegt; Infozeile unten rechts „Stromkreis 4 · 6 Elemente · 23 m“; Antippen eines Elements im Plan wählt dessen Stromkreis, wenn der Reiter „Stromkreise“ offen ist; Antippen ins Leere hebt die Hervorhebung auf
 - [ ] Im Verteiler: LS antippen → „Im Plan zeigen“ springt zu ② Elektro mit hervorgehobenem Stromkreis
 - [ ] Raumränder nach Stromkreis nur noch bei gewähltem Stromkreis (Punkt aus dem Designkonzept, hier mit erledigt)
+- [ ] Mehrfachkombination im Plan hintereinander statt nebeneinander zeichnen (wie Schalter + Steckdose seit 0.6.2): Glieder senkrecht zur Wand gestaffelt in den Raum hinein, Rahmen-Umriss entsprechend; Reihenfolge nach Lage im Rahmen
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
