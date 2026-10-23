@@ -372,7 +372,7 @@ function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
 function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
   const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
 function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
-  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc==='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){const t={x:-p.d.y,y:p.d.x};p.x+=t.x*17*ks;p.y+=t.y*17*ks}return [it.id,p]}));
+  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc!=='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){p.x+=p.d.x*11*ks;p.y+=p.d.y*11*ks}return [it.id,p]}));
   const si=sel?.kind==='item'&&its.find(i=>i.id===sel.id);
   if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=routeSvg(f,s,C,exp)+extraLines(f,s,exp);
   if(!plan&&!exp){if(!UI.guides&&si&&KINDS[si.k]?.place==='ceil'){const A=alignGuides(f,g,si,si,0.6);UI._tg={it:si,gx:A.gx,gy:A.gy,x:A.gx.length?si.x:null,y:A.gy.length?si.y:null};const k_=UI.guides;UI.guides=UI._tg;h+=guidesSvg(f,g,s);UI.guides=k_}else h+=guidesSvg(f,g,s)}
