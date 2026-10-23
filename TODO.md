@@ -14,6 +14,8 @@
 - [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
 ## Nächste Version
+- [ ] Neues Grundriss-Element „Kabeldurchlass“ (Wand- oder Deckendurchbruch für Leitungen), das die Leitungsführung bevorzugt nutzt
+- [ ] Unterlage der anderen Etage: Innenwände per Knopf ausblenden (nur Außenwände zeigen)
 - [ ] Treppen im Grundriss, mit automatischem Treppenauge/Aufgang in der Etage darüber
 - [ ] Fenster (und Öffnungen) duplizieren
 - [ ] Leitungsführung verbessern: Wege nie quer durch Räume, sondern entlang der Wände und durch Türen (Wegenetz mit kürzestem Weg zum Verteiler); Zuleitungen bündeln, gemeinsame Strecken nur einmal zeichnen mit Anzahl; Einspeisepunkt einer Schaltung automatisch an der Schaltstelle mit dem kürzesten Weg zum Verteiler; gilt auch für Verbindungen zwischen Schaltern, Klingel- und Netzwerkleitungen
