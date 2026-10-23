@@ -23,6 +23,13 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Schaltbild je Schaltung mit Klemmen und Aderfarben, verdrahtet in den Schalterdosen ohne Abzweigdosen
 - Reiter für Elemente, Schaltungen, Legende und Etagen-Übersicht; Varianten je Etage
 
+## Stand: Phase 3 – Verteiler und Stromkreise
+- Stromkreise mit Nummer, Bezeichnung, Farbe, Verteiler, Schutzorgan, FI/RCD und Leitung; Prüfhinweise zu FI-Pflicht, Querschnitt und Absicherung
+- Zuordnen per Antippen im Plan, ganze Schaltungen gemeinsam; Schnellaktionen je Raum für Steckdosen, Licht und eigene Geräte
+- Ebene „Verteiler“: Vorderansicht mit Reihen und TE, Leitungsschutzschalter unter ihrem FI, Belegt/Frei, Geräte frei ergänzbar
+- Zuleitungen der Unterverteiler mit Absicherung im versorgenden Verteiler
+- Stromkreisliste für alle Etagen, Export als CSV, Belegung als Bild
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).
