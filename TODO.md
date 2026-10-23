@@ -13,6 +13,11 @@
 - [x] „Schaltet“-Liste nach Räumen gegliedert
 - [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
+## Nächste Version
+- [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume, als Bestand bleibt); Umbau-Ansicht vergleicht beide
+- [ ] Hinweise ignorierbar machen (je Hinweis „Ignorieren“, Liste der ignorierten Hinweise wiederherstellbar, Zähler zählt nur offene)
+- [ ] Treppenformen: gerade, viertelgewendelt (L), halbgewendelt / zweiläufig mit Podest (U), Wendeltreppe; Lauf links/rechts; Treppenauge in der Etage darüber in derselben Form
+
 ## Version 0.7.0 (erledigt)
 - [x] Katalog in Elektro als Klappmenü nach Kategorien
 - [x] Mehrere Projekte (Häuser)
