@@ -1136,6 +1136,7 @@ function sceneSvg(vp,VW,VH,exp,view){
       for(const o of f.openings){const x=g.byId.get(o.wall);if(!x||!VIS[view](o))continue;const A={x:x.A.x+x.u.x*o.off,y:x.A.y+x.u.y*o.off},B={x:x.A.x+x.u.x*(o.off+o.w),y:x.A.y+x.u.y*(o.off+o.w)};
         h+=`<line class="hit" data-kind="op" data-id="${o.id}" vector-effect="non-scaling-stroke" x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}"/>`}
       for(const p of visNodes(f,g)){const on=sel?.kind==='node'&&sel.id===p.id;h+=`<circle class="vtx${on?' on':''}" vector-effect="non-scaling-stroke" cx="${p.x}" cy="${p.y}" r="${px(on?7:5)}"/><circle class="nhit" data-kind="node" data-id="${p.id}" cx="${p.x}" cy="${p.y}" r="${px(16)}"/>`}}
+    {const gg=UI.tool==='draw'?{x:UI.cur?.gx,y:UI.cur?.gy}:UI.wg||{},bb_=bbox(g.walls.flatMap(x=>x.poly).concat(UI.cur?[UI.cur]:[]));if(isFinite(bb_.minX)){const m=px(80);if(gg.x!=null)h+=`<line x1="${gg.x}" y1="${bb_.minY-m}" x2="${gg.x}" y2="${bb_.maxY+m}" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`;if(gg.y!=null)h+=`<line x1="${bb_.minX-m}" y1="${gg.y}" x2="${bb_.maxX+m}" y2="${gg.y}" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`}}
     if(UI.tool==='draw'){const c=UI.cur,ch=UI.chain,a=ch&&nodeOf(f,ch.last);
       if(a&&c){const L=dist(a,c);if(L>0.5){const ux=(c.x-a.x)/L,uy=(c.y-a.y)/L,t=drawDefaults().t/2,nx=-uy*t,ny=ux*t;
         h+=`<polygon class="prev" vector-effect="non-scaling-stroke" points="${pts([{x:a.x+nx,y:a.y+ny},{x:c.x+nx,y:c.y+ny},{x:c.x-nx,y:c.y-ny},{x:a.x-nx,y:a.y-ny}])}"/>`;
@@ -1151,7 +1152,7 @@ function sceneSvg(vp,VW,VH,exp,view){
 function render(){if(UI.mode==='dist'){renderBoard();updInfo();return}const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
 function updInfo(){const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='dist'?`${dists().length} Verteiler, ${circuits().length} Stromkreise`:UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
   const b=$('#badge');let h=`<span>${esc(VIEWS[UI.view])}</span>`;if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
-  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
+  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.dock&&UI.mode==='plan'?'Auf die Wand tippen, an die der neue Raum soll.':UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
 function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
   document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
@@ -1212,13 +1213,14 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
       <p class="hint">Dort gilt später zusätzlich die Installationszone 90 bis 120 cm.</p>
       <div class="row" style="margin-top:12px"><button class="btn danger" data-act="delRoom" ${multi||!F?'':'disabled'}>Name löschen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>
       ${multi||!F?'':'<p class="hint">Ein Raum entsteht aus seinen Wänden. Zum Entfernen die Wände löschen.</p>'}${UI.mode==='elec'?roomElec(f,r)+roomCiHtml(f,r):''}`}}
-  if(!h){const d={type:(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
+  if(!h){const d={type:(f.walls.length?types().find(t=>!t.ext&&t.t<15)||types().find(t=>!t.ext):null)?.id||(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
     h=`<h2>Grundriss ${esc(f.name)}</h2><p class="hint">Wand, Ecke, Tür oder Raum antippen, um sie zu bearbeiten. Räume entstehen von selbst, sobald Wände eine Fläche umschließen.</p>
       <div class="row"><button class="btn primary" data-act="tool" data-v="draw" style="flex:1">Wand zeichnen</button></div>
       <h3>Raum aus Innenmaßen</h3>
       <div class="grid2">${inp('Breite innen','w',400,'mk','cm','id="mkw"')}${inp('Länge innen','l',350,'mk','cm','id="mkl"')}</div>
       <div class="grid2" style="margin-top:8px"><label class="f">Wandtyp<select id="mkt">${typeOpts(d.type)}</select></label>${inp('Dicke','t',typeOf({type:d.type}).t,'mk','cm','id="mkd"')}</div>
-      <div class="row" style="margin-top:10px"><button class="btn" data-act="mkRoom" style="flex:1">Raum anlegen (${stNew})</button></div>
+      <div class="row" style="margin-top:10px"><button class="btn" data-act="mkRoom" style="flex:1">Raum frei anlegen</button>${f.walls.length?`<button class="btn primary" data-act="mkDock" style="flex:1">An Wand andocken</button>`:''}</div>
+      ${UI.dock?'<div class="note">Tippe im Plan auf die Wand, an die der neue Raum soll, auf der Seite, wo er entstehen soll. Er beginnt an der näheren Ecke dieser Wand. <button class="btn" data-act="mkDockEnd">Abbrechen</button></div>':''}<p class="hint">Neue Wände werden als ${stNew} angelegt. Beim Andocken teilt sich der neue Raum die Wand mit dem bestehenden: Breite läuft entlang der Wand, Länge in den neuen Raum hinein.</p>
       `}
   return h}
 function roomName(f,g,F){const r=f.rooms.find(r=>inside(r,F.poly));return r?r.name:'Raum'}
@@ -1260,6 +1262,16 @@ function select(sel){UI.sel=sel;if(sel&&!(UI.mode==='elec'&&UI.tab.elec==='sch'&
 function setTool(t){UI.tool=t;UI.chain=null;UI.cur=null;if(t==='draw')UI.sel=null;if(UI.measOn)toggleMeas();commit();updBar();renderPanel();render()}
 function endChain(){UI.chain=null;UI.cur=null;commit();renderPanel();render()}
 function wallProps(){const d=drawDefaults();return {t:d.t,type:d.type,build:d.build,st:newStatus()}}
+function nodeAt(f,p){const n=f.nodes.find(q=>dist(q,p)<1&&deg(f,q.id));if(n)return n.id;for(const w of f.walls){const A=nodeOf(f,w.a),B=nodeOf(f,w.b),L=wlen(f,w);if(L<1)continue;const t=((p.x-A.x)*(B.x-A.x)+(p.y-A.y)*(B.y-A.y))/L;if(t<1||t>L-1)continue;
+  const q={x:A.x+(B.x-A.x)*t/L,y:A.y+(B.y-A.y)*t/L};if(dist(q,p)<0.8)return splitWall(f,w,t)}return addNode(f,p)}
+function dockRoom(p){const f=floor(),g=G(f,UI.view),d=UI.dock;let best=null;
+  for(const x of g.walls){const t=(p.x-x.A.x)*x.u.x+(p.y-x.A.y)*x.u.y;if(t<0||t>x.L)continue;const q={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t},dv=(p.x-q.x)*x.n.x+(p.y-q.y)*x.n.y;if(Math.abs(dv)>x.h+90)continue;const sc=Math.abs(Math.abs(dv)-x.h);if(!best||sc<best.sc)best={x,t,side:dv<0?-1:1,sc}}
+  if(!best){flash('Tippe auf eine bestehende Wand, an die der neue Raum soll.');return}
+  const {x,t,side}=best,n={x:x.n.x*side,y:x.n.y*side},u=x.u,th=d.t,ty=types().find(y=>y.id===d.type)||types()[0],fromA=t<=x.L/2,s0=fromA?0:x.L,dir=fromA?1:-1,s1=s0+dir*(th+d.w),depth=x.h+d.l+th/2;
+  const P=s=>({x:x.A.x+u.x*s,y:x.A.y+u.y*s}),off=(q,k)=>({x:q.x+n.x*k,y:q.y+n.y*k}),pr={t:th,type:ty.id,build:ty.builds[0]?.name||'',st:newStatus()};
+  const na=fromA?x.w.a:x.w.b,nb=nodeAt(f,P(s1)),ne=addNode(f,off(P(s0),depth)),nc=addNode(f,off(P(s1),depth));
+  if(fromA?s1>x.L:s1<0)addWall(f,fromA?x.w.b:x.w.a,nb,{...pr,type:x.w.type,t:x.w.t,build:x.w.build});
+  addWall(f,na,ne,pr);addWall(f,ne,nc,pr);addWall(f,nc,nb,pr);UI.dock=null;UI.sel=null;commit();renderAll();flash(`Raum ${fmt(d.w)} × ${fmt(d.l)} cm angedockt.`)}
 function mkRoom(){const f=floor(),w=num($('#mkw').value),l=num($('#mkl').value),tid=$('#mkt').value,t=num($('#mkd').value);
   if(!(w>=20&&l>=20&&t>0))return;const ty=types().find(x=>x.id===tid)||types()[0],h=t/2,g=G(f,UI.view),P=g.walls.flatMap(x=>x.poly);
   let ox=0,oy=0;if(P.length){const bb=bbox(P);ox=bb.maxX+100+t;oy=bb.minY+t}
@@ -1300,6 +1312,8 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'irot':{const it=items(f).find(x=>x.id===s?.id);if(it){it.rot=((it.rot||0)+90)%360;commit();render()}}break;
     case 'idup':{const it=items(f).find(x=>x.id===s?.id);if(it){const c={...it,id:uid()};delete c.ctl;if(c.wall)c.off+=25;else{c.x+=25;c.y+=25}if(c.k==='v_hv'){flash('Es gibt nur einen Hauptverteiler.');return}items(f).push(c);UI.sel={kind:'item',id:c.id};commit();renderPanel();render()}}break;
     case 'mkRoom':mkRoom();break;
+    case 'mkDock':{const w=num($('#mkw').value),l=num($('#mkl').value),t=num($('#mkd').value);if(w>=20&&l>=20&&t>0){UI.dock={w,l,t,type:$('#mkt').value};renderPanel();flash('Jetzt auf die Wand tippen, an die der Raum soll.')}}break;
+    case 'mkDockEnd':UI.dock=null;renderPanel();break;
     case 'selRoom':UI.tab[UI.mode]='edit';select({kind:'room',id:b.dataset.id});break;
     case 'floorEdit':floorForm(f);break;
     case 'grp':UI.grp=b.dataset.id;if(UI.sel?.kind==='item')UI.sel=null;renderPanel();render();break;
@@ -1342,10 +1356,10 @@ function snapDraw(w){const f=floor(),g=G(f,UI.view),thr=14/UI.vp.s,ch=UI.chain,a
   if(a){const dx=p.x-a.x,dy=p.y-a.y,L=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI,q=((ang%90)+90)%90,dev=Math.min(q,90-q);
     if(dev<8&&L>0){const ax=Math.abs(dx)>=Math.abs(dy);let len=ax?Math.abs(dx):Math.abs(dy);if(gr)len=round(len,gr);
       if(ax){p.x=a.x+Math.sign(dx)*len;p.y=a.y}else{p.y=a.y+Math.sign(dy)*len;p.x=a.x}
-      for(const n of visNodes(f,g)){if(ax&&Math.abs(n.x-w.x)<thr)p.x=n.x;if(!ax&&Math.abs(n.y-w.y)<thr)p.y=n.y}
+      for(const n of visNodes(f,g)){if(ax&&p.gx==null&&Math.abs(n.x-w.x)<thr){p.x=n.x;p.gx=n.x}if(!ax&&p.gy==null&&Math.abs(n.y-w.y)<thr){p.y=n.y;p.gy=n.y}}
       return p}}
   if(gr){p.x=round(p.x,gr);p.y=round(p.y,gr)}
-  for(const n of visNodes(f,g)){if(Math.abs(n.x-w.x)<thr)p.x=n.x;if(Math.abs(n.y-w.y)<thr)p.y=n.y}
+  for(const n of visNodes(f,g)){if(p.gx==null&&Math.abs(n.x-w.x)<thr){p.x=n.x;p.gx=n.x}if(p.gy==null&&Math.abs(n.y-w.y)<thr){p.y=n.y;p.gy=n.y}}
   return p}
 function resolve(f,c){if(c.node&&nodeOf(f,c.node))return {id:c.node,old:true};if(c.wall){const w=f.walls.find(x=>x.id===c.wall);if(w)return {id:splitWall(f,w,c.t),old:true}}return {id:addNode(f,c),old:false}}
 function drawTo(c){const f=floor(),ch=UI.chain;
@@ -1525,9 +1539,10 @@ $('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)retur
 /* ---------- Zeiger ---------- */
 const ptrs=new Map();let drag=null,pinch=null;
 function pinchStart(){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,s0:UI.vp.s,w:toWorld((a.x+b.x)/2,(a.y+b.y)/2)}}
-function snapNode(p,id){const f=floor(),g=G(f,UI.view),gr=S.settings.grid,thr=14/UI.vp.s;if(S.settings.snap&&gr){p.x=round(p.x,gr);p.y=round(p.y,gr)}
-  const nb=f.walls.filter(w=>w.a===id||w.b===id).map(w=>nodeOf(f,w.a===id?w.b:w.a));for(const q of nb){if(Math.abs(p.x-q.x)<thr)p.x=q.x;if(Math.abs(p.y-q.y)<thr)p.y=q.y}
-  for(const q of visNodes(f,g))if(q.id!==id&&dist(q,p)<thr){p.x=q.x;p.y=q.y}}
+function snapNode(p,id){const f=floor(),g=G(f,UI.view),gr=S.settings.grid,thr=14/UI.vp.s,raw={x:p.x,y:p.y};if(S.settings.snap&&gr){p.x=round(p.x,gr);p.y=round(p.y,gr)}UI.wg={};
+  const nb=f.walls.filter(w=>w.a===id||w.b===id).map(w=>nodeOf(f,w.a===id?w.b:w.a)),others=visNodes(f,g).filter(q=>q.id!==id);
+  for(const q of [...nb,...others]){if(UI.wg.x==null&&Math.abs(raw.x-q.x)<thr){p.x=q.x;UI.wg.x=q.x}if(UI.wg.y==null&&Math.abs(raw.y-q.y)<thr){p.y=q.y;UI.wg.y=q.y}}
+  for(const q of others)if(dist(q,raw)<thr){p.x=q.x;p.y=q.y;UI.wg={}}}
 function dropNode(id){const f=floor(),g=G(f,UI.view),p=nodeOf(f,id),thr=14/UI.vp.s;
   const q=visNodes(f,g).find(n=>n.id!==id&&dist(n,p)<thr);if(q){mergeNodes(f,q.id,id);UI.sel={kind:'node',id:q.id};return}
   for(const x of g.walls){if(x.w.a===id||x.w.b===id)continue;const t=(p.x-x.A.x)*x.u.x+(p.y-x.A.y)*x.u.y;if(t<1||t>x.L-1)continue;const qq={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t};
@@ -1538,6 +1553,7 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   const base={sx:e.clientX,sy:e.clientY,moved:false};drag={...base,type:'pan',tx0:UI.vp.tx,ty0:UI.vp.ty,w};
   if(UI.measOn){const p=measSnap(w);drag={...base,type:'meas',a:p};UI.meas={a:p,b:p};return}
   if(UI.tool==='draw'&&UI.mode==='plan'){drag={...base,type:'draw'};UI.cur=snapDraw(w);render();return}
+  if(UI.dock&&UI.mode==='plan')return;
   if(!t)return;const k=t.dataset.kind,id=t.dataset.id;
   if(UI.mode==='elec'){if(UI.place)return;if(UI.assign&&k==='item'){const it=items(f).find(x=>x.id===id);if(it){assignCi(f,it,it.ci===UI.assign?null:UI.assign);drag=null;commit();renderPanel();render()}return}if(k==='item'){const it=items(f).find(x=>x.id===id);if(!it)return;UI.place=null;if(UI.sel?.id!==id)select({kind:'item',id});const p=itemPos(G(f,UI.view),it);drag={...base,type:'item',it,ox:w.x-p.x,oy:w.y-p.y}}
     else if(k==='room'){select({kind:'room',id})}return}
@@ -1570,8 +1586,9 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(d.type==='meas'){if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)<5)UI.meas=null;render();return}
   if(d.type==='draw'){if(e.type==='pointercancel'){UI.cur=null;render();return}const c=UI.cur||snapDraw(toWorld(e.clientX,e.clientY));drawTo(c);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.place){placeAt(d.w);return}
+  if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.dock){dockRoom(d.w);return}
   if(d.type==='pan'&&!d.moved){const F=faceAt(G(floor(),UI.view),d.w),r=F&&floor().rooms.find(r=>inside(r,F.poly));select(r?{kind:'room',id:r.id}:null);return}
-  UI.guides=null;
+  UI.guides=null;UI.wg=null;
   if(!d.moved||d.type==='pan')return;
   if(d.type==='node')dropNode(d.id);
   if(d.type==='room'&&!faceAt(G(floor(),'soll'),d.r)){d.r.x=d.x0;d.r.y=d.y0}
