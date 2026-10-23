@@ -12,6 +12,15 @@
 - [x] Gesamtanzeige für Probleme und nicht zugewiesene Elemente oben
 - [x] „Schaltet“-Liste nach Räumen gegliedert
 
+## Eigene Linie: Teilen mit Freunden
+- [ ] Tutorial / Einführung für neue Nutzer: geführte Tour beim ersten Start (überspringbar, jederzeit im Menü „Einführung“ wieder startbar), kurze Schritte mit Hervorhebung: Projekt anlegen → Raum zeichnen/andocken → Tür/Fenster → Elektro: Element setzen → Schalter mit Leuchte verbinden → Stromkreis anlegen → Verteiler → Material/Pläne ausgeben
+- [ ] Beispielprojekt „Testwohnung 4 Zimmer“ direkt in der App ladbar (Projekte → „Beispiel öffnen“), damit Freunde ohne Datei loslegen können
+- [ ] Kurze Hilfe-Seite (Was ist was, Gesten, Symbole) und Hinweis, dass die App keine Elektrofachkraft ersetzt
+- [ ] Teilen: Link auf GitHub Pages, Daten bleiben lokal auf dem Gerät des Freundes; Sicherung als Datei zum Weitergeben
+
+## Bedienung und Design
+- [ ] Bedienkonzept überarbeiten: gesamte Steuerung durchgehen, vereinfachen, einheitliche Designsprache (Ergebnis und Testversion siehe Projektdoku „Elektroplaner-Designkonzept“)
+
 ## Fahrplan (mehrere kleine Zwischenschritte)
 
 ## 0.7.1 – Kleinigkeiten, die beim Testen sofort helfen
