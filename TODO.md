@@ -25,6 +25,11 @@
 - [ ] Baufortschritt pro Element und Stromkreis: Schritte „Schlitz gestemmt“, „Dose gesetzt“, „Leitung gezogen“, „angeschlossen“, „geprüft“; Fortschrittsanzeige je Raum, Etage und Projekt; Plan färbt Elemente nach Stand; Liste „Was fehlt noch“
 - [ ] Wandansicht: Wand antippen → Ansicht von vorne mit allen Dosen in echter Höhe, Türen/Fenster und Installationszonen nach DIN 18015-3; Hinweis bei Dosen außerhalb der Zonen; als Plan druckbar
 
+- [ ] Schalter verknüpfen per Drag and Drop: einen Schalter auf einen anderen ziehen → Auswahl „Mehrfachkombination“ (zwei Wippen in gemeinsamem 2-fach-Rahmen, eine Dose bzw. Dosen direkt nebeneinander, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz mit zwei Wippen, eine Dose); Lösen per Knopf im Panel; zählt im Material richtig (Rahmen, Einsätze, Dosen); auch Schalter + Steckdose als 2-fach-Kombination möglich
+- [ ] Schalter → Leuchte per Ziehen zuordnen (vom Schalter auf die Leuchte ziehen statt über das Panel)
+- [ ] Maße beim ausgewählten Wandelement anzeigen: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (bezogen auf die Raumseite) statt „Abstand Wandanfang“, beide editierbar, mit Hinweis, von welcher Ecke gemessen wird
+- [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen anzeigen
+
 ## Version danach (0.9)
 - [ ] Fotos pro Wand (vor dem Verputzen), Ablage in IndexedDB statt localStorage, optional mit GitHub-Sync; in der Wandansicht und im Baufortschritt erreichbar
 - [ ] Prüfprotokoll pro Stromkreis: Isolationswiderstand, Schleifenimpedanz / Kurzschlussstrom, FI-Auslösezeit und -strom, Datum, Prüfer; Ausgabe als PDF; Stromkreis gilt im Baufortschritt erst mit Messwerten als „geprüft“
