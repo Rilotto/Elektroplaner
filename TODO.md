@@ -35,7 +35,7 @@
 - [x] Arbeitsschritte ① Grundriss ② Elektro ③ Verteiler ④ Ausgabe, Ausgabe mit Druckvorschau
 - [x] Werkzeuge, Stand, Ebenen und Etagen am Plan; Kopfzeile aufgeräumt
 - [x] Elementsuche im Katalog (vorgezogen aus der alten Liste)
-- [x] Ansicht je Arbeitsschritt gemerkt (Grundriss = Ist, Elektro = Soll)
+- [x] ~~Ansicht je Arbeitsschritt gemerkt~~ – in 0.7.2.1 auf Wunsch wieder entfernt: die Ansicht bleibt beim Schrittwechsel, wie gewählt
 
 ## 0.7.2 – Maße, Hinweise, Wippen (erledigt)
 - [x] Maße beim gewählten Wandelement: Maßlinien im Plan bis Raumecke bzw. Tür-/Fenster-/Durchgangskante; im Seitenfeld „Abstand links“ / „Abstand rechts“ (mit Blick auf die Wand, bis Dosenmitte) statt „Abstand Wandanfang“, beide editierbar
