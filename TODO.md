@@ -27,6 +27,16 @@
 - [ ] Grundausstattung (immer da, kein Modul) ergänzen: TV/SAT-Antennendose, Leerdose mit Leerrohr (für später), Rollladenschalter/-taster und Motoranschluss (einfache Ausführung), Video-Türsprechanlage / Innenstation; Türsprechanlage und Rauchwarnmelder sind schon drin
 - [ ] Neutralleiter in jeder Schalterdose als Projekteinstellung (Standard an, wichtig für spätere Smart-Home-Aktoren); Schalterdosen wahlweise als tiefe Elektronikdosen im Material
 
+## 0.7.3 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
+- [ ] Bündel antippen → fächert sich auf: alle Leitungen dieser Strecke einzeln nebeneinander gezeichnet, jede mit Farbe und Beschriftung (Leitungstyp, Stromkreis-Nr., Ziel/Raum); klappt wieder zu, sobald woanders getippt wird
+- [ ] Alle Leitungsarten bündeln, nicht nur Stromkreis-Zuleitungen: auch Schalter→Leuchte, Klingel, Netzwerk, Bus, damit die Zahl im Bündel stimmt
+- [ ] Infokasten zum Bündel: Anzahl je Leitungstyp (z. B. 3× NYM-J 3×1,5, 2× NYM-J 5×1,5, 1× CAT7), Summe der Außendurchmesser (Tabelle mit ca.-Werten je Typ, in den Einstellungen anpassbar), daraus empfohlene Schlitzbreite/-tiefe bei Verlegung nebeneinander bzw. Leerrohrgröße; Hinweis bei zu breitem Schlitz (Statik, ggf. zwei Schlitze oder Leerrohr)
+- [ ] Schlitzliste je Raum/Wand als Tabelle und CSV (für die Baustelle), später auch in der Wandansicht
+- [ ] Verlauf selbst anpassen: Leitung antippen → Ziehpunkte erscheinen; Strecke ziehen erzeugt einen Knick (rastet auf 90° und an Wänden/anderen Leitungen ein, damit Bündel entstehen); Knickpunkt doppelt antippen löscht ihn; „Automatisch“ setzt die Strecke zurück
+- [ ] Gespeichert je Teilstück (von Element zu Element), Längen und Material rechnen mit dem eigenen Verlauf; eigene Strecken werden leicht anders markiert
+- [ ] Verlegeart je Strecke: „an der Wand“ (heute) oder „über die Decke direkt“ (z. B. Leuchte zu Leuchte in einer Reihe, ohne Abstecher zur Wand); auch als Voreinstellung je Stromkreis/Schaltung
+- [ ] Reihenfolge der Leuchten in einer Schaltung festlegen (wer an wem hängt), damit Ketten Leuchte→Leuchte sinnvoll laufen
+
 ## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
 - [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume); Umbau-Ansicht vergleicht beide; bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
 - [ ] Treppenformen: gerade, viertelgewendelt (L), halbgewendelt / zweiläufig mit Podest (U), Wendeltreppe; Lauf links/rechts, Podestgröße; Treppenauge in der Etage darüber in derselben Form
