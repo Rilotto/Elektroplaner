@@ -43,11 +43,11 @@
 - [x] Hinweise ignorierbar (je Hinweis „Ignorieren“, gespeichert im Projekt als `S.ignored` über den Hinweistext; ändert sich der Hinweis, erscheint er wieder; Bereich „Ignorierte Hinweise“ mit „Wieder zeigen“; Zähler zählt nur offene)
 - [x] Serienschalter: Zuordnung je Leuchte gab es schon (als „Kreis 1/2“, im Schaltbild berücksichtigt), jetzt als „Wippe 1/2“ benannt
 
-## 0.7.3 – Schalter verknüpfen und Grundausstattung ergänzen
-- [ ] Schalter verknüpfen per Drag and Drop: Schalter auf Schalter ziehen → „Mehrfachkombination“ (gemeinsamer 2-/3-fach-Rahmen, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz, zwei Wippen); auch Schalter + Steckdose als Kombination; Lösen per Knopf; Material zählt Rahmen, Einsätze und Dosen richtig
-- [ ] Schalter → Leuchte per Ziehen zuordnen
-- [ ] Grundausstattung (immer da, kein Modul) ergänzen: TV/SAT-Antennendose, Leerdose mit Leerrohr (für später), Rollladenschalter/-taster und Motoranschluss (einfache Ausführung), Video-Türsprechanlage / Innenstation; Türsprechanlage und Rauchwarnmelder sind schon drin
-- [ ] Schalterdosen: Einstellung „tiefe Elektronikdosen“ (Material passt sich an, Standard aus); im Schaltbild und in der Leitungsliste sichtbar machen, dass N und PE in jeder Schalterdose ankommen (ist bei der Verdrahtung ohne Abzweigdosen schon so)
+## 0.7.3 – Schalter verknüpfen und Grundausstattung (erledigt)
+- [x] Schalter auf Schalter/Dose an derselben Wand ziehen → Auswahl „Mehrfachkombination“ (gemeinsamer Rahmen, bis 5-fach, `it.frame`), „Serienschalter“ (zwei Ausschalter → ein Serienschalter, Leuchten des gezogenen Schalters auf Wippe 2) oder „Übereinander“ (Schalter + Steckdose, bestehende Kombination); Lösen bzw. „In zwei Ausschalter teilen“ im Seitenfeld; Material zählt Rahmen der Kombination als einen n-fach-Rahmen
+- [x] ⊕-Punkt am gewählten Schalter auf eine Leuchte ziehen verbindet bzw. trennt sie (auch Rollladentaster → Motor)
+- [x] Grundausstattung: TV/SAT-Antennendose, Leerdose mit Leerrohr, Rollladentaster + Rollladenmotor (Leitung NYM-J 4×1,5, Hinweise bei fehlender Zuordnung), Video-Innenstation (an der Klingelleitung)
+- [x] Einstellung „Schalterdosen als tiefe Elektronikdosen“ (Menü → Rechenvorgaben), Material passt sich an; N und PE in jeder Schalterdose stehen schon im Schaltbild („N, PE geklemmt“) und jetzt auch im Hinweis der Materialliste
 
 ## 0.7.4 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
 - [ ] Bündel antippen → fächert sich auf: alle Leitungen dieser Strecke einzeln nebeneinander gezeichnet, jede mit Farbe und Beschriftung (Leitungstyp, Stromkreis-Nr., Ziel/Raum); klappt wieder zu, sobald woanders getippt wird
