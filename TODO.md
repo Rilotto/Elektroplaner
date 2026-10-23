@@ -30,6 +30,8 @@
 - [ ] Maße beim ausgewählten Wandelement anzeigen: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (bezogen auf die Raumseite) statt „Abstand Wandanfang“, beide editierbar, mit Hinweis, von welcher Ecke gemessen wird
 - [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen anzeigen
 
+- [ ] Serienschalter: festlegen, welche Leuchte an welcher Wippe hängt (Wippe 1 / Wippe 2), im Schaltbild und in der Leitungsliste zeigen
+
 ## Version danach (0.9)
 - [ ] Fotos pro Wand (vor dem Verputzen), Ablage in IndexedDB statt localStorage, optional mit GitHub-Sync; in der Wandansicht und im Baufortschritt erreichbar
 - [ ] Prüfprotokoll pro Stromkreis: Isolationswiderstand, Schleifenimpedanz / Kurzschlussstrom, FI-Auslösezeit und -strom, Datum, Prüfer; Ausgabe als PDF; Stromkreis gilt im Baufortschritt erst mit Messwerten als „geprüft“
@@ -61,3 +63,13 @@
 - [x] 5. Netzwerk, Klingel, Außen, Eltako, erste Fassung
 - [x] 6. Pläne und Ausgaben, erste Fassung
 - [ ] 7. Automatische Verdrahtung (vorerst nicht geplant)
+
+## Später: zuschaltbare Module (Idee, weit fortgeschritten)
+Grundgedanke: Module pro Projekt in den Projekteinstellungen ein- und ausschalten. Ein Modul bringt eigene Katalog-Gruppen, Panel-Reiter, Hinweise, Leitungsarten, Verteiler-Geräte und Materialposten mit. Der Code bleibt in der einen Datei (offline, einfach); intern eine Modul-Registry, damit Module sauber getrennt sind. Erst wenn die Datei zu groß wird, Module als eigene .js-Dateien nachladen (Service Worker cacht sie).
+- [ ] Modul Rollladen/Jalousie: Motor je Fenster (am Fenster andockend), Taster oder Schalter, Einzel-/Gruppen-/Zentralsteuerung, Wind-/Sonnen-/Zeitsteuerung; Leitungen (z. B. 4×1,5 bzw. 5×1,5 zum Motor), Aktoren im Verteiler (Eltako/KNX, TE), Steuerungsschema je Gruppe
+- [ ] Modul Smart Home / KNX: Busleitung (grün, eigene Linienführung), Aktoren und Netzteil im Verteiler mit TE, Taster mit Tastenbelegung, Präsenzmelder, Gruppenadressen-Liste als CSV-Export (für ETS)
+- [ ] Modul Sicherheit: Rauchmelder (Pflichtprüfung Schlafräume, Kinderzimmer, Flure), Alarmanlage, Kameras (PoE → Netzwerk), Türkommunikation / Video-Klingel
+- [ ] Modul Heizung: Raumthermostate, Stellantriebe Fußbodenheizung, Heizkreisverteiler mit Klemmleiste
+- [ ] Modul Medien: SAT/Antenne (Koax-Sternverteilung, Multischalter), Lautsprecher / Multiroom
+- [ ] Modul Energie: PV, Speicher, Wallbox, Wärmepumpe, Zählerplatz nach TAB
+- [ ] Modul Außenbereich: Garten- und Wegebeleuchtung, Außensteckdosen, Erdkabel NYY mit Längen
