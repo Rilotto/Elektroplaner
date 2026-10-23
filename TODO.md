@@ -11,36 +11,44 @@
 - [x] Leuchten in einer Flucht ausrichten (Hilfslinien beim Verschieben)
 - [x] Gesamtanzeige für Probleme und nicht zugewiesene Elemente oben
 - [x] „Schaltet“-Liste nach Räumen gegliedert
-- [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
-## Nächste Version (0.8)
+## Fahrplan (mehrere kleine Zwischenschritte)
+
+## 0.7.1 – Kleinigkeiten, die beim Testen sofort helfen
+- [ ] Suchleiste im Elemente-Katalog: Suche über Namen, Gruppen und Stichwörter (z. B. „Klingel“, „Herd“, „PoE“, „Zigbee“), Treffer aus allen Gruppen, aufgeklappt; Tippen setzt das Element wie bisher; letzte/zuletzt genutzte Elemente oben
+- [ ] Maße beim ausgewählten Wandelement: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür-/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (Raumseite) statt „Abstand Wandanfang“, beide editierbar
+- [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen
+- [ ] Hinweise ignorierbar machen (je Hinweis „Ignorieren“, je Projekt gespeichert, Liste der ignorierten wiederherstellbar, Zähler zählt nur offene)
+- [ ] Serienschalter: je Leuchte festlegen, an welcher Wippe sie hängt (Wippe 1 / 2), im Schaltbild und in der Leitungsliste
+
+## 0.7.2 – Schalter verknüpfen und Grundausstattung ergänzen
+- [ ] Schalter verknüpfen per Drag and Drop: Schalter auf Schalter ziehen → „Mehrfachkombination“ (gemeinsamer 2-/3-fach-Rahmen, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz, zwei Wippen); auch Schalter + Steckdose als Kombination; Lösen per Knopf; Material zählt Rahmen, Einsätze und Dosen richtig
+- [ ] Schalter → Leuchte per Ziehen zuordnen
+- [ ] Grundausstattung (immer da, kein Modul) ergänzen: TV/SAT-Antennendose, Leerdose mit Leerrohr (für später), Rollladenschalter/-taster und Motoranschluss (einfache Ausführung), Video-Türsprechanlage / Innenstation; Türsprechanlage und Rauchwarnmelder sind schon drin
+- [ ] Neutralleiter in jeder Schalterdose als Projekteinstellung (Standard an, wichtig für spätere Smart-Home-Aktoren); Schalterdosen wahlweise als tiefe Elektronikdosen im Material
+
+## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
 - [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume); Umbau-Ansicht vergleicht beide; bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
-- [ ] Hinweise ignorierbar machen (je Hinweis „Ignorieren“, je Projekt gespeichert, Liste der ignorierten Hinweise wiederherstellbar, Zähler zählt nur offene)
 - [ ] Treppenformen: gerade, viertelgewendelt (L), halbgewendelt / zweiläufig mit Podest (U), Wendeltreppe; Lauf links/rechts, Podestgröße; Treppenauge in der Etage darüber in derselben Form
-- [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
-  - Planung: alles bearbeitbar wie bisher
-  - Umsetzung: Baufortschritt-Modus steht im Vordergrund; zurück in die Planung jederzeit möglich, der Fortschritt bleibt erhalten
-  - Wird nach dem Zurückschalten ein Element mit Fortschritt verschoben, geändert oder gelöscht, markiert die App es (Hinweis „geändert nach Leitung gezogen“ o. Ä.) und setzt betroffene Schritte auf Wunsch zurück
-  - Abgeschlossen: Nur-Lesen-Schutz gegen versehentliches Verschieben, abschaltbar
-- [ ] Baufortschritt pro Element und Stromkreis: Schritte „Schlitz gestemmt“, „Dose gesetzt“, „Leitung gezogen“, „angeschlossen“, „geprüft“; Fortschrittsanzeige je Raum, Etage und Projekt; Plan färbt Elemente nach Stand; Liste „Was fehlt noch“
 - [ ] Wandansicht: Wand antippen → Ansicht von vorne mit allen Dosen in echter Höhe, Türen/Fenster und Installationszonen nach DIN 18015-3; Hinweis bei Dosen außerhalb der Zonen; als Plan druckbar
 
-- [ ] Schalter verknüpfen per Drag and Drop: einen Schalter auf einen anderen ziehen → Auswahl „Mehrfachkombination“ (zwei Wippen in gemeinsamem 2-fach-Rahmen, eine Dose bzw. Dosen direkt nebeneinander, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz mit zwei Wippen, eine Dose); Lösen per Knopf im Panel; zählt im Material richtig (Rahmen, Einsätze, Dosen); auch Schalter + Steckdose als 2-fach-Kombination möglich
-- [ ] Schalter → Leuchte per Ziehen zuordnen (vom Schalter auf die Leuchte ziehen statt über das Panel)
-- [ ] Maße beim ausgewählten Wandelement anzeigen: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (bezogen auf die Raumseite) statt „Abstand Wandanfang“, beide editierbar, mit Hinweis, von welcher Ecke gemessen wird
-- [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen anzeigen
+## 0.9 – Umsetzung auf der Baustelle
+- [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
+  - Planung: alles bearbeitbar wie bisher
+  - Umsetzung: Baufortschritt steht im Vordergrund; zurück in die Planung jederzeit möglich, Fortschritt bleibt erhalten
+  - Wird danach ein Element mit Fortschritt geändert, verschoben oder gelöscht, markiert die App es („geändert nach Leitung gezogen“) und setzt betroffene Schritte auf Wunsch zurück
+  - Abgeschlossen: Nur-Lesen-Schutz, abschaltbar
+- [ ] Baufortschritt pro Element und Stromkreis: „Schlitz gestemmt“, „Dose gesetzt“, „Leitung gezogen“, „angeschlossen“, „geprüft“; Fortschritt je Raum, Etage, Projekt; Plan färbt nach Stand; Liste „Was fehlt noch“
+- [ ] Fotos pro Wand (vor dem Verputzen), Ablage in IndexedDB statt localStorage, optional mit GitHub-Sync; in Wandansicht und Baufortschritt erreichbar
+- [ ] Prüfprotokoll pro Stromkreis: Isolationswiderstand, Schleifenimpedanz / Kurzschlussstrom, FI-Auslösezeit und -strom, Datum, Prüfer; PDF; Stromkreis gilt erst mit Messwerten als „geprüft“
 
-- [ ] Serienschalter: festlegen, welche Leuchte an welcher Wippe hängt (Wippe 1 / Wippe 2), im Schaltbild und in der Leitungsliste zeigen
-
-## Version danach (0.9)
-- [ ] Fotos pro Wand (vor dem Verputzen), Ablage in IndexedDB statt localStorage, optional mit GitHub-Sync; in der Wandansicht und im Baufortschritt erreichbar
-- [ ] Prüfprotokoll pro Stromkreis: Isolationswiderstand, Schleifenimpedanz / Kurzschlussstrom, FI-Auslösezeit und -strom, Datum, Prüfer; Ausgabe als PDF; Stromkreis gilt im Baufortschritt erst mit Messwerten als „geprüft“
-- [ ] Ausstattungs-Check pro Raum nach DIN 18015-2 / RAL-RG 678 (Ausstattungswert 1–3 wählbar): Mindestanzahl Steckdosen, Lichtauslässe, Netzwerk je Raumart und Größe; Fehlendes als (ignorierbarer) Hinweis; Raumart pro Raum einstellbar
-- [ ] Bad-Schutzbereiche 0/1/2 um Wanne und Dusche (Wanne/Dusche als Element), Hinweis bei Steckdosen oder Schaltern im Bereich
-- [ ] Spannungsfall und Querschnitt pro Stromkreis aus den berechneten Leitungslängen; Warnung, wenn der Querschnitt nicht reicht, mit Vorschlag
-- [ ] Große Verbraucher als Vorlagen: Herd (Drehstrom), Wallbox, Wärmepumpe, PV-Einspeisung, Überspannungsschutz, Leerrohre für später; rechnen im Verteiler mit (TE, Schutzorgan, Querschnitt)
-- [ ] Kostenschätzung: Preise in der Materialliste hinterlegbar, Summe je Raum, Etage, Projekt; Preise projektübergreifend merken
-- [ ] Raumvorlagen: z. B. „Schlafzimmer Standard“, „Küche“, „Bad“ mit typischer Ausstattung, mit einem Tipp in einen Raum setzen, eigene Vorlagen aus einem fertigen Raum speichern
+## 0.10 – Planung prüfen und beschleunigen
+- [ ] Ausstattungs-Check pro Raum nach DIN 18015-2 / RAL-RG 678 (Ausstattungswert 1–3): Mindestanzahl Steckdosen, Lichtauslässe, Netzwerk je Raumart und Größe; Raumart pro Raum; Fehlendes als ignorierbarer Hinweis
+- [ ] Bad-Schutzbereiche 0/1/2 um Wanne und Dusche (Wanne/Dusche als Element), Hinweis bei Dosen oder Schaltern im Bereich
+- [ ] Spannungsfall und Querschnitt pro Stromkreis aus den Leitungslängen; Warnung mit Vorschlag
+- [ ] Große Verbraucher als Vorlagen: Herd (Drehstrom), Wallbox, Wärmepumpe, PV-Einspeisung, Überspannungsschutz; rechnen im Verteiler mit
+- [ ] Kostenschätzung: Preise in der Materialliste, Summe je Raum, Etage, Projekt; Preise projektübergreifend merken
+- [ ] Raumvorlagen: „Schlafzimmer Standard“, „Küche“, „Bad“ …, eigene Vorlagen aus einem fertigen Raum speichern
 
 ## Version 0.7.0 (erledigt)
 - [x] Katalog in Elektro als Klappmenü nach Kategorien
@@ -64,12 +72,27 @@
 - [x] 6. Pläne und Ausgaben, erste Fassung
 - [ ] 7. Automatische Verdrahtung (vorerst nicht geplant)
 
-## Später: zuschaltbare Module (Idee, weit fortgeschritten)
-Grundgedanke: Module pro Projekt in den Projekteinstellungen ein- und ausschalten. Ein Modul bringt eigene Katalog-Gruppen, Panel-Reiter, Hinweise, Leitungsarten, Verteiler-Geräte und Materialposten mit. Der Code bleibt in der einen Datei (offline, einfach); intern eine Modul-Registry, damit Module sauber getrennt sind. Erst wenn die Datei zu groß wird, Module als eigene .js-Dateien nachladen (Service Worker cacht sie).
-- [ ] Modul Rollladen/Jalousie: Motor je Fenster (am Fenster andockend), Taster oder Schalter, Einzel-/Gruppen-/Zentralsteuerung, Wind-/Sonnen-/Zeitsteuerung; Leitungen (z. B. 4×1,5 bzw. 5×1,5 zum Motor), Aktoren im Verteiler (Eltako/KNX, TE), Steuerungsschema je Gruppe
-- [ ] Modul Smart Home / KNX: Busleitung (grün, eigene Linienführung), Aktoren und Netzteil im Verteiler mit TE, Taster mit Tastenbelegung, Präsenzmelder, Gruppenadressen-Liste als CSV-Export (für ETS)
-- [ ] Modul Sicherheit: Rauchmelder (Pflichtprüfung Schlafräume, Kinderzimmer, Flure), Alarmanlage, Kameras (PoE → Netzwerk), Türkommunikation / Video-Klingel
-- [ ] Modul Heizung: Raumthermostate, Stellantriebe Fußbodenheizung, Heizkreisverteiler mit Klemmleiste
-- [ ] Modul Medien: SAT/Antenne (Koax-Sternverteilung, Multischalter), Lautsprecher / Multiroom
-- [ ] Modul Energie: PV, Speicher, Wallbox, Wärmepumpe, Zählerplatz nach TAB
-- [ ] Modul Außenbereich: Garten- und Wegebeleuchtung, Außensteckdosen, Erdkabel NYY mit Längen
+## 1.x – Module (Idee, weit fortgeschritten)
+
+### Aufbau: zwei Arten von Modulen
+Damit sich nichts vermischt, wenn z. B. ein Rollladenmotor über einen Zigbee-Aktor und einen normalen Taster gesteuert wird:
+- **Was wird gesteuert (Funktionsmodule):** Beschattung/Rollladen, Heizung, Sicherheit, Energie, Medien, Außenbereich. Sie bringen die Geräte und Verbraucher mit (Motor, Stellantrieb, Kamera …) und die Gruppen, in denen sie zusammengefasst werden.
+- **Womit wird gesteuert (Technikmodule):** konventionell (immer da), Eltako (schon da), Zigbee/Home Assistant, KNX, später ggf. Matter/Thread oder WLAN (Shelly). Sie bringen keine Verbraucher mit, sondern Aktoren, Bedienstellen, Leitungen und Prüfungen.
+- Jede Gruppe (Lichtschaltung, Rollladengruppe, Heizkreis) bekommt ein Feld **„Steuerung“** mit den eingeschalteten Techniken. Die Wahl entscheidet, welche Aktoren gebraucht werden (Unterputz in der Dose oder Reiheneinbau im Verteiler), welche Leitungen und welches Material anfallen.
+- Bedienstellen bleiben gemischt erlaubt: normaler Taster am Aktor-Eingang, Funktaster, Wandschalter mit Zigbee-Einsatz.
+- Module pro Projekt in den Projekteinstellungen ein-/ausschaltbar; Code bleibt in einer Datei mit interner Modul-Registry, erst bei Bedarf als eigene .js nachladen.
+
+### Technikmodule
+- [ ] Zigbee / Home Assistant (Wunsch des Nutzers): Koordinator (USB-Stick am HA-Server, Standort im Plan), Unterputz-Aktoren in Schalter-/Geräteposition (Licht, Dimmer, Rollladen), Funktaster, Sensoren (Tür/Fenster, Bewegung, Temperatur); Prüfung: Neutralleiter und tiefe Dose am Aktor-Ort; Mesh-Hinweis (netzbetriebene Geräte sind Router, Abstand zum Koordinator/nächsten Router); HA-Server im Datenverteiler (Netzwerk, Steckdose); Geräteliste als CSV
+- [ ] KNX: Busleitung (grün, eigene Linienführung), Aktoren und Netzteil im Verteiler mit TE, Taster mit Tastenbelegung, Präsenzmelder, Gruppenadressen-Liste als CSV für die ETS
+
+### Funktionsmodule
+- [ ] Beschattung / Rollladen (zuerst): Motor am Fenster andockend, Einzel-/Gruppen-/Zentralsteuerung, Wind-/Sonnen-/Zeitautomatik, Motorleitung (z. B. 4×1,5), Steuerung über Technikmodul, Steuerungsschema je Gruppe
+- [ ] Heizung: Raumthermostate, Stellantriebe Fußbodenheizung, Heizkreisverteiler mit Klemmleiste
+- [ ] Sicherheit: Rauchmelder-Pflichtprüfung (Schlafräume, Kinderzimmer, Flure), Alarmanlage, Kameras (PoE → Netzwerk)
+- [ ] Energie: PV, Speicher, Wallbox, Wärmepumpe, Zählerplatz nach TAB
+- [ ] Medien: SAT/Antenne (Koax-Stern, Multischalter), Lautsprecher / Multiroom
+- [ ] Außenbereich: Garten- und Wegebeleuchtung, Erdkabel NYY mit Längen
+
+## Später
+- [ ] Einfache Möbel im Grundriss für bessere Orientierung (aus dem Raumplaner)
