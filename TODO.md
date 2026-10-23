@@ -5,12 +5,12 @@
 - [ ] Privates Repo `Elektroplaner-daten` anlegen, Token nur dafür erstellen und am Tablet verbinden
 
 ## Wünsche (Update nach Phase 6)
-- [ ] Klingeltrafo mit Zuleitung automatisch anlegen, Klingelleitungen im Plan
-- [ ] Kombination Schalter + Steckdose in einer Achse (z. B. Schalter 105 cm, Steckdose 30 cm)
-- [ ] Netzwerkkabel im Plan zeichnen
-- [ ] Leuchten in einer Flucht ausrichten (Hilfslinien beim Verschieben)
-- [ ] Gesamtanzeige für Probleme und nicht zugewiesene Elemente oben
-- [ ] „Schaltet“-Liste nach Räumen gegliedert
+- [x] Klingeltrafo mit Zuleitung automatisch anlegen, Klingelleitungen im Plan
+- [x] Kombination Schalter + Steckdose in einer Achse (z. B. Schalter 105 cm, Steckdose 30 cm)
+- [x] Netzwerkkabel im Plan zeichnen
+- [x] Leuchten in einer Flucht ausrichten (Hilfslinien beim Verschieben)
+- [x] Gesamtanzeige für Probleme und nicht zugewiesene Elemente oben
+- [x] „Schaltet“-Liste nach Räumen gegliedert
 - [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
 ## Phasen

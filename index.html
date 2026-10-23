@@ -42,6 +42,8 @@ header{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1p
 .btn.icon{width:40px;padding:0;flex:0 0 auto}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .btn.danger{color:var(--warn)}
+.btn.warn{color:var(--warn);border-color:var(--warn);font-weight:600}
+.lgrp{border-top:1px solid var(--line);padding:6px 0}.lgrp>b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px}.lgrp summary{cursor:pointer;min-height:36px;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
 .btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 select.btn{padding-right:8px;max-width:170px}
@@ -198,6 +200,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
   <button class="btn icon" id="redo" aria-label="Wiederholen"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <button class="btn icon" id="meas" aria-label="Maßband" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 15 15 3l6 6L9 21z"/><path d="m7 11 2 2M10 8l2 2M13 5l2 2"/></svg></button>
   <button class="btn icon" id="fit" aria-label="Plan einpassen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  <button class="btn" id="probs" aria-label="Hinweise">✓</button>
   <span id="info"></span>
   <button class="btn icon" id="sync" data-st="off" aria-label="Speicherort"><svg viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z"/></svg></button>
   <button class="btn icon" id="menu" aria-label="Einstellungen und Daten"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -244,7 +247,7 @@ const MOUNT={UP:'Unterputz',HW:'Hohlwand',AP:'Aufputz',IP44:'Außen IP44',IP65:'
 const LIGHTS=['l_deck','l_wand','l_spot','l_led','l_spieg','a_l'];
 const CAT=[
   {g:'Steckdosen',l:[['sd','Steckdose',1],['sd','Steckdose 2-fach',2],['sd','Steckdose 3-fach',3],['sd','Steckdose 4-fach',4],['sdk','Steckdose mit Klappdeckel'],['sd400','Kraftsteckdose 400 V'],['ga','Geräteanschlussdose'],['wm','Waschmaschine / Trockner']]},
-  {g:'Schalter',l:[['sw_aus','Ausschalter'],['sw_ser','Serienschalter'],['sw_wech','Wechselschalter'],['sw_kreuz','Kreuzschalter'],['sw_kon','Kontrollschalter'],['sw_dim','Dimmer']]},
+  {g:'Schalter',l:[['kombi','Schalter + Steckdose'],['sw_aus','Ausschalter'],['sw_ser','Serienschalter'],['sw_wech','Wechselschalter'],['sw_kreuz','Kreuzschalter'],['sw_kon','Kontrollschalter'],['sw_dim','Dimmer']]},
   {g:'Taster',l:[['ta','Taster'],['ta2','Doppeltaster']]},
   {g:'Leuchten',l:[['l_deck','Deckenauslass'],['l_wand','Wandauslass'],['l_spot','Einbaustrahler'],['l_led','LED-Band'],['l_spieg','Spiegelleuchte']]},
   {g:'Außen',l:[['entry','Vorlage Hauseingang'],['a_l','Außenleuchte'],['a_bwm','Bewegungsmelder'],['a_dae','Dämmerungsschalter'],['a_sd','Außensteckdose IP44'],['a_gar','Gartenanschluss']]},
@@ -323,10 +326,12 @@ const hvElsewhere=()=>S.floors.find(fl=>items(fl).some(i=>i.k==='v_hv'&&i.st!=='
 function placeAt(p){const f=floor(),g=G(f,UI.view),{k,cnt}=UI.place,maxD=Math.max(45,30/UI.vp.s);
   if(k==='entry'){const s=snapWall(g,p,maxD);if(!s){flash('Tippe auf die Außenwand neben der Haustür.');return}
     const L=wlen(f,f.walls.find(w=>w.id===s.wall));const add=[['k_t',0,140],['a_l',45,200],['a_bwm',-45,230]].map(([kk,dx,hh])=>{const it=newItem(f,kk,1,p,{...s,off:clamp(s.off+dx,2,L-2)});it.h=hh;return it});
-    items().push(...add);UI.place=null;UI.sel={kind:'item',id:add[0].id};commit();renderPanel();render();flash('Klingeltaster, Außenleuchte und Bewegungsmelder gesetzt.');return}
+    items().push(...add);UI.place=null;UI.sel={kind:'item',id:add[0].id};commit();renderPanel();render();flash('Klingeltaster, Außenleuchte und Bewegungsmelder gesetzt.');ensureTrafo(false);return}
+  if(k==='kombi'){const sn=snapWall(g,p,maxD);if(!sn){flash('Tippe auf eine Wand oder direkt daneben.');return}const a=newItem(f,'sw_aus',1,p,sn);items().push(a);addCombo(f,a);UI.sel=null;commit();renderPanel();render();flash(`Schalter (${fmt(heightOf('switch'))} cm) und Steckdose (${fmt(heightOf('socket'))} cm) als Kombination gesetzt.`);return}
   const d=KINDS[k];let snap=null;if(d.place==='wall'){snap=snapWall(g,p,maxD);if(!snap){flash('Tippe auf eine Wand oder direkt daneben.');return}}
   if(k==='v_hv'){const ex=hvElsewhere();if(ex){flash(`Es gibt schon einen Hauptverteiler (${ex.name}).`);return}S.hv=f.id}
-  const it=newItem(f,k,cnt,p,snap);items().push(it);UI.sel=null;commit();renderPanel();render();flash(kindName(it)+' gesetzt. Weiter antippen oder „Fertig mit Setzen“.')}
+  const it=newItem(f,k,cnt,p,snap);items().push(it);UI.sel=null;commit();renderPanel();render();flash(kindName(it)+' gesetzt. Weiter antippen oder „Fertig mit Setzen“.');
+  if(['k_t','k_g','k_ts','v_hv','v_uv'].includes(k)&&bellPlan())ensureTrafo(false)}
 function pick(k,cnt){UI.place=UI.place&&UI.place.k===k&&UI.place.cnt===cnt?null:{k,cnt};UI.sel=null;renderPanel();render()}
 function usedLegend(f,view){const m=new Map();for(const it of items(f)){if(!VIS[view](it))continue;const key=legendKey(it);if(!m.has(key))m.set(key,{it,n:0});m.get(key).n++}
   return [...m.values()].sort((a,b)=>kindOrder.indexOf(a.it.k)-kindOrder.indexOf(b.it.k)||(a.it.cnt||1)-(b.it.cnt||1))}
@@ -348,24 +353,29 @@ function itemPanel(f,it){const d=KINDS[it.k],gs=G(f,'soll'),r=itemRoom(f,gs,it),
     ${d.hc==='socket'||d.hc==='switch'?`<label class="chk"><input type="checkbox" data-f="work" data-scope="item" ${it.work?'checked':''}>Über Arbeitsplatte (${fmt(heightOf('work'))} cm)</label>`:''}
     ${d.hc==='socket'&&it.k!=='sd400'?`<label class="chk"><input type="checkbox" data-f="sw" data-scope="item" ${it.sw?'checked':''}>Schaltbar (über einen Schalter)</label>`:''}
     ${d.hc==='socket'||['ga','s_herd','wm'].includes(it.k)?`<label class="chk"><input type="checkbox" data-f="own" data-scope="item" ${it.own?'checked':''}>Eigener Stromkreis</label>`:''}
-    ${d.hc==='switch'?`<h3>Schaltet</h3>${loads.length?`<div class="stack">${loads.map(l=>{const on=(it.ctl||[]).includes(l.id),rr=itemRoom(f,gs,l);return `<div class="row" style="margin:0;flex-wrap:nowrap;align-items:center"><label class="chk" style="flex:1;min-width:0"><input type="checkbox" data-f="ctl" data-v="${l.id}" data-scope="item" ${on?'checked':''}><span>${esc(l.name||kindName(l))}<small style="display:block;color:var(--muted);font-size:13px">${esc(rr?.name||'ohne Raum')}</small></span></label>${ser&&on?`<select class="btn" data-f="kreis" data-v="${l.id}" data-scope="item"><option value="1">Kreis 1</option><option value="2"${(it.ctl2||[]).includes(l.id)?' selected':''}>Kreis 2</option></select>`:''}</div>`}).join('')}</div><p class="hint" style="margin-top:6px">Für mehrere Schaltstellen dieselbe Leuchte auch beim anderen Schalter anhaken. Das Schaltbild steht im Reiter „Schaltungen“.</p>`:'<p class="hint">Auf dieser Etage gibt es noch keine Leuchte oder schaltbare Steckdose.</p>'}`:''}
+    ${d.hc==='switch'?`<h3>Schaltet</h3>${loads.length?(()=>{const by=new Map();for(const l of loads){const rn=itemRoom(f,gs,l)?.name||'ohne Raum';if(!by.has(rn))by.set(rn,[]);by.get(rn).push(l)}const myR=r?.name;
+      const row=(l,lbl)=>{const on=(it.ctl||[]).includes(l.id);return `<div class="row" style="margin:0;flex-wrap:nowrap;align-items:center"><label class="chk" style="flex:1;min-width:0"><input type="checkbox" data-f="ctl" data-v="${l.id}" data-scope="item" ${on?'checked':''}><span>${esc(lbl)}</span></label>${ser&&on?`<select class="btn" data-f="kreis" data-v="${l.id}" data-scope="item"><option value="1">Kreis 1</option><option value="2"${(it.ctl2||[]).includes(l.id)?' selected':''}>Kreis 2</option></select>`:''}</div>`};
+      const block=(rn,arr)=>{const cnt=new Map(),tot=new Map();for(const l of arr){const k=l.name||kindName(l);tot.set(k,(tot.get(k)||0)+1)}return arr.map(l=>{const k=l.name||kindName(l),n=(cnt.get(k)||0)+1;cnt.set(k,n);return row(l,tot.get(k)>1?`${k} ${n}`:k)}).join('')};
+      return [...by].sort((a,b)=>(b[0]===myR)-(a[0]===myR)).map(([rn,arr])=>{const anyOn=arr.some(l=>(it.ctl||[]).includes(l.id));return rn===myR?`<div class="lgrp"><b>${esc(rn)}</b>${block(rn,arr)}</div>`:`<details class="lgrp"${anyOn?' open':''}><summary>${esc(rn)} <span class="tag">${arr.length}</span>${anyOn?' <span class="tag on">gewählt</span>':''}</summary>${block(rn,arr)}</details>`}).join('')+'<p class="hint" style="margin-top:6px">Für mehrere Schaltstellen dieselbe Leuchte auch beim anderen Schalter anhaken. Das Schaltbild steht im Reiter „Schaltungen“.</p>'})():'<p class="hint">Auf dieser Etage gibt es noch keine Leuchte oder schaltbare Steckdose.</p>'}`:''}
+    ${wall&&(d.hc==='socket'||isSw(it))?(it.combo?`<div class="note" style="margin-top:10px">Kombination mit ${esc(kindName(comboPartner(f,it)||{k:'sd'}))} in derselben Achse. Verschieben bewegt beide.</div><div class="row"><button class="btn" data-act="combooff">Kombination lösen</button></div>`:`<div class="row" style="margin-top:10px"><button class="btn" data-act="comboadd">${d.hc==='socket'?'Schalter darüber ergänzen':'Steckdose darunter ergänzen'}</button></div>`):''}
     <div class="row" style="margin-top:10px"><label class="f">Bezeichnung (optional)<input data-f="name" data-scope="item" value="${esc(it.name||'')}" placeholder="z. B. Bett links"></label></div>
     <div class="row"><button class="btn" data-act="idup">Duplizieren</button><button class="btn danger" data-act="idel">${delLbl}</button></div>
     <div class="row end"><button class="btn primary" data-act="done">Fertig</button></div>`}
 function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
   let h=`<h2>Elektro ${esc(f.name)}</h2>`;
   if(pl){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k].name;
-    h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'} Du kannst mehrere nacheinander setzen.</div>
+    h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&pl.k!=='kombi'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'} Du kannst mehrere nacheinander setzen.</div>
       <div class="row"><button class="btn primary" data-act="pickend" style="flex:1">Fertig mit Setzen</button></div>`}
   else h+=`<p class="hint">Element wählen und im Plan antippen. Wanddosen rasten an der Wandseite ein. Der Grundriss ist hier gesperrt. Neue Elemente kommen in dieser Ansicht als <b>${newStatus()==='keep'?'Bestand':'neu'}</b>.</p>`;
-  for(const c of CAT)h+=`<h3>${c.g}</h3><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div>`;
+  for(const c of CAT)h+=`<h3>${c.g}</h3><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div>`;
   return h}
 function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
   const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
 function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
-  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>[it.id,itemPos(g,it)]));
+  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc==='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){const t={x:-p.d.y,y:p.d.x};p.x+=t.x*17*ks;p.y+=t.y*17*ks}return [it.id,p]}));
   const si=sel?.kind==='item'&&its.find(i=>i.id===sel.id);
-  if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=routeSvg(f,s,C,exp);
+  if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=routeSvg(f,s,C,exp)+extraLines(f,s,exp);
+  if(!plan&&!exp){if(!UI.guides&&si&&KINDS[si.k]?.place==='ceil'){const A=alignGuides(f,g,si,si,0.6);UI._tg={it:si,gx:A.gx,gy:A.gy,x:A.gx.length?si.x:null,y:A.gy.length?si.y:null};const k_=UI.guides;UI.guides=UI._tg;h+=guidesSvg(f,g,s);UI.guides=k_}else h+=guidesSvg(f,g,s)}
   if(!plan)h+=grpLines(f,g,view,s,C,ks,sel);
   const pm=its.some(i=>i.k==='n_d'||i.k==='n_ap')?portsOfItem(netPlan()):new Map();
   for(const it of its){const p=pos.get(it.id),cc_=ciOf(it),col=view==='umbau'&&it.st==='new'?C('new'):view==='umbau'&&it.st==='del'?C('del'):cc_&&S.settings.ciColor!==false?cc_.color:C('ink'),cc=symCenter(it),on=si&&si.id===it.id;
@@ -460,7 +470,7 @@ function schHtml(f){const grs=groupsOf(f,UI.view),sel=UI.sel?.kind==='item'?UI.s
 function legHtml(f){const lg=usedLegend(f,UI.view),sw=(c,d)=>`<svg width="34" height="14" aria-hidden="true"><line x1="2" y1="7" x2="32" y2="7" stroke="${c}" stroke-width="3"${d?' stroke-dasharray="6 4"':''}/></svg>`;
   return `<h2>Legende ${esc(layout(f).name)}</h2>${lg.length?`<ul class="lst">${lg.map(({it,n})=>`<li>${symIcon(it.k,it.cnt,it)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente auf dieser Etage.</p>'}
     <h3>Leitungen im Plan</h3><ul class="lst"><li>${sw(LC.zul,1)}<span class="nm"><b>Zuleitung</b><small>kommt an der ersten Schaltstelle an</small></span></li><li>${sw(LC.korr)}<span class="nm"><b>Zwischen Schaltstellen</b><small>NYM-J 5×1,5, korrespondierende Adern plus N und PE</small></span></li>
-    <li>${sw(LC.last)}<span class="nm"><b>Zur Leuchte oder Steckdose</b><small>NYM-J 3×1,5, Schaltdraht plus N und PE</small></span></li><li>${sw('#D64545')}<span class="nm"><b>Leitungsweg je Stromkreis</b><small>in Stromkreisfarbe entlang der Wände in der Zone, gepunktet durch eine Wand oder über die Etage</small></span></li><li>${sw('#0E9F8E')}<span class="nm"><b>Senkrechte Installationszone</b><small>10 bis 30 cm neben Ecken, Türen und Fenstern (DIN 18015-3)</small></span></li><li>${sw(LC.steuer,1)}<span class="nm"><b>Tasterleitung</b><small>Steuerung über Stromstoßschalter, folgt in Phase 5</small></span></li></ul>
+    <li>${sw(LC.last)}<span class="nm"><b>Zur Leuchte oder Steckdose</b><small>NYM-J 3×1,5, Schaltdraht plus N und PE</small></span></li><li>${sw('#D64545')}<span class="nm"><b>Leitungsweg je Stromkreis</b><small>in Stromkreisfarbe entlang der Wände in der Zone, gepunktet durch eine Wand oder über die Etage</small></span></li><li>${sw('#C2417F',1)}<span class="nm"><b>Klingelleitung</b><small>J-Y(St)Y 2×2×0,8 vom Klingeltrafo</small></span></li><li>${sw('#2E8B57',1)}<span class="nm"><b>Netzwerkkabel</b><small>Cat 7, je Buchse eine Leitung zum Datenverteiler</small></span></li><li>${sw('#0E9F8E')}<span class="nm"><b>Senkrechte Installationszone</b><small>10 bis 30 cm neben Ecken, Türen und Fenstern (DIN 18015-3)</small></span></li><li>${sw(LC.steuer,1)}<span class="nm"><b>Tasterleitung</b><small>Steuerung über Stromstoßschalter, folgt in Phase 5</small></span></li></ul>
     <h3>Aderfarben im Schaltbild</h3><ul class="lst"><li>${sw('#8B5A2B')}<span class="nm"><b>Braun</b><small>Außenleiter L, Schaltdraht</small></span></li><li>${sw('var(--ink)')}<span class="nm"><b>Schwarz und Grau</b><small>korrespondierende Adern</small></span></li><li>${sw('#2F6FD0')}<span class="nm"><b>Blau</b><small>Neutralleiter N</small></span></li><li>${sw('#2E8B57',1)}<span class="nm"><b>Grün-gelb</b><small>Schutzleiter PE</small></span></li></ul>`}
 function cntCat(it){const d=KINDS[it.k];if(d.hc==='socket')return ['so',it.cnt||1];if(d.hc==='switch')return ['sw',1];if(LIGHTS.includes(it.k))return ['li',1];if(it.k==='n_d')return ['ne',it.cnt||1];return ['ot',1]}
 function floorElecHtml(f){const gs=G(f,'soll'),rows=new Map(),add=(key,name)=>{if(!rows.has(key))rows.set(key,{name,so:0,sw:0,li:0,ne:0,ot:0});return rows.get(key)};
@@ -514,6 +524,7 @@ function groupMembers(f,it){const g=groupsOf(f,'umbau').find(x=>x.sw.includes(it
 function assignCi(f,it,ci){for(const m of groupMembers(f,it)){if(ci)m.ci=ci;else delete m.ci}}
 function ciItems(c){return allItems().filter(x=>x.it.ci===c.id&&x.it.st!=='del')}
 function ciSummary(c){const m=new Map();for(const {it} of ciItems(c)){if(isSw(it))continue;const [cat,n]=cntCat(it),k=cat==='so'?'Steckdosen':cat==='li'?'Leuchten':cat==='ne'?'Netzwerk':KINDS[it.k].name;m.set(k,(m.get(k)||0)+(cat==='so'?n:1))}
+  for(const x of dists())if((x.it.devs||[]).some(d=>d.ci===c.id&&d.t==='trafo'))m.set('Klingeltrafo',1);
   const one={Steckdosen:'Steckdose',Leuchten:'Leuchte',Netzwerk:'Netzwerk'};return [...m].map(([k,n])=>`${n} ${n===1&&one[k]?one[k]:k}`).join(', ')||'keine Elemente'}
 function ciWarn(c){const w=[],its=ciItems(c).map(x=>x.it),dv=distBy(c.dist);if(!dv)w.push('Kein Verteiler gewählt.');
   if(its.some(i=>KINDS[i.k].hc==='socket')&&!c.rcd)w.push('Steckdosen-Stromkreise brauchen einen FI/RCD.');
@@ -774,6 +785,43 @@ function schEltako(f,gr){const C=k=>`var(--${k})`,W=310,A=60,B=88,Cx=116,NX=240,
   return `<svg viewBox="0 0 ${W} ${y+6}" width="100%" style="max-width:${W}px;display:block" role="img" aria-label="Schaltbild Eltako">${h}</svg>
     ${mode==='2'?'<p class="hint">Vorgabe „zwei Leitungen“: Tasterleitung (L, T, PE) und Leuchtenleitung (S, N, PE) laufen getrennt vom Verteiler. Umstellen unter Menü → Rechenvorgaben.</p>':''}
     <div class="row" style="margin-top:10px"><label class="f">Aktor im Verteiler<select data-f="akt" data-scope="grp" data-v="${gr.sw[0].id}">${Object.entries(AKT).map(([k,v])=>`<option value="${k}"${k===ak?' selected':''}>${v}</option>`).join('')}</select></label></div>`}
+/* ---------- Update: Probleme, Klingeltrafo, Kombination, Fluchten ---------- */
+function problems(){const P=[];
+  for(const f of S.floors){const its=items(f).filter(i=>i.st!=='del'),nm=f.name;
+    const o=its.filter(i=>needsCi(i)&&!ciOf(i));if(o.length)P.push({t:`${nm}: ${o.length} ${o.length===1?'Element':'Elemente'} ohne Stromkreis`,go:{f:f.id,mode:'elec',tab:'ci'}});
+    const w=its.filter(i=>KINDS[i.k]?.place==='wall'&&!i.wall);if(w.length)P.push({t:`${nm}: ${w.length} Wanddose${w.length===1?'':'n'} nicht an einer Wand`,go:{f:f.id,mode:'elec',sel:w[0].id}});
+    const sw=its.filter(i=>isSw(i)&&!(i.ctl||[]).length);if(sw.length)P.push({t:`${nm}: ${sw.length} Schalter ohne Leuchte`,go:{f:f.id,mode:'elec',sel:sw[0].id}});
+    for(const g of groupsOf(f,'soll')){const pr=grpProblem(g);if(pr)P.push({t:`${nm}, ${grpTitle(f,g).t}: ${pr}`,go:{f:f.id,mode:'elec',tab:'sch',grp:g.id}})}}
+  for(const c of circuits())for(const w of ciWarn(c))if(!/je nach Verlegeart/.test(w))P.push({t:`Stromkreis ${c.no} ${c.name}: ${w}`,go:{mode:'elec',tab:'ci',ci:c.id}});
+  for(const x of dists())if(boardStats(x).over)P.push({t:`${distName(x)}: zu wenig Platz`,go:{mode:'dist',dv:x.it.vid}});
+  const b=bellPlan();if(b&&!b.tr)P.push({t:'Klingelanlage ohne Klingeltrafo',go:{mode:'dist'},fix:'trafo'});
+  if(netItems().length&&!dvs().length)P.push({t:'Netzwerkdosen ohne Datenverteiler',go:{mode:'elec',tab:'edit'}});
+  if(allItems().length&&!allItems().some(x=>x.it.k==='v_hv'&&x.it.st!=='del'))P.push({t:'Noch kein Hauptverteiler gesetzt',go:{mode:'elec',tab:'edit'}});
+  return P}
+function updProbs(){const b=$('#probs');if(!b)return;const n=problems().length;b.textContent=n?`⚠ ${n}`:'✓';b.classList.toggle('warn',!!n);b.setAttribute('aria-label',n?`${n} Hinweise zur Planung`:'Keine Hinweise');b.title=n?`${n} Hinweise zur Planung`:'Alles zugeordnet'}
+function probsMenu(){const P=problems(),{el,close}=modal(`<h2>${P.length?`${P.length} Hinweise`:'Alles in Ordnung'}</h2>${P.length?`<p class="hint">Antippen springt an die passende Stelle.</p><div class="mlist">${P.map((p,i)=>`<button class="mrow" data-pi="${i}"><span><b>${esc(p.t)}</b>${p.fix==='trafo'?'<small>Antippen legt den Klingeltrafo mit Zuleitung an</small>':''}</span><span class="chev" aria-hidden="true">›</span></button>`).join('')}</div>`:'<p class="hint">Alle Elemente haben einen Stromkreis, und es gibt keine offenen Warnungen.</p>'}`);
+  el.querySelectorAll('[data-pi]').forEach(b=>b.onclick=()=>{const p=P[+b.dataset.pi];close();if(p.fix==='trafo'){ensureTrafo(true);return}const g=p.go;
+    if(g.f)S.activeFloor=g.f;UI.mode=g.mode;UI.place=null;UI.assign=null;UI.sel=null;UI.selC=null;UI.selB=null;if(g.tab)UI.tab[g.mode]=g.tab;if(g.grp)UI.grp=g.grp;if(g.ci)UI.selC=g.ci;if(g.dv)UI.dv=g.dv;if(g.sel){UI.tab.elec='edit';UI.sel={kind:'item',id:g.sel}}
+    if(UI.tool==='draw')UI.tool='sel';updBar();renderAll();if(g.f)fit()})}
+function ensureTrafo(say){if(dists().some(x=>(x.it.devs||[]).some(d=>d.t==='trafo')))return false;const dv=dists().find(x=>x.it.k==='v_hv')||dists()[0];
+  if(!dv){if(say)flash('Für den Klingeltrafo fehlt noch ein Verteiler.');return false}
+  const c=newCircuit({name:'Klingeltrafo',prot:'B10',cable:'H07V-K',dist:dv.it.vid,rcd:null});dv.it.devs.push({id:uid(),t:'trafo',te:2,ci:c.id});commit();renderAll();
+  flash(`Klingeltrafo in ${distName(dv)} angelegt, Zuleitung über Stromkreis ${c.no} (B10).`);return true}
+function comboPartner(f,it){return it.combo?items(f).find(o=>o!==it&&o.combo===it.combo):null}
+function syncCombos(f){for(const l of f.layouts){for(const it of l.items){if(!it.combo)continue;const p=l.items.find(o=>o!==it&&o.combo===it.combo);if(!p){delete it.combo;continue}
+  if(KINDS[it.k].hc==='socket'&&KINDS[p.k].hc!=='socket'){it.wall=p.wall;it.side=p.side;it.off=p.off}}}}
+function addCombo(f,it){const sock=KINDS[it.k].hc==='socket',cid=uid(),n=newItem(f,sock?'sw_aus':'sd',1,it,{wall:it.wall,side:it.side,off:it.off});n.h=heightOf(sock?'switch':'socket');n.combo=it.combo=cid;if(it.ci&&!sock)n.ci=it.ci;items(f).push(n);return n}
+function alignGuides(f,g,it,p,thr){const gx=[],gy=[];for(const o of items(f)){if(o===it||KINDS[o.k]?.place!=='ceil'||!VIS[UI.view](o))continue;if(Math.abs(o.x-p.x)<thr)gx.push(o);if(Math.abs(o.y-p.y)<thr)gy.push(o)}return {gx,gy}}
+function guidesSvg(f,g,s){const G_=UI.guides;if(!G_)return '';const pts_=g.walls.flatMap(x=>x.poly);if(!pts_.length)return '';const bb=bbox(pts_),px=n=>n/s;let h='';
+  const lab=(x,y,t)=>{const bw=px(t.length*6.5+10);return `<rect x="${x-bw/2}" y="${y-px(9)}" width="${bw}" height="${px(18)}" rx="${px(9)}" fill="var(--accent)" pointer-events="none"/><text x="${x}" y="${y}" font-size="${px(11.5)}" text-anchor="middle" dominant-baseline="central" fill="var(--accent-ink)" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" pointer-events="none">${t}</text>`};
+  const it=G_.it;if(G_.x!=null){h+=`<line x1="${G_.x}" y1="${bb.minY}" x2="${G_.x}" y2="${bb.maxY}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+    const nb=G_.gx.reduce((a,o)=>!a||Math.abs(o.y-it.y)<Math.abs(a.y-it.y)?o:a,null);if(nb)h+=lab(G_.x+px(30),(nb.y+it.y)/2,fmt(Math.abs(nb.y-it.y))+' cm')}
+  if(G_.y!=null){h+=`<line x1="${bb.minX}" y1="${G_.y}" x2="${bb.maxX}" y2="${G_.y}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+    const nb=G_.gy.reduce((a,o)=>!a||Math.abs(o.x-it.x)<Math.abs(a.x-it.x)?o:a,null);if(nb)h+=lab((nb.x+it.x)/2,G_.y-px(22),fmt(Math.abs(nb.x-it.x))+' cm')}
+  return h}
+function extraLines(f,s,exp){let h='';const b=bellPlan();if(b)for(const sg of b.segs){if(sg.f!==f||sg.cross==='Etage')continue;h+=`<polyline points="${pts(sg.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':'#C2417F'}" stroke-width="1.8" stroke-dasharray="5 3" vector-effect="non-scaling-stroke" pointer-events="none"/>`}
+  for(const v of netPlan().values())for(const p of v.ports){if(p.sf!==f||p.cross==='Etage'||p.i>0)continue;h+=`<polyline points="${pts(p.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':'#2E8B57'}" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`}
+  return h}
 function defaultWallTypes(){return [
   {id:'aw',name:'Außenwand',t:36.5,shade:'dark',ext:true,builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Porenbeton'},{name:'Beton'},{name:'Holzrahmen + Dämmung',hollow:true}]},
   {id:'tw',name:'Tragende Innenwand',t:24,shade:'dark',builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Beton'}]},
@@ -960,7 +1008,7 @@ function syncRooms(f){const g=G(f,'soll'),fs=g.rooms,has=F=>f.rooms.some(r=>!r._
     if(best){r.x=r1(best.c.x);r.y=r1(best.c.y);r._o=false;free.splice(free.indexOf(best.F),1)}else r._drop=true}
   f.rooms=f.rooms.filter(r=>!r._drop);for(const r of f.rooms)delete r._o;
   for(const F of fs)if(!f.rooms.some(r=>inside(r,F.poly))){const c=interiorPoint(F.poly);f.rooms.push({id:uid(),name:nextRoomName(f),x:r1(c.x),y:r1(c.y)})}}
-function normalize(f){dedupe(f);clampOpenings(f);const keep=new Set([UI.chain?.last,UI.chain?.start]);f.nodes=f.nodes.filter(n=>keep.has(n.id)||deg(f,n.id)>0);syncRooms(f);normItems(f)}
+function normalize(f){dedupe(f);clampOpenings(f);const keep=new Set([UI.chain?.last,UI.chain?.start]);f.nodes=f.nodes.filter(n=>keep.has(n.id)||deg(f,n.id)>0);syncRooms(f);normItems(f);syncCombos(f)}
 function validateSel(){const s=UI.sel,f=floor();if(!s)return;const g=G(f,UI.view);
   if(s.kind==='wall'&&!g.byId.has(s.id))UI.sel=null;
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o||!g.byId.has(o.wall)||!VIS[UI.view](o))UI.sel=null}
@@ -1047,8 +1095,8 @@ function sceneSvg(vp,VW,VH,exp,view){
 function render(){if(UI.mode==='dist'){renderBoard();updInfo();return}const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
 function updInfo(){const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='dist'?`${dists().length} Verteiler, ${circuits().length} Stromkreise`:UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
   const b=$('#badge');let h=`<span>${esc(VIEWS[UI.view])}</span>`;if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
-  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
-function updBar(){$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
+  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
+function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
   document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
   document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));$('#toolSeg').hidden=UI.mode!=='plan';const D=UI.mode==='dist';$('#svg').style.display=D?'none':'';$('#board').hidden=!D;$('#badge').hidden=D;$('#viewSeg').hidden=D;$('#meas').hidden=D;$('#fit').hidden=D}
@@ -1132,7 +1180,7 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
     else if(fld==='kreis'){const id=el.dataset.v,c=new Set(it.ctl2||[]);v==='2'?c.add(id):c.delete(id);it.ctl2=[...c];if(!it.ctl2.length)delete it.ctl2}
     else if(fld==='sw'&&!v){delete it.sw;for(const o of items(f))if(o.ctl)o.ctl=o.ctl.filter(i=>i!==it.id)}
     else if(fld==='work'||fld==='own'||fld==='sw'){if(v)it[fld]=true;else delete it[fld];if(fld==='work'&&d.place==='wall')it.h=heightOf(v?'work':d.hc)}
-    else if(fld==='cnt')it.cnt=+v;else if(fld==='h')it.h=Math.max(0,v);else if(fld==='off')it.off=Math.max(0,v);else if(fld==='w')it.w=Math.max(20,v);else it[fld]=v;
+    else if(fld==='cnt')it.cnt=+v;else if(fld==='h')it.h=Math.max(0,v);else if(fld==='off'){it.off=Math.max(0,v);const pp=comboPartner(f,it);if(pp)pp.off=it.off}else if(fld==='w')it.w=Math.max(20,v);else it[fld]=v;
     commit();renderPanel();render();return}
   if(sc==='ci'){const c=circuits().find(x=>x.id===(UI.selC||UI.selB));if(!c)return;if(fld==='dist'){c.dist=v||null;c.rcd=distBy(c.dist)?.it.devs?.find(d=>d.t==='rcd')?.id||null}else if(fld==='rcd')c.rcd=v||null;else c[fld]=String(v).trim()||c[fld];commit();renderPanel();render();return}
   if(sc==='grp'){const x=allItems().find(y=>y.it.id===el.dataset.v);if(x){x.it.akt=v;commit();renderPanel();render()}return}
@@ -1184,6 +1232,8 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'matnew':UI.matNew=b.dataset.v==='1';renderPanel();render();break;
     case 'matcsv':exportMat();break;
     case 'netcsv':exportNet();break;
+    case 'comboadd':{const it=items(f).find(x=>x.id===s?.id);if(it&&!it.combo){addCombo(f,it);commit();renderPanel();render()}}break;
+    case 'combooff':{const it=items(f).find(x=>x.id===s?.id),pp=it&&comboPartner(f,it);if(it){delete it.combo;if(pp){delete pp.combo;pp.off+=20}commit();renderPanel();render()}}break;
     case 'calcform':calcForm();break;
     case 'boardpng':exportBoard();break;
     case 'pick':pick(b.dataset.k,+b.dataset.c||1);break;
@@ -1451,7 +1501,7 @@ svg.addEventListener('pointermove',e=>{
     case 'wall':{let t=(w.x-drag.w0.x)*drag.n.x+(w.y-drag.w0.y)*drag.n.y;if(gr)t=round(t,gr);for(const o of drag.p0){o.q.x=r1(o.x+drag.n.x*t);o.q.y=r1(o.y+drag.n.y*t)}break}
     case 'op':{const x=f.walls.find(q=>q.id===drag.o.wall);if(!x)break;const A=nodeOf(f,x.a),u=unitOf(f,x),L=wlen(f,x);let off=(w.x-A.x)*u.x+(w.y-A.y)*u.y-drag.grab;if(gr)off=round(off,gr);drag.o.off=clamp(off,0,L-drag.o.w);break}
     case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break
-    case 'item':{const it=drag.it,q={x:w.x-drag.ox,y:w.y-drag.oy};if(KINDS[it.k]?.place==='wall'){const sn=snapWall(G(f,UI.view),{x:w.x,y:w.y},Math.max(60,60/UI.vp.s));if(sn){it.wall=sn.wall;it.side=sn.side;it.off=gr?round(sn.off,gr):sn.off}}else{it.x=gr?round(q.x,gr):r1(q.x);it.y=gr?round(q.y,gr):r1(q.y)}break}}
+    case 'item':{const it=drag.it,q={x:w.x-drag.ox,y:w.y-drag.oy};if(KINDS[it.k]?.place==='wall'){const sn=snapWall(G(f,UI.view),{x:w.x,y:w.y},Math.max(60,60/UI.vp.s));if(sn){it.wall=sn.wall;it.side=sn.side;it.off=gr?round(sn.off,gr):sn.off;const pp=comboPartner(f,it);if(pp){pp.wall=it.wall;pp.side=it.side;pp.off=it.off}}}else{let x=gr?round(q.x,gr):r1(q.x),y=gr?round(q.y,gr):r1(q.y);const A=alignGuides(f,null,it,{x,y},12/UI.vp.s);UI.guides={it,gx:A.gx,gy:A.gy};if(A.gx.length){x=A.gx[0].x;UI.guides.x=x}if(A.gy.length){y=A.gy[0].y;UI.guides.y=y}it.x=x;it.y=y}break}}
   render()});
 function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(pinch){if(ptrs.size<2)pinch=null;drag=null;return}
@@ -1460,6 +1510,7 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(d.type==='draw'){if(e.type==='pointercancel'){UI.cur=null;render();return}const c=UI.cur||snapDraw(toWorld(e.clientX,e.clientY));drawTo(c);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.place){placeAt(d.w);return}
   if(d.type==='pan'&&!d.moved){const F=faceAt(G(floor(),UI.view),d.w),r=F&&floor().rooms.find(r=>inside(r,F.poly));select(r?{kind:'room',id:r.id}:null);return}
+  UI.guides=null;
   if(!d.moved||d.type==='pan')return;
   if(d.type==='node')dropNode(d.id);
   if(d.type==='room'&&!faceAt(G(floor(),'soll'),d.r)){d.r.x=d.x0;d.r.y=d.y0}
@@ -1491,7 +1542,7 @@ document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INP
   else if(e.key==='Escape'){if(UI.measOn)toggleMeas();else if(UI.chain)endChain();else if(UI.tool==='draw')setTool('sel');else select(null)}
   else if(e.key.toLowerCase()==='w'&&!e.ctrlKey&&!e.metaKey)setTool(UI.tool==='draw'?'sel':'draw')});
 let rz;new ResizeObserver(()=>{clearTimeout(rz);rz=setTimeout(render,50)}).observe(stage);
-$('#sync').onclick=syncMenu;if(IN_ART)$('#sync').hidden=true;
+$('#sync').onclick=syncMenu;$('#probs').onclick=probsMenu;if(IN_ART)$('#sync').hidden=true;
 document.addEventListener('visibilitychange',()=>{if(!sync)return;if(document.visibilityState==='hidden'){if(SY.timer)push()}else syncNow()});
 window.__EP={get S(){return S},mkRoom,act,UI,G,floor,commit,renderAll,fit,addWall,addNode,drawTo,snapDraw,setThickness,setLen,select};
 renderAll();requestAnimationFrame(fit);
