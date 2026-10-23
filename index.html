@@ -182,36 +182,95 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 .pcur{fill:none;stroke:var(--accent);stroke-width:2}
 .meas{stroke:var(--accent);stroke-width:2.5;stroke-dasharray:8 5}
 .measend{fill:var(--accent);stroke:var(--floor);stroke-width:2}
+
+/* ---------- Design-Test: Plan als Arbeitsfläche ---------- */
+:root{--hint:#B86A0C;--shadow:0 2px 10px rgba(20,30,35,.14)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}
+header{gap:12px;padding:6px 10px;overflow:visible;justify-content:space-between;background:var(--panel)}
+#projBtn{font-weight:600;font-size:16px;max-width:260px;border:0;background:none;padding:0 6px;overflow:hidden;text-overflow:ellipsis;display:block;line-height:40px}
+#projBtn::after{content:' ▾';color:var(--muted);font-weight:400;font-size:13px}
+.steps{display:flex;gap:2px;background:var(--line);padding:3px;border-radius:12px;flex:0 1 auto;min-width:0}
+.steps button{min-height:38px;padding:0 14px 0 10px;border:0;border-radius:9px;background:transparent;color:var(--muted);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.steps button i{font-style:normal;width:22px;height:22px;flex:0 0 22px;border-radius:11px;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.steps button[aria-pressed="true"]{background:var(--field);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.steps button[aria-pressed="true"] i{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.hright{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+#probs.warn{color:var(--hint);border-color:var(--hint)}
+.mapbar{position:absolute;display:flex;gap:8px;align-items:center;flex-wrap:wrap;z-index:3;pointer-events:none}
+.mapbar>*{pointer-events:auto;flex:0 0 auto}
+#mapTop{left:10px;top:10px;right:96px}
+#mapTools{left:10px;bottom:10px;right:150px}
+.float{background:var(--floor);border:1px solid var(--line);border-radius:999px;box-shadow:var(--shadow);padding:3px;display:inline-flex;gap:2px;align-items:center}
+.float .btn{border:0;background:transparent;border-radius:999px;min-height:40px}
+.float .btn.icon{width:42px}
+.float .seg{border:0;border-radius:999px;gap:2px}
+.float .seg button{border-radius:999px;background:transparent;min-height:38px;padding:0 14px}
+.float .seg button+button{border-left:0}
+.float .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.float .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+#variants{position:static;display:flex;gap:6px;flex-wrap:wrap;max-width:none}
+#variants button,.pill{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--floor);font-size:14px;box-shadow:var(--shadow)}
+#variants:empty{display:none}
+#layersBtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+#layersPop{position:absolute;top:56px;left:10px;z-index:5;background:var(--floor);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;min-width:240px;display:none}
+#layersPop.open{display:block}
+#layersPop h4{margin:6px 8px 4px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+#layersPop button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:0 10px;border:0;border-radius:10px;background:none;text-align:left}
+.sw{flex:0 0 40px;height:24px;border-radius:12px;background:var(--line);position:relative;transition:background .15s}
+.sw::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s}
+[aria-pressed="true"]>.sw{background:var(--accent)}[aria-pressed="true"]>.sw::after{left:19px}
+.rd{flex:0 0 20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--muted)}
+[aria-pressed="true"]>.rd{box-shadow:inset 0 0 0 6px var(--accent)}
+#layersBtn{white-space:nowrap}
+.grid2 .btn{white-space:normal;line-height:1.2;padding:4px 10px}
+#floors{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3;align-items:stretch}
+#floors button{min-width:64px;max-width:110px;min-height:44px;padding:0 10px;border-radius:12px;border:1px solid var(--line);background:var(--floor);box-shadow:var(--shadow);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#floors button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#floors button.fm{font-weight:400;color:var(--muted);min-height:36px;font-size:14px}
+#info{position:absolute;right:12px;bottom:16px;margin:0;font-size:14px;z-index:2;pointer-events:none;background:color-mix(in srgb,var(--paper) 80%,transparent);padding:2px 8px;border-radius:8px}
+#badge{bottom:64px}
+#toolhint{top:auto;bottom:66px}
+.search{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--field);padding:0 12px 0 36px;margin:2px 0 10px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237d8a8f' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:11px center}
+.catres{display:grid;grid-template-columns:1fr 1fr;gap:6px}.catres .btn{justify-content:flex-start;text-align:left;white-space:normal;min-height:44px}.catres small{display:block;color:var(--muted);font-size:12px}
+.prev{background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-width:1400px;margin:0 auto}
+.prev img{display:block;width:100%;height:auto}
+@media (max-width:1000px){.steps button span{display:none}.steps button{padding:0 10px}.steps button[aria-pressed="true"] span{display:inline}#info{display:none}}
+@media (max-width:820px){#mapTools{right:10px}}
+@media (max-width:560px){.steps button[aria-pressed="true"] span{display:none}#projBtn{max-width:120px}}
 </style>
 </head>
 <body>
 <header>
-  <button class="btn" id="projBtn" style="max-width:170px;overflow:hidden;text-overflow:ellipsis">Projekt</button>
-  <select id="floorSel" class="btn" aria-label="Etage wählen"></select>
-  <button class="btn" id="floorMenu">Etagen</button>
-  <div class="seg" role="group" aria-label="Ansicht" id="viewSeg">
-    <button data-view="ist">Ist</button><button data-view="soll">Soll</button><button data-view="umbau">Umbau</button>
+  <button class="btn" id="projBtn" title="Projekt wechseln">Projekt</button>
+  <nav class="steps" role="group" aria-label="Arbeitsschritt" id="modeSeg">
+    <button data-mode="plan"><i>1</i><span>Grundriss</span></button><button data-mode="elec"><i>2</i><span>Elektro</span></button><button data-mode="dist"><i>3</i><span>Verteiler</span></button><button data-mode="out"><i>4</i><span>Ausgabe</span></button>
+  </nav>
+  <div class="hright">
+    <button class="btn" id="probs" aria-label="Hinweise">✓</button>
+    <button class="btn icon" id="sync" data-st="off" aria-label="Speicherort"><svg viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z"/></svg></button>
+    <button class="btn icon" id="menu" aria-label="Einstellungen und Daten"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   </div>
-  <div class="seg" role="group" aria-label="Ebene" id="modeSeg">
-    <button data-mode="plan">Grundriss</button><button data-mode="elec">Elektro</button><button data-mode="dist">Verteiler</button>
-  </div>
-  <div class="seg" role="group" aria-label="Werkzeug" id="toolSeg">
-    <button data-tool="sel">Auswählen</button><button data-tool="draw">Wand zeichnen</button>
-  </div>
-  <button class="btn icon" id="undo" aria-label="Rückgängig"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
-  <button class="btn icon" id="redo" aria-label="Wiederholen"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
-  <button class="btn icon" id="meas" aria-label="Maßband" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 15 15 3l6 6L9 21z"/><path d="m7 11 2 2M10 8l2 2M13 5l2 2"/></svg></button>
-  <button class="btn icon" id="fit" aria-label="Plan einpassen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-  <button class="btn" id="probs" aria-label="Hinweise">✓</button>
-  <span id="info"></span>
-  <button class="btn icon" id="sync" data-st="off" aria-label="Speicherort"><svg viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z"/></svg></button>
-  <button class="btn icon" id="menu" aria-label="Einstellungen und Daten"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 </header>
 <main>
   <div id="stage">
     <svg id="svg"><g id="world"></g></svg>
     <div id="badge"></div>
-    <div id="variants"></div>
+    <div class="mapbar" id="mapTop">
+      <div class="float"><div class="seg" role="group" aria-label="Stand" id="viewSeg"><button data-view="ist">Ist</button><button data-view="soll">Soll</button><button data-view="umbau">Umbau</button></div></div>
+      <div id="variants"></div>
+      <button class="pill" id="layersBtn" aria-expanded="false">Ebenen ▾</button>
+    </div>
+    <div id="layersPop" role="dialog" aria-label="Ebenen"></div>
+    <div id="floors" aria-label="Etage"></div>
+    <select id="floorSel" hidden aria-hidden="true"></select><button id="floorMenu" hidden></button>
+    <div class="mapbar" id="mapTools">
+      <div class="float"><div class="seg" role="group" aria-label="Werkzeug" id="toolSeg"><button data-tool="sel">Auswählen</button><button data-tool="draw">Wand zeichnen</button></div></div>
+      <div class="float"><button class="btn icon" id="undo" aria-label="Rückgängig" title="Rückgängig"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button class="btn icon" id="redo" aria-label="Wiederholen" title="Wiederholen"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button></div>
+      <div class="float"><button class="btn icon" id="meas" aria-label="Maßband" title="Maßband" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 15 15 3l6 6L9 21z"/><path d="m7 11 2 2M10 8l2 2M13 5l2 2"/></svg></button><button class="btn icon" id="fit" aria-label="Plan einpassen" title="Plan einpassen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+    </div>
+    <span id="info"></span>
     <div id="board" hidden></div>
     <div id="toolhint"></div>
   </div>
@@ -227,8 +286,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.7.0',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[
+const APP_VERSION='0.7.1-design',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.7.1-design','Design-Test: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -375,13 +434,19 @@ function itemPanel(f,it){const d=KINDS[it.k],gs=G(f,'soll'),r=itemRoom(f,gs,it),
     <div class="row" style="margin-top:10px"><label class="f">Bezeichnung (optional)<input data-f="name" data-scope="item" value="${esc(it.name||'')}" placeholder="z. B. Bett links"></label></div>
     <div class="row"><button class="btn" data-act="idup">Duplizieren</button><button class="btn danger" data-act="idel">${delLbl}</button></div>
     <div class="row end"><button class="btn primary" data-act="done">Fertig</button></div>`}
+const CAT_SYN={sd:'schuko dose',sdk:'bad außen feucht',sd400:'kraft cee drehstrom 400',ga:'anschluss geschirrspüler spülmaschine dunstabzug',wm:'waschmaschine trockner',kombi:'schalter steckdose kombination',sw_aus:'licht',sw_ser:'zwei wippen doppel licht',sw_wech:'zwei stellen licht',sw_kreuz:'drei stellen licht',sw_kon:'kontrolle licht',sw_dim:'dimmen licht',ta:'stromstoß eltako licht',ta2:'stromstoß eltako licht',l_deck:'licht lampe leuchte decke',l_wand:'licht lampe leuchte wand',l_spot:'licht lampe spot downlight',l_led:'licht streifen',l_spieg:'licht bad',entry:'haustür eingang klingel',a_l:'licht lampe außen',a_bwm:'pir sensor licht',a_dae:'licht sensor',a_sd:'außen garten terrasse',a_gar:'garten erdkabel',k_t:'klingel tür',k_g:'klingel',k_ts:'klingel video gegensprechanlage',n_d:'lan rj45 cat netzwerk internet',n_ap:'wlan wifi',n_r:'internet fritzbox',n_sw:'netzwerk lan',n_hak:'internet glasfaser telefon kabel',v_hv:'sicherung zählerschrank verteiler',v_uv:'sicherung verteiler',v_dv:'patchpanel netzwerk lan',s_rm:'brand rauch',s_herd:'herd backofen kochfeld',s_hz:'heizung therme',s_pa:'erdung pa schiene'};
+function catList(q){const pl=UI.place,btn=(k,lbl,cnt,g)=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}${g?`<small>${esc(g)}</small>`:''}</span></button>`;
+  q=(q||'').trim().toLowerCase();
+  if(q){const ws=q.split(/\s+/),hits=CAT.flatMap(c=>c.l.map(e=>({c,e}))).filter(({c,e})=>{const hay=(e[1]+' '+c.g+' '+(KINDS[e[0]]?.name||'')+' '+(KINDS[e[0]]?.tag||'')+' '+(CAT_SYN[e[0]]||'')).toLowerCase();return ws.every(w=>hay.includes(w))});
+    return hits.length?`<div class="catres">${hits.map(({c,e})=>btn(e[0],e[1],e[2],c.g)).join('')}</div>`:`<p class="hint">Nichts gefunden für „${esc(q)}“.</p>`}
+  UI.catOpen=UI.catOpen||{Steckdosen:true};return CAT.map(c=>{const op=UI.catOpen[c.g]||(pl&&c.l.some(e=>e[0]===pl.k));return `<details class="catg" data-g="${c.g}"${op?' open':''}><summary>${c.g} <span class="tag">${c.l.length}</span></summary><div class="cat">${c.l.map(([k,lbl,cnt])=>btn(k,lbl,cnt)).join('')}</div></details>`}).join('')}
 function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
   let h=`<h2>Elektro ${esc(f.name)}</h2>`;
   if(pl){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k].name;
     h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&pl.k!=='kombi'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'} Du kannst mehrere nacheinander setzen.</div>
       <div class="row"><button class="btn primary" data-act="pickend" style="flex:1">Fertig mit Setzen</button></div>`}
-  else h+=`<p class="hint">Element wählen und im Plan antippen. Wanddosen rasten an der Wandseite ein. Der Grundriss ist hier gesperrt. Neue Elemente kommen in dieser Ansicht als <b>${newStatus()==='keep'?'Bestand':'neu'}</b>.</p>`;
-  UI.catOpen=UI.catOpen||{Steckdosen:true};for(const c of CAT){const op=UI.catOpen[c.g]||(pl&&c.l.some(e=>e[0]===pl.k));h+=`<details class="catg" data-g="${c.g}"${op?' open':''}><summary>${c.g} <span class="tag">${c.l.length}</span></summary><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div></details>`}
+  else h+=`<p class="hint">Element wählen, dann im Plan antippen. Neue Elemente gelten als <b>${newStatus()==='keep'?'Bestand':'neu'}</b>.</p>`;
+  h+=`<input type="search" id="catq" class="search" placeholder="Element suchen, z. B. Herd, LAN, Klingel" value="${esc(UI.catQ||'')}" autocomplete="off" enterkeyhint="search"><div id="catRes">${catList(UI.catQ)}</div>`;
   return h}
 function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
   const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
@@ -507,11 +572,11 @@ function floorPlanHtml(f){const g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,
     <div class="row" style="margin-top:14px"><button class="btn" data-act="floorEdit">Etage bearbeiten</button></div>`}
 function roomsHtml(f){const g=G(f,UI.view),rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
   return `<h2>Räume ${esc(f.name)}</h2>${rs.length?`<ul class="lst">${rs.map(({r,F})=>`<li><button class="nm" data-act="selRoom" data-id="${r.id}"><b>${esc(r.name)}</b><small>${fmtA(F.area/1e4)} m²${r.height?' · '+fmt(r.height)+' cm hoch':''}${r.work?' · Arbeitsflächen':''}</small></button></li>`).join('')}</ul>`:'<p class="hint">Noch keine Räume. Lege im Reiter „Bearbeiten“ einen Raum an.</p>'}`}
-const TABS={plan:[['edit','Bearbeiten'],['rooms','Räume'],['floor','Etage']],elec:[['edit','Elemente'],['sch','Schaltungen'],['ci','Stromkreise'],['leg','Legende'],['floor','Etage']],dist:[['bel','Belegung'],['list','Stromkreisliste'],['net','Netzwerk'],['mat','Material']]};
+const TABS={plan:[['edit','Bearbeiten'],['rooms','Räume'],['floor','Etage']],elec:[['edit','Elemente'],['sch','Schaltungen'],['ci','Stromkreise'],['leg','Legende'],['floor','Etage']],dist:[['bel','Belegung'],['list','Stromkreisliste'],['net','Netzwerk'],['mat','Material']],out:[['out','Pläne und Listen'],['leg','Legende']]};
 function renderPanel(){const p=$('#panel'),m=UI.mode,t=UI.tab[m]||TABS[m][0][0],f=floor();
   let h=`<div class="tabs" role="tablist">${TABS[m].map(([k,v])=>`<button role="tab" data-tab="${k}" aria-selected="${k===t}">${v}</button>`).join('')}</div>`;
-  h+=t==='net'?netHtml():t==='mat'?matHtml():t==='bel'?belegHtml():t==='list'?ciTableHtml():t==='ci'?ciListHtml(f):t==='rooms'?roomsHtml(f):t==='floor'?(m==='elec'?floorElecHtml(f):floorPlanHtml(f)):t==='sch'?schHtml(f):t==='leg'?legHtml(f):editHtml();
-  const st=p.scrollTop,same=p.dataset.shown===m+t;p.innerHTML=h;p.dataset.shown=m+t;if(same)p.scrollTop=st}
+  h+=t==='out'?'<div id="outBox"></div>':t==='net'?netHtml():t==='mat'?matHtml():t==='bel'?belegHtml():t==='list'?ciTableHtml():t==='ci'?ciListHtml(f):t==='rooms'?roomsHtml(f):t==='floor'?(m==='elec'?floorElecHtml(f):floorPlanHtml(f)):t==='sch'?schHtml(f):t==='leg'?legHtml(f):editHtml();
+  const st=p.scrollTop,same=p.dataset.shown===m+t;p.innerHTML=h;p.dataset.shown=m+t;if(t==='out')outputsForm($('#outBox'));if(same)p.scrollTop=st}
 /* ---------- Phase 3: Verteiler und Stromkreise ---------- */
 const CI_COLORS=['#D64545','#2F7DD1','#2E9E5B','#C77A12','#8A4FD1','#0E9AA7','#C2417F','#6B8E23','#B5651D','#4F5BD5','#D4A017','#5E7D8A'];
 const DEF_PROTS=['B6','B10','B13','B16','B20','C16','C20','3-pol. B16','3-pol. B20','3-pol. B25','3-pol. B32','3-pol. B40','3-pol. C32','NH-Sicherung 35 A','SLS 35 A','SLS 50 A'];
@@ -582,6 +647,9 @@ function boardSvg(dv,sel){const TE=dv.it.te||12,st=boardStats(dv),nR=Math.max(dv
       x+=e.te*U}
     for(let k=(row?.used||0);k<TE;k++)h+=`<rect x="${X0+k*U+2}" y="${yr+22}" width="${U-4}" height="80" rx="5" fill="none" stroke="#B8C0C3" stroke-dasharray="4 4"/>`}
   const H=nR*RH+44;return {svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto;display:block">${h}</svg>`,W,H}}
+let OUTURL=null;
+function renderOut(){const o=UI.outOpt||{mode:'elec',view:'soll',black:false,routes:true};let im='<p class="hint">Vorschau nicht möglich.</p>';try{const {svg}=withCtx({...o,f:S.activeFloor},planSvg);if(OUTURL)URL.revokeObjectURL(OUTURL);OUTURL=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));im=`<img alt="Druckvorschau" src="${OUTURL}">`}catch(e){}
+  const b=$('#board');b.style.paddingRight=S.floors.length?'140px':'';b.innerHTML=`<div class="prev">${im}</div><p class="hint" style="text-align:center;margin-top:10px">Vorschau ${esc(floor().name)}. Andere Etage rechts oben wählen.</p>`}
 function renderBoard(){const b=$('#board'),D=boardList();if(UI.tab.dist==='net'){b.innerHTML=netWide();return}if(UI.tab.dist==='list'){b.innerHTML=ciTableWide();return}if(UI.tab.dist==='mat'){b.innerHTML=matWide();return}if(!D.length){b.innerHTML=`<div class="bempty"><h2>Noch kein Verteiler</h2><p class="hint">Setze in der Ebene „Elektro“ einen Hauptverteiler oder Unterverteiler an eine Wand. Dann erscheint er hier mit seinen Reihen.</p></div>`;return}
   if(!boardBy(UI.dv))UI.dv=(D.find(x=>x.it.k==='v_hv')||D[0]).it.vid;const dv=boardBy(UI.dv);
   if(dv.it.k==='v_dv'){const n=netPlan().get(dv.it.vid)?.ports.length||0;b.innerHTML=`<div class="bchips">${D.map(x=>`<button data-dv="${x.it.vid}" aria-pressed="${x.it.vid===UI.dv}">${esc(distName(x))}</button>`).join('')}</div><div class="bhead"><h2>${esc(distName(dv))}</h2><span class="tag on">${n} Ports belegt</span></div><div class="bwrap">${netBoardSvg(dv).svg}</div><p class="hint">Die Liste Dose zu Port steht im Reiter „Netzwerk“.</p>`;return}
@@ -1217,17 +1285,24 @@ function sceneSvg(vp,VW,VH,exp,view){
         `<circle class="measend" vector-effect="non-scaling-stroke" cx="${M.a.x}" cy="${M.a.y}" r="${px(6)}"/><circle class="measend" vector-effect="non-scaling-stroke" cx="${M.b.x}" cy="${M.b.y}" r="${px(6)}"/>`+
         `<rect x="${m.x-bw/2}" y="${m.y-bh/2-px(18)}" width="${bw}" height="${bh}" rx="${px(11)}" fill="var(--accent)"/><text class="dimt" style="fill:var(--accent-ink)" font-size="${px(15)}" text-anchor="middle" dominant-baseline="central" x="${m.x}" y="${m.y-px(18)}">${lbl}</text>`}}}
   return h}
-function render(){if(UI.mode==='dist'){renderBoard();updInfo();return}const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
+function render(){if(UI.mode==='dist'){renderBoard();updInfo();return}if(UI.mode==='out'){renderOut();updInfo();return}const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
 function updInfo(){const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='dist'?`${dists().length} Verteiler, ${circuits().length} Stromkreise`:UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
-  const b=$('#badge');let h=`<span>${esc(VIEWS[UI.view])}</span>`;if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
+  const b=$('#badge');let h='';if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
   const th=$('#toolhint'),t=UI.flash?UI.flash:UI.dock&&UI.mode==='plan'?'Auf die Wand tippen, an die der neue Raum soll.':UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
 function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
   document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
-  document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));$('#toolSeg').hidden=UI.mode!=='plan';const D=UI.mode==='dist';$('#svg').style.display=D?'none':'';$('#board').hidden=!D;$('#badge').hidden=D;$('#viewSeg').hidden=D;$('#meas').hidden=D;$('#fit').hidden=D}
-function renderVariants(){const v=$('#variants'),f=floor();if(UI.mode==='plan'){const lf=lowerFloor(f);v.innerHTML=lf?`<button data-ul="all" aria-pressed="${S.settings.underlay&&!S.settings.ulExt}">${esc(lf.name)} darunter</button><button data-ul="ext" aria-pressed="${S.settings.underlay&&!!S.settings.ulExt}">nur Außenwände</button><button data-ul="off" aria-pressed="${!S.settings.underlay}">aus</button>`:'';return}if(UI.mode!=='elec'){v.innerHTML='';return}ensureLayouts(f);
-  v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button><span style="width:10px"></span><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege</button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen</button>`}
-function renderFloorSel(){const pb=$('#projBtn');if(pb){pb.textContent=pName(S);pb.title='Projekt wechseln: '+pName(S)}$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));
+  const D=UI.mode==='dist',O=UI.mode==='out',B=D||O;$('#toolSeg').parentNode.hidden=UI.mode!=='plan';$('#svg').style.display=B?'none':'';$('#board').hidden=!B;$('#badge').hidden=B;
+  $('#mapTop').hidden=B;$('#mapTools').hidden=B;$('#info').hidden=B;if(!B)$('#board').style.paddingRight='';$('#floors').hidden=D;if(B)closeLayers()}
+function renderVariants(){const v=$('#variants'),f=floor(),lp=$('#layersPop'),lb=$('#layersBtn');let L='';
+  if(UI.mode==='plan'){v.innerHTML='';const lf=lowerFloor(f);if(lf)L=`<h4>${esc(lf.name)} darunter einblenden</h4><button data-ul="all" aria-pressed="${S.settings.underlay&&!S.settings.ulExt}">Alle Wände<span class="rd"></span></button><button data-ul="ext" aria-pressed="${S.settings.underlay&&!!S.settings.ulExt}">Nur Außenwände<span class="rd"></span></button><button data-ul="off" aria-pressed="${!S.settings.underlay}">Aus<span class="rd"></span></button>`}
+  else if(UI.mode==='elec'){ensureLayouts(f);v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button>`;
+    L=`<h4>Im Plan zeigen</h4><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege<span class="sw"></span></button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen<span class="sw"></span></button>`}
+  else v.innerHTML='';
+  lp.innerHTML=L;lb.hidden=!L;if(!L)closeLayers()}
+function closeLayers(){$('#layersPop').classList.remove('open');$('#layersBtn').setAttribute('aria-expanded','false')}
+function renderFloorSel(){const fr=$('#floors');if(fr)fr.innerHTML=[...S.floors].sort((a,b)=>(b.level||0)-(a.level||0)).map(f=>`<button data-floor="${f.id}" aria-pressed="${f.id===floor().id}" title="${esc(f.name)}">${esc(f.name)}</button>`).join('')+`<button class="fm" data-fm="1" aria-label="Etagen bearbeiten">✎ Etagen</button>`;const pb=$('#projBtn');if(pb){pb.textContent=pName(S);pb.title='Projekt wechseln: '+pName(S)}$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
 function renderAll(){renderFloorSel();renderPanel();updBar();render()}
 
 /* ---------- Seitenleiste ---------- */
@@ -1284,11 +1359,11 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
       <div class="row" style="margin-top:12px"><button class="btn danger" data-act="delRoom" ${multi||!F?'':'disabled'}>Name löschen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>
       ${multi||!F?'':'<p class="hint">Ein Raum entsteht aus seinen Wänden. Zum Entfernen die Wände löschen.</p>'}${UI.mode==='elec'?roomElec(f,r)+roomCiHtml(f,r):''}`}}
   if(!h){const d={type:(f.walls.length?types().find(t=>!t.ext&&t.t<15)||types().find(t=>!t.ext):null)?.id||(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
-    h=`<h2>Grundriss ${esc(f.name)}</h2><p class="hint">Wand, Ecke, Tür oder Raum antippen, um sie zu bearbeiten. Räume entstehen von selbst, sobald Wände eine Fläche umschließen.</p>
+    h=`<h2>Grundriss ${esc(f.name)}</h2><p class="hint">Wand, Tür oder Raum antippen, um sie zu bearbeiten.</p>
       <div class="row"><button class="btn primary" data-act="tool" data-v="draw" style="flex:1">Wand zeichnen</button></div>
       <div class="grid2"><button class="btn" data-act="riserMode" aria-pressed="${!!UI.riser}">Deckendurchlass setzen</button><button class="btn" data-act="stairMode" aria-pressed="${!!UI.stairM}">Treppe setzen</button></div>
       ${UI.riser?'<div class="note" style="margin-top:8px">Stelle im Raum antippen, an der Leitungen in die Etage darüber gehen sollen.</div>':''}${UI.stairM?'<div class="note" style="margin-top:8px">Stelle antippen, an der die Treppe beginnt. Danach lassen sich Maße, Richtung und Stufen einstellen.</div>':''}
-      <p class="hint" style="margin-top:6px">Kabeldurchlässe in Wänden setzt du über eine Wand → Einsetzen. Leitungen nutzen sie bevorzugt.</p>
+      
       <h3>Raum aus Innenmaßen</h3>
       <div class="grid2">${inp('Breite innen','w',400,'mk','cm','id="mkw"')}${inp('Länge innen','l',350,'mk','cm','id="mkl"')}</div>
       <div class="grid2" style="margin-top:8px"><label class="f">Wandtyp<select id="mkt">${typeOpts(d.type)}</select></label>${inp('Dicke','t',typeOf({type:d.type}).t,'mk','cm','id="mkd"')}</div>
@@ -1559,7 +1634,7 @@ function plankopf(W,H,f,view,elx){const pr=S.project,F=LIGHT.f,w=520,h=128,x=W-7
     cell(c1,y+14,'Projekt',pr.name||'Elektroplaner')+cell(c2,y+14,'Plan',(elx?'Installationsplan ':'Grundriss ')+f.name)+cell(c1,y+54,'Adresse',pr.address)+cell(c2,y+54,'Ansicht',VIEWS[view]+(elx?', '+layout(f).name:''))+
     cell(c1,y+94,'Bearbeiter',pr.author)+cell(x+w/3+10,y+94,'Planstand',pr.stand)+cell(x+2*w/3+10,y+94,'Datum',new Date().toLocaleDateString('de-DE'))+
     `<text x="${x}" y="${y+h+16}" font-family="${F}" font-size="11" fill="${LIGHT.muted}">Planungshilfe. Querschnitte, Absicherung und Ausführung prüft eine Elektrofachkraft nach VDE.</text></g>`}
-function outputsForm(){const fl=S.floors;const {el}=modal(`<h2>Pläne und Listen</h2>
+function outputsForm(target){const fl=S.floors;const html=(`<h2>Pläne und Listen</h2>
   <h3 style="margin-top:4px">Pläne</h3><div class="stack">${fl.map(f=>`<label class="chk"><input type="checkbox" name="of" value="${f.id}" ${f.id===S.activeFloor?'checked':''}>${esc(f.name)}</label>`).join('')}</div>
   <div class="grid2" style="margin-top:8px"><label class="f">Inhalt<select name="om"><option value="elec"${UI.mode!=='plan'?' selected':''}>Installationsplan</option><option value="plan"${UI.mode==='plan'?' selected':''}>Grundriss</option></select></label>
   <label class="f">Ansicht<select name="ov">${Object.entries(VIEWS).map(([k,v])=>`<option value="${k}"${k===UI.view?' selected':''}>${v}</option>`).join('')}</select></label>
@@ -1567,11 +1642,11 @@ function outputsForm(){const fl=S.floors;const {el}=modal(`<h2>Pläne und Listen
   <label class="f">Leitungswege<select name="or"><option value="1">Zeigen</option><option value="0">Ausblenden</option></select></label></div>
   <div class="stack" style="margin-top:12px"><button class="btn primary" id="opng">Als Bild speichern (je Etage ein PNG)</button>${IN_ART?'':'<button class="btn" id="opdf">Als PDF drucken (je Etage eine Seite)</button>'}</div>
   <h3>Listen als CSV (Excel)</h3><div class="stack"><button class="btn" id="oci">Stromkreisliste</button><button class="btn" id="obo">Verteilerbelegung</button><button class="btn" id="oma">Materialliste</button><button class="btn" id="one">Netzwerk-Belegung</button></div>
-  <p class="hint" style="margin-top:10px">Verteilerbelegung als Bild gibt es in der Ebene „Verteiler“ unter Stromkreisliste.</p>`);
+  <p class="hint" style="margin-top:10px">Verteilerbelegung als Bild gibt es in der Ebene „Verteiler“ unter Stromkreisliste.</p>`);let el;if(target){target.innerHTML=html;el=target}else ({el}=modal(html));
   const opts=()=>{const q=n=>el.querySelector(`[name=${n}]`).value;return {fs:[...el.querySelectorAll('[name=of]:checked')].map(i=>i.value),mode:q('om'),view:q('ov'),black:q('oc')==='0',routes:q('or')==='1'}};
   el.querySelector('#opng').onclick=async()=>{const o=opts();for(const id of o.fs){const f=S.floors.find(x=>x.id===id);try{const png=await planPng({...o,f:id});await saveFile(png,`elektroplaner-${(f.name+'-'+(o.mode==='elec'?'installation':'grundriss')+'-'+o.view).replace(/[^\wäöüÄÖÜß-]+/g,'-')}.png`,'Plan '+f.name)}catch(e){flash('Bild konnte nicht erstellt werden.')}}};
   el.querySelector('#opdf')?.addEventListener('click',async()=>{const o=opts();$('#modal').classList.remove('open');await printPlans(o)});
-  el.querySelector('#oci').onclick=()=>exportCsv();el.querySelector('#obo').onclick=()=>exportBoardCsv();el.querySelector('#oma').onclick=()=>exportMat();el.querySelector('#one').onclick=()=>exportNet()}
+  if(target){const upd=()=>{const o=opts();UI.outOpt={mode:o.mode,view:o.view,black:o.black,routes:o.routes};render()};el.querySelectorAll('select').forEach(s=>s.onchange=upd);upd()}el.querySelector('#oci').onclick=()=>exportCsv();el.querySelector('#obo').onclick=()=>exportBoardCsv();el.querySelector('#oma').onclick=()=>exportMat();el.querySelector('#one').onclick=()=>exportNet()}
 async function printPlans(o){const pa=$('#printArea'),urls=[];try{for(const id of o.fs){const png=await planPng({...o,f:id});urls.push(URL.createObjectURL(png))}
   pa.innerHTML=urls.map((u,i)=>`<img alt="" src="${u}" style="${i<urls.length-1?'break-after:page;page-break-after:always;':''}">`).join('');for(const im of pa.querySelectorAll('img'))await im.decode();
   const done=()=>{pa.innerHTML='';urls.forEach(u=>URL.revokeObjectURL(u));window.removeEventListener('afterprint',done)};window.addEventListener('afterprint',done);window.print()}catch(e){pa.innerHTML='';modal('<h2>Drucken nicht möglich</h2><p class="hint">Speichere die Pläne stattdessen als Bild.</p>')}}
@@ -1685,13 +1760,13 @@ svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,U
 /* ---------- Verdrahtung der Oberfläche ---------- */
 const panel=$('#panel');
 panel.addEventListener('click',e=>{const tb=e.target.closest('.tabs [data-tab]');if(tb){UI.tab[UI.mode]=tb.dataset.tab;UI.selB=null;UI.selC=null;if(tb.dataset.tab!=='edit')UI.place=null;renderPanel();render();return}const b=e.target.closest('[data-act]');if(b&&!b.disabled)act(b)});
-panel.addEventListener('input',e=>{const el=e.target;if(el.id==='mkt'){const t=types().find(t=>t.id===el.value);if(t)$('#mkd').value=t.t;return}if(el.dataset.f)applyField(el,el.tagName==='SELECT'||el.type==='checkbox'?true:false)});
+panel.addEventListener('input',e=>{const el=e.target;if(el.id==='catq'){UI.catQ=el.value;$('#catRes').innerHTML=catList(UI.catQ);return}if(el.id==='mkt'){const t=types().find(t=>t.id===el.value);if(t)$('#mkd').value=t.t;return}if(el.dataset.f)applyField(el,el.tagName==='SELECT'||el.type==='checkbox'?true:false)});
 panel.addEventListener('toggle',e=>{const d=e.target;if(d.classList?.contains('catg')){UI.catOpen=UI.catOpen||{};UI.catOpen[d.dataset.g]=d.open}},true);
 panel.addEventListener('change',e=>{const el=e.target;if(el.dataset.f&&el.tagName!=='SELECT'&&el.type!=='checkbox')applyField(el,true)});
 panel.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='dlen'){e.preventDefault();e.target.blur();return}if(e.target.dataset.f)e.target.blur()});
-document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b.dataset.view;UI.chain=null;UI.cur=null;validateSel();commit();updBar();renderPanel();render()});
+document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b.dataset.view;(UI.viewBy=UI.viewBy||{})[UI.mode]=UI.view;UI.chain=null;UI.cur=null;validateSel();commit();updBar();renderPanel();render()});
 document.querySelectorAll('#toolSeg button').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
-document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>{if(UI.mode===b.dataset.mode)return;UI.mode=b.dataset.mode;UI.place=null;UI.sel=null;if(UI.tool==='draw')setTool('sel');commit();updBar();renderPanel();render()});
+document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>{if(UI.mode===b.dataset.mode)return;const VB=UI.viewBy=UI.viewBy||{};VB[UI.mode]=UI.view;UI.mode=b.dataset.mode;UI.view=VB[UI.mode]||(UI.mode==='plan'?'ist':'soll');UI.chain=null;UI.cur=null;validateSel();UI.place=null;UI.sel=null;if(UI.tool==='draw')setTool('sel');commit();updBar();renderPanel();render()});
 $('#board').addEventListener('click',e=>{const cf=e.target.closest('[data-cif]');if(cf){UI.ciF=cf.dataset.cif||null;render();return}const c=e.target.closest('[data-dv]');if(c){UI.dv=c.dataset.dv;UI.tab.dist='bel';UI.selB=null;renderAll();return}const g=e.target.closest('[data-board]');if(g){UI.selB=g.dataset.board.slice(2);if(UI.tab.dist!=='list')UI.tab.dist='bel';renderPanel();render()}});
 $('#variants').addEventListener('click',e=>{const ul=e.target.closest('[data-ul]');if(ul){const k=ul.dataset.ul;S.settings.underlay=k!=='off';S.settings.ulExt=k==='ext';commit();render();return}const tg=e.target.closest('[data-tog]');if(tg){const k=tg.dataset.tog;UI[k]=k==='showRoutes'?UI[k]===false:!UI[k];render();return}const b=e.target.closest('[data-lay]');if(!b)return;const f=floor(),id=b.dataset.lay;
   if(id==='+'){const cur=layout(f),map=new Map(cur.items.map(i=>[i.id,uid()])),n={id:uid(),name:'Variante '+String.fromCharCode(65+f.layouts.length),items:cur.items.map(i=>({...i,id:map.get(i.id),...(i.ctl?{ctl:i.ctl.map(c=>map.get(c))}:{})}))};f.layouts.push(n);f.activeLayout=n.id;UI.sel=null;commit();renderAll()}
@@ -1699,6 +1774,10 @@ $('#variants').addEventListener('click',e=>{const ul=e.target.closest('[data-ul]
 $('#meas').onclick=toggleMeas;
 $('#undo').onclick=undo;$('#redo').onclick=redo;$('#fit').onclick=fit;$('#menu').onclick=mainMenu;$('#floorMenu').onclick=floorMenu;
 $('#floorSel').onchange=e=>switchFloor(e.target.value);
+$('#floors').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.fm){floorMenu();return}if(b.dataset.floor&&b.dataset.floor!==S.activeFloor){switchFloor(b.dataset.floor);if(UI.mode==='out')renderAll()}});
+$('#layersBtn').onclick=e=>{e.stopPropagation();const p=$('#layersPop'),o=!p.classList.contains('open'),br=$('#layersBtn').getBoundingClientRect(),sr=stage.getBoundingClientRect();p.style.left=Math.max(10,Math.min(br.left-sr.left,sr.width-260))+'px';p.style.top=(br.bottom-sr.top+8)+'px';p.classList.toggle('open',o);$('#layersBtn').setAttribute('aria-expanded',String(o))};
+$('#layersPop').addEventListener('click',e=>{e.stopPropagation();const ul=e.target.closest('[data-ul]');if(ul){const k=ul.dataset.ul;S.settings.underlay=k!=='off';S.settings.ulExt=k==='ext';commit();render();return}const tg=e.target.closest('[data-tog]');if(tg){const k=tg.dataset.tog;UI[k]=k==='showRoutes'?UI[k]===false:!UI[k];render()}});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#layersPop,#layersBtn'))closeLayers()});
 document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA'||$('#modal').classList.contains('open'))return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}
   else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo()}
