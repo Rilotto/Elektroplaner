@@ -62,6 +62,7 @@ main{flex:1;display:flex;min-height:0}
 #badge i{width:12px;height:12px;border-radius:3px;display:inline-block}
 #variants{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 20px)}
 #variants button{min-height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--floor);font-size:14px}
+#variants span{display:inline-block}
 #variants button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:600}
 .cat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .cat .btn span{min-width:0;overflow-wrap:anywhere}
@@ -363,6 +364,7 @@ function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)
 function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
   const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>[it.id,itemPos(g,it)]));
   const si=sel?.kind==='item'&&its.find(i=>i.id===sel.id);
+  if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=routeSvg(f,s,C,exp);
   if(!plan)h+=grpLines(f,g,view,s,C,ks,sel);
   for(const it of its){const p=pos.get(it.id),cc_=ciOf(it),col=view==='umbau'&&it.st==='new'?C('new'):view==='umbau'&&it.st==='del'?C('del'):cc_&&S.settings.ciColor!==false?cc_.color:C('ink'),cc=symCenter(it),on=si&&si.id===it.id;
     h+=`<g class="sy" transform="translate(${r1(p.x)} ${r1(p.y)}) rotate(${r1(p.rot)}) scale(${r1(ks*100)/100})" fill="none" stroke="${col}" stroke-width="1.5"${plan?' opacity=".3" pointer-events="none"':''}>${symSvg(it,col,p.rot)}`+(cc_&&!plan?`<text x="-12" y="${cc.y-9}" font-size="6" text-anchor="middle" dominant-baseline="central" fill="${col}" stroke="none" font-weight="700" font-family="Barlow Condensed,'Arial Narrow',sans-serif" transform="rotate(${-r1(p.rot)} -12 ${cc.y-9})">${esc(cc_.no)}</text>`:'')+(UI.assign&&!exp&&!plan&&it.ci===UI.assign?`<circle cx="${cc.x}" cy="${cc.y}" r="13" fill="${col}" fill-opacity=".15" stroke="none"/>`:'')+
@@ -456,7 +458,7 @@ function schHtml(f){const grs=groupsOf(f,UI.view),sel=UI.sel?.kind==='item'?UI.s
 function legHtml(f){const lg=usedLegend(f,UI.view),sw=(c,d)=>`<svg width="34" height="14" aria-hidden="true"><line x1="2" y1="7" x2="32" y2="7" stroke="${c}" stroke-width="3"${d?' stroke-dasharray="6 4"':''}/></svg>`;
   return `<h2>Legende ${esc(layout(f).name)}</h2>${lg.length?`<ul class="lst">${lg.map(({it,n})=>`<li>${symIcon(it.k,it.cnt,it)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente auf dieser Etage.</p>'}
     <h3>Leitungen im Plan</h3><ul class="lst"><li>${sw(LC.zul,1)}<span class="nm"><b>Zuleitung</b><small>kommt an der ersten Schaltstelle an</small></span></li><li>${sw(LC.korr)}<span class="nm"><b>Zwischen Schaltstellen</b><small>NYM-J 5×1,5, korrespondierende Adern plus N und PE</small></span></li>
-    <li>${sw(LC.last)}<span class="nm"><b>Zur Leuchte oder Steckdose</b><small>NYM-J 3×1,5, Schaltdraht plus N und PE</small></span></li><li>${sw(LC.steuer,1)}<span class="nm"><b>Tasterleitung</b><small>Steuerung über Stromstoßschalter, folgt in Phase 5</small></span></li></ul>
+    <li>${sw(LC.last)}<span class="nm"><b>Zur Leuchte oder Steckdose</b><small>NYM-J 3×1,5, Schaltdraht plus N und PE</small></span></li><li>${sw('#D64545')}<span class="nm"><b>Leitungsweg je Stromkreis</b><small>in Stromkreisfarbe entlang der Wände in der Zone, gepunktet durch eine Wand oder über die Etage</small></span></li><li>${sw('#0E9F8E')}<span class="nm"><b>Senkrechte Installationszone</b><small>10 bis 30 cm neben Ecken, Türen und Fenstern (DIN 18015-3)</small></span></li><li>${sw(LC.steuer,1)}<span class="nm"><b>Tasterleitung</b><small>Steuerung über Stromstoßschalter, folgt in Phase 5</small></span></li></ul>
     <h3>Aderfarben im Schaltbild</h3><ul class="lst"><li>${sw('#8B5A2B')}<span class="nm"><b>Braun</b><small>Außenleiter L, Schaltdraht</small></span></li><li>${sw('var(--ink)')}<span class="nm"><b>Schwarz und Grau</b><small>korrespondierende Adern</small></span></li><li>${sw('#2F6FD0')}<span class="nm"><b>Blau</b><small>Neutralleiter N</small></span></li><li>${sw('#2E8B57',1)}<span class="nm"><b>Grün-gelb</b><small>Schutzleiter PE</small></span></li></ul>`}
 function cntCat(it){const d=KINDS[it.k];if(d.hc==='socket')return ['so',it.cnt||1];if(d.hc==='switch')return ['sw',1];if(LIGHTS.includes(it.k))return ['li',1];if(it.k==='n_d')return ['ne',it.cnt||1];return ['ot',1]}
 function floorElecHtml(f){const gs=G(f,'soll'),rows=new Map(),add=(key,name)=>{if(!rows.has(key))rows.set(key,{name,so:0,sw:0,li:0,ne:0,ot:0});return rows.get(key)};
@@ -478,10 +480,10 @@ function floorPlanHtml(f){const g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,
     <div class="row" style="margin-top:14px"><button class="btn" data-act="floorEdit">Etage bearbeiten</button></div>`}
 function roomsHtml(f){const g=G(f,UI.view),rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
   return `<h2>Räume ${esc(f.name)}</h2>${rs.length?`<ul class="lst">${rs.map(({r,F})=>`<li><button class="nm" data-act="selRoom" data-id="${r.id}"><b>${esc(r.name)}</b><small>${fmtA(F.area/1e4)} m²${r.height?' · '+fmt(r.height)+' cm hoch':''}${r.work?' · Arbeitsflächen':''}</small></button></li>`).join('')}</ul>`:'<p class="hint">Noch keine Räume. Lege im Reiter „Bearbeiten“ einen Raum an.</p>'}`}
-const TABS={plan:[['edit','Bearbeiten'],['rooms','Räume'],['floor','Etage']],elec:[['edit','Elemente'],['sch','Schaltungen'],['ci','Stromkreise'],['leg','Legende'],['floor','Etage']],dist:[['bel','Belegung'],['list','Stromkreisliste']]};
+const TABS={plan:[['edit','Bearbeiten'],['rooms','Räume'],['floor','Etage']],elec:[['edit','Elemente'],['sch','Schaltungen'],['ci','Stromkreise'],['leg','Legende'],['floor','Etage']],dist:[['bel','Belegung'],['list','Stromkreisliste'],['mat','Material']]};
 function renderPanel(){const p=$('#panel'),m=UI.mode,t=UI.tab[m]||TABS[m][0][0],f=floor();
   let h=`<div class="tabs" role="tablist">${TABS[m].map(([k,v])=>`<button role="tab" data-tab="${k}" aria-selected="${k===t}">${v}</button>`).join('')}</div>`;
-  h+=t==='bel'?belegHtml():t==='list'?ciTableHtml():t==='ci'?ciListHtml(f):t==='rooms'?roomsHtml(f):t==='floor'?(m==='elec'?floorElecHtml(f):floorPlanHtml(f)):t==='sch'?schHtml(f):t==='leg'?legHtml(f):editHtml();
+  h+=t==='mat'?matHtml():t==='bel'?belegHtml():t==='list'?ciTableHtml():t==='ci'?ciListHtml(f):t==='rooms'?roomsHtml(f):t==='floor'?(m==='elec'?floorElecHtml(f):floorPlanHtml(f)):t==='sch'?schHtml(f):t==='leg'?legHtml(f):editHtml();
   const st=p.scrollTop,same=p.dataset.shown===m+t;p.innerHTML=h;p.dataset.shown=m+t;if(same)p.scrollTop=st}
 /* ---------- Phase 3: Verteiler und Stromkreise ---------- */
 const CI_COLORS=['#D64545','#2F7DD1','#2E9E5B','#C77A12','#8A4FD1','#0E9AA7','#C2417F','#6B8E23','#B5651D','#4F5BD5','#D4A017','#5E7D8A'];
@@ -549,7 +551,7 @@ function boardSvg(dv,sel){const TE=dv.it.te||12,st=boardStats(dv),nR=Math.max(dv
       x+=e.te*U}
     for(let k=(row?.used||0);k<TE;k++)h+=`<rect x="${X0+k*U+2}" y="${yr+22}" width="${U-4}" height="80" rx="5" fill="none" stroke="#B8C0C3" stroke-dasharray="4 4"/>`}
   const H=nR*RH+44;return {svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto;display:block">${h}</svg>`,W,H}}
-function renderBoard(){const b=$('#board'),D=dists();if(UI.tab.dist==='list'){b.innerHTML=ciTableWide();return}if(!D.length){b.innerHTML=`<div class="bempty"><h2>Noch kein Verteiler</h2><p class="hint">Setze in der Ebene „Elektro“ einen Hauptverteiler oder Unterverteiler an eine Wand. Dann erscheint er hier mit seinen Reihen.</p></div>`;return}
+function renderBoard(){const b=$('#board'),D=dists();if(UI.tab.dist==='list'){b.innerHTML=ciTableWide();return}if(UI.tab.dist==='mat'){b.innerHTML=matWide();return}if(!D.length){b.innerHTML=`<div class="bempty"><h2>Noch kein Verteiler</h2><p class="hint">Setze in der Ebene „Elektro“ einen Hauptverteiler oder Unterverteiler an eine Wand. Dann erscheint er hier mit seinen Reihen.</p></div>`;return}
   if(!distBy(UI.dv))UI.dv=(D.find(x=>x.it.k==='v_hv')||D[0]).it.vid;const dv=distBy(UI.dv),st=boardStats(dv);
   b.innerHTML=`<div class="bchips">${D.map(x=>`<button data-dv="${x.it.vid}" aria-pressed="${x.it.vid===UI.dv}">${esc(distName(x))}</button>`).join('')}</div>
     <div class="bhead"><h2>${esc(distName(dv))}</h2><span class="tag${st.over?'':' on'}">${st.used} von ${st.cap} TE belegt, ${Math.max(0,st.free)} frei</span></div>
@@ -563,7 +565,7 @@ function ciForm(c){const dv=distBy(c.dist),rcds=(dv?.it.devs||[]).filter(d=>d.t=
     <div class="row"><label class="f">Verteiler<select data-f="dist" data-scope="ci"><option value="">kein Verteiler</option>${dists().map(x=>`<option value="${x.it.vid}"${x.it.vid===c.dist?' selected':''}>${esc(distName(x))}</option>`).join('')}</select></label></div>
     <div class="grid2"><label class="f">Schutzorgan<select data-f="prot" data-scope="ci">${opt(prots(),c.prot)}</select></label><label class="f">FI/RCD<select data-f="rcd" data-scope="ci"><option value="">ohne</option>${rcds.map(d=>`<option value="${d.id}"${d.id===c.rcd?' selected':''}>${esc(devLabel(d))}</option>`).join('')}</select></label></div>
     <div class="row" style="margin-top:8px"><label class="f">Leitung<select data-f="cable" data-scope="ci">${opt(cables(),c.cable)}</select></label></div>
-    <p class="hint">${esc(ciSummary(c))} · Länge folgt in Phase 4</p>
+    ${(()=>{const R=ciRoute(c);return `<div class="row" style="margin-top:8px"><label class="f">Verlegung<select data-f="zone" data-scope="ci">${Object.entries(ZONES).map(([k,v])=>`<option value="${k}"${k===R.z?' selected':''}>${v}</option>`).join('')}</select></label></div><p class="hint">${esc(ciSummary(c))}</p><table class="sum kv"><tbody>${[...R.by].map(([k,m])=>`<tr><td>${esc(k)}</td><td>${fmtM(m)}</td></tr>`).join('')}<tr><td><b>Gesamt</b></td><td><b>${fmtM(R.total)}</b></td></tr></tbody></table>${R.segs.some(x=>x.cross)?`<p class="hint">${R.segs.filter(x=>x.cross==='Raum').length?'Gepunktete Wege gehen durch eine Wand oder über die Decke in einen anderen Raum. ':''}${R.segs.some(x=>x.cross==='Etage')?'Mit Etagenwechsel. ':''}</p>`:''}`})()}
     <div class="row"><button class="btn primary" data-act="ciassign" data-id="${c.id}" style="flex:1">Elemente im Plan zuordnen</button></div>
     <div class="row"><button class="btn danger" data-act="cidel" data-id="${c.id}">Stromkreis löschen</button><button class="btn" data-act="ciback" style="margin-left:auto">Zur Liste</button></div>`}
 function ciListHtml(f){const cs=[...circuits()].sort((a,b)=>(+a.no||0)-(+b.no||0)),open=items(f).filter(i=>VIS[UI.view](i)&&needsCi(i)&&!ciOf(i));
@@ -605,11 +607,11 @@ function feedForm(dv,inline){const it=dv.it,opt=(arr,cur)=>arr.map(v=>`<option${
     <div class="row"><label class="f">Versorgt von<select data-f="feedFrom" data-scope="feed" data-v="${it.vid}"><option value="">nicht festgelegt</option>${dists().filter(x=>x.it!==it).map(x=>`<option value="${x.it.vid}"${x.it.vid===it.feedFrom?' selected':''}>${esc(distName(x))}</option>`).join('')}</select></label></div>
     <div class="grid2"><label class="f">Leitung<select data-f="feedCable" data-scope="feed" data-v="${it.vid}">${opt(cables(),it.feedCable)}</select></label><label class="f">Absicherung<select data-f="feedProt" data-scope="feed" data-v="${it.vid}">${opt(prots(),it.feedProt)}</select></label></div>
     <p class="hint">Die Absicherung erscheint im versorgenden Verteiler.</p>${inline?'':`<div class="row end"><button class="btn primary" data-act="bdone">Fertig</button></div>`}`}
-function ciRowsAll(){return [...circuits()].sort((a,b)=>(+a.no||0)-(+b.no||0)).map(c=>{const dv=distBy(c.dist),rcd=dv?.it.devs?.find(d=>d.id===c.rcd);return {c,dist:distName(dv),rcd:rcd?devLabel(rcd):'–',el:ciSummary(c)}})}
+function ciRowsAll(){return [...circuits()].sort((a,b)=>(+a.no||0)-(+b.no||0)).map(c=>{const dv=distBy(c.dist),rcd=dv?.it.devs?.find(d=>d.id===c.rcd);return {c,dist:distName(dv),rcd:rcd?devLabel(rcd):'–',el:ciSummary(c),len:fmtM(ciRoute(c).total)}})}
 function ciTableWide(){const R=ciRowsAll();
   return `<div class="bhead"><h2>Stromkreisliste</h2><span class="tag on">${R.length} Stromkreise, alle Etagen</span></div>
-    ${R.length?`<div class="bwrap"><table class="sum ci"><thead><tr><th>Nr.</th><th>Bezeichnung</th><th>Verteiler</th><th>Schutz</th><th>RCD</th><th>Leitung</th><th>Elemente</th><th>Länge</th></tr></thead><tbody>${R.map(r=>`<tr data-board="c:${r.c.id}" style="cursor:pointer"><td><span class="chip" style="background:${r.c.color};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>${esc(r.c.no)}</td><td>${esc(r.c.name)}</td><td>${esc(r.dist)}</td><td>${esc(r.c.prot)}</td><td>${esc(r.rcd)}</td><td>${esc(r.c.cable)}</td><td>${esc(r.el)}</td><td>–</td></tr>`).join('')}</tbody></table></div>
-    <p class="hint">Zeile antippen zum Bearbeiten. Die Länge kommt mit Phase 4.</p>`:'<p class="hint">Noch keine Stromkreise. Lege sie in der Ebene „Elektro“ im Reiter „Stromkreise“ an.</p>'}`}
+    ${R.length?`<div class="bwrap"><table class="sum ci"><thead><tr><th>Nr.</th><th>Bezeichnung</th><th>Verteiler</th><th>Schutz</th><th>RCD</th><th>Leitung</th><th>Elemente</th><th>Länge</th></tr></thead><tbody>${R.map(r=>`<tr data-board="c:${r.c.id}" style="cursor:pointer"><td><span class="chip" style="background:${r.c.color};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>${esc(r.c.no)}</td><td>${esc(r.c.name)}</td><td>${esc(r.dist)}</td><td>${esc(r.c.prot)}</td><td>${esc(r.rcd)}</td><td>${esc(r.c.cable)}</td><td>${esc(r.el)}</td><td>${r.len}</td></tr>`).join('')}</tbody></table></div>
+    <p class="hint">Zeile antippen zum Bearbeiten. Länge inklusive Reserve und Verschnitt, alle Leitungen des Stromkreises.</p>`:'<p class="hint">Noch keine Stromkreise. Lege sie in der Ebene „Elektro“ im Reiter „Stromkreise“ an.</p>'}`}
 function ciTableHtml(){const R=ciRowsAll(),feeds=dists().filter(x=>x.it.k!=='v_hv'),warn=R.filter(r=>ciWarn(r.c).length);
   if(UI.selB){const c=circuits().find(x=>x.id===UI.selB);if(c)return ciForm(c)}
   return `<h2>Stromkreisliste</h2><p class="hint">${R.length} Stromkreise auf allen Etagen. Sie dient zugleich als Beschriftung für den Verteiler.</p>
@@ -617,12 +619,87 @@ function ciTableHtml(){const R=ciRowsAll(),feeds=dists().filter(x=>x.it.k!=='v_h
     ${feeds.length?`<h3>Zuleitungen der Unterverteiler</h3><table class="sum kv"><tbody>${feeds.map(x=>`<tr><td>${esc(distName(x))} von ${esc(distName(distBy(x.it.feedFrom)))}</td><td>${esc(x.it.feedCable||'')} · ${esc(x.it.feedProt||'')}</td></tr>`).join('')}</tbody></table>`:''}
     <div class="stack" style="margin-top:14px"><button class="btn" data-act="csv">Als CSV speichern (Excel)</button><button class="btn" data-act="boardpng">Belegung als Bild speichern</button></div>`}
 async function exportCsv(){const q=v=>`"${String(v??'').replace(/"/g,'""')}"`,rows=[['Nr.','Bezeichnung','Verteiler','Schutz','RCD','Leitung','Elemente','Länge']];
-  for(const r of ciRowsAll())rows.push([r.c.no,r.c.name,r.dist,r.c.prot,r.rcd,r.c.cable,r.el,'']);
+  for(const r of ciRowsAll())rows.push([r.c.no,r.c.name,r.dist,r.c.prot,r.rcd,r.c.cable,r.el,r.len]);
   for(const x of dists())if(x.it.k!=='v_hv')rows.push(['Zul.','Zuleitung '+distName(x),distName(distBy(x.it.feedFrom)),x.it.feedProt||'','',x.it.feedCable||'','','']);
   const csv='﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n');await saveFile(new Blob([csv],{type:'text/csv'}),`stromkreisliste-${new Date().toISOString().slice(0,10)}.csv`,'Stromkreisliste')}
 async function exportBoard(){const dv=distBy(UI.dv)||dists()[0];if(!dv)return;const {svg,W,H}=boardSvg(dv,null),url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),img=new Image();
   try{await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});const c=document.createElement('canvas');c.width=W*2;c.height=H*2;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.scale(2,2);x.drawImage(img,0,0,W,H);
     const png=await new Promise(r=>c.toBlob(r,'image/png'));await saveFile(png,`belegung-${distName(dv).replace(/[^\wäöüÄÖÜß-]+/g,'-')}.png`,'Verteilerbelegung')}catch(e){flash('Bild konnte nicht erstellt werden.')}finally{URL.revokeObjectURL(url)}}
+/* ---------- Phase 4: Leitungswege, Längen, Material ---------- */
+const ZONES={top:'Deckenzone (30 cm unter Decke)',bottom:'Fußbodenzone (30 cm über Boden)',work:'Arbeitsflächenzone (105 cm)',ceil:'In oder über der Decke'};
+const calc=()=>({res:30,cut:10,rings:'50, 100',...(S.settings.calc||{})});
+const roomH=(f,r)=>r?.height||f.height||250;
+const zoneH=(z,H)=>z==='bottom'?30:z==='work'?105:z==='ceil'?H:H-30;
+function zoneOf(c){if(c.zone)return c.zone;return ciItems(c).some(x=>KINDS[x.it.k].hc==='socket')?'bottom':'top'}
+function perimPath(P,pa,pb){const n=P.length,L=[0];for(let i=0;i<n;i++)L.push(L[i]+dist(P[i],P[(i+1)%n]));const T=L[n];
+  const pr=p=>{let b=null;for(let i=0;i<n;i++){const a=P[i],c=P[(i+1)%n],dx=c.x-a.x,dy=c.y-a.y,l2=dx*dx+dy*dy||1,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/l2,0,1),q={x:a.x+dx*t,y:a.y+dy*t},d=dist(q,p);if(!b||d<b.d)b={d,q,s:L[i]+Math.sqrt(l2)*t,i}}return b};
+  const A=pr(pa),B=pr(pb),fw=((B.s-A.s)%T+T)%T,go=fw<=T-fw,path=[pa,A.q];
+  if(A.i!==B.i||(go?B.s<A.s:B.s>A.s)){let k=A.i;for(let g=0;g<n+1;g++){if(go){k=(k+1)%n;path.push(P[k]);if(k===B.i)break}else{path.push(P[k]);if(k===(B.i+1)%n)break;k=(k-1+n)%n}}}
+  path.push(B.q,pb);return {len:Math.min(fw,T-fw)+A.d+B.d,path}}
+function stubOf(f,g,it,z){const d=KINDS[it.k],H=roomH(f,itemRoom(f,g,it)),zh=zoneH(z,H);if(!d||d.place!=='wall')return Math.abs(H-zh);const h=(it.h??heightOf(d.hc))+(d.sym==='dist'?40:0);return Math.abs(h-zh)}
+function segBetween(fa,a,fb,b,z,cable,kind){const res=calc().res;
+  if(fa!==fb){const ga=G(fa,'soll'),gb=G(fb,'soll'),pa=itemPos(ga,a),pb=itemPos(gb,b),plan=Math.abs(pa.x-pb.x)+Math.abs(pa.y-pb.y),vert=Math.abs(fa.level-fb.level);
+    return {f:fb,P:[pa,pb],len:plan+vert+stubOf(fa,ga,a,z)+stubOf(fb,gb,b,z)+2*res,cable,kind,cross:'Etage'}}
+  const g=G(fa,'soll'),pa=itemPos(g,a),pb=itemPos(g,b),off=p=>p.d?{x:p.x+p.d.x*3,y:p.y+p.d.y*3}:p,Fa=faceAt(g,off(pa)),Fb=faceAt(g,off(pb)),st=stubOf(fa,g,a,z)+stubOf(fa,g,b,z)+2*res;
+  if(Fa&&Fa===Fb&&z!=='ceil'){const pp=perimPath(Fa.poly,pa,pb);return {f:fa,P:pp.path,len:pp.len+st,cable,kind,cross:null}}
+  const P=mroute(pa,pb,g),plan=P.reduce((s,p,i)=>i?s+dist(P[i-1],p):0,0);return {f:fa,P,len:plan+st,cable,kind,cross:Fa&&Fa===Fb?null:'Raum'}}
+function ciRoute(c){const z=zoneOf(c),its=ciItems(c),dv=distBy(c.dist),segs=[],gs=new Map();
+  for(const f of S.floors)for(const gr of groupsOf(f,'soll'))if(gr.loads.some(l=>l.ci===c.id)||gr.sw.some(s=>s.ci===c.id))gs.set(gr,f);
+  const inG=new Set([...gs.keys()].flatMap(g=>[...g.sw,...g.loads].map(i=>i.id)));
+  const nodes=its.filter(x=>!inG.has(x.it.id)&&!isSw(x.it)&&needsCi(x.it)).map(x=>({it:x.it,f:x.f}));for(const [g,f] of gs)nodes.push({it:g.sw[0],f,g});
+  let cur=dv?{it:dv.it,f:dv.f}:null;const rest=[...nodes];
+  const key=n=>cur?(n.f===cur.f?0:1e7*Math.abs(n.f.level-cur.f.level))+dist(n.it,cur.it):0;
+  while(rest.length){rest.sort((a,b)=>key(a)-key(b));const n=rest.shift();if(cur)segs.push(segBetween(cur.f,cur.it,n.f,n.it,z,c.cable,'feed'));cur=n}
+  for(const [g,f] of gs){for(let i=0;i+1<g.sw.length;i++)segs.push(segBetween(f,g.sw[i],f,g.sw[i+1],z,'NYM-J 5×1,5','korr'));let p=g.sw[g.sw.length-1];
+    for(const l of g.loads){segs.push(segBetween(f,p,f,l,z,g.sw.length===1&&g.sw[0].k==='sw_ser'?'NYM-J 5×1,5':'NYM-J 3×1,5','last'));p=l}}
+  const k=1+calc().cut/100,by=new Map();for(const s of segs)by.set(s.cable,(by.get(s.cable)||0)+s.len*k/100);
+  return {segs,by,total:[...by.values()].reduce((a,b)=>a+b,0),z}}
+const fmtM=m=>m.toFixed(1).replace('.',',')+' m';
+function routeSvg(f,s,C,exp){let h='';const px=n=>n/s;
+  for(const c of circuits()){const R=ciRoute(c),on=UI.selC===c.id||UI.assign===c.id;for(const sg of R.segs){if(sg.f!==f||sg.kind!=='feed')continue;
+    h+=`<polyline points="${pts(sg.P)}" fill="none" stroke="${c.color}" stroke-width="${on?4.5:2.6}" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity="${UI.selC&&!on?.3:.9}"${sg.cross?' stroke-dasharray="2 5"':''} pointer-events="none"/>`;
+    if(on&&!exp){let best=0,bi=0;for(let i=0;i+1<sg.P.length;i++){const L=dist(sg.P[i],sg.P[i+1]);if(L>best){best=L;bi=i}}if(best*s>50){const m={x:(sg.P[bi].x+sg.P[bi+1].x)/2,y:(sg.P[bi].y+sg.P[bi+1].y)/2},lbl=fmtM(sg.len/100)+(sg.cross?' · '+sg.cross:''),bw=px(lbl.length*6.4+10);
+      h+=`<rect x="${m.x-bw/2}" y="${m.y-px(9)}" width="${bw}" height="${px(18)}" rx="${px(9)}" fill="${c.color}" pointer-events="none"/><text x="${m.x}" y="${m.y}" font-size="${px(11.5)}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" pointer-events="none">${esc(lbl)}</text>`}}}}
+  return h}
+function zonesSvg(f,g,s){let h='';const band=(p,u,n,a,b)=>{const q=k=>({x:p.x+u.x*k,y:p.y+u.y*k}),d=6/s,A=q(a),B=q(b);return `<polygon points="${pts([A,B,{x:B.x+n.x*d,y:B.y+n.y*d},{x:A.x+n.x*d,y:A.y+n.y*d}])}" fill="#0E9F8E" fill-opacity=".45" pointer-events="none"/>`};
+  for(const F of g.rooms){const P=F.poly,ar=sArea(P),m=P.length;for(let i=0;i<m;i++){const a=P[i],b=P[(i+1)%m],L=dist(a,b);if(L<40)continue;const u={x:(b.x-a.x)/L,y:(b.y-a.y)/L},n=ar>0?{x:-u.y,y:u.x}:{x:u.y,y:-u.x};
+    h+=band(a,u,n,10,30)+band(a,u,n,L-30,L-10);
+    for(const o of f.openings){const x=g.byId.get(o.wall);if(!x||!VIS[UI.view](o))continue;for(const t of [o.off,o.off+o.w]){const pp={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t},k=(pp.x-a.x)*u.x+(pp.y-a.y)*u.y,dd=Math.abs((pp.x-a.x)*u.y-(pp.y-a.y)*u.x);
+      if(dd>x.h+3||k<-5||k>L+5)continue;const sgn=t===o.off?-1:1,dir=Math.sign(u.x*x.u.x+u.y*x.u.y)*sgn;h+=dir>0?band(a,u,n,k+10,k+30):band(a,u,n,k-30,k-10)}}}}
+  return h}
+function ringPlan(m){const R=String(calc().rings).split(/[,; ]+/).map(Number).filter(x=>x>0).sort((a,b)=>b-a);if(!R.length)return '';let left=m,out=[];
+  for(const r of R){const n=Math.floor(left/r);if(n){out.push(`${n}× ${r} m`);left-=n*r}}if(left>0.05)out.push(`1× ${R[R.length-1]} m`);return out.join(' + ')}
+function material(onlyNew){const ok=it=>it.st!=='del'&&(!onlyNew||it.st==='new'),rows=[],add=(grp,name,n,u='Stk.')=>{if(!n)return;const r=rows.find(x=>x.grp===grp&&x.name===name);if(r)r.n+=n;else rows.push({grp,name,n,u})};
+  const cab=new Map();for(const c of circuits())for(const [k,v] of ciRoute(c).by)cab.set(k,(cab.get(k)||0)+v);
+  for(const x of dists())if(x.it.feedFrom){const a=distBy(x.it.feedFrom);if(a){const s=segBetween(a.f,a.it,x.f,x.it,'top',x.it.feedCable,'zul');cab.set(x.it.feedCable,(cab.get(x.it.feedCable)||0)+s.len*(1+calc().cut/100)/100)}}
+  for(const [k,m] of [...cab].sort())rows.push({grp:'Leitungen',name:k,n:Math.ceil(m),u:'m',note:ringPlan(Math.ceil(m))});
+  for(const {it} of allItems()){if(!ok(it))continue;const d=KINDS[it.k];if(!d)continue;const mt=MOUNT[it.mount]||it.mount||'';
+    if(d.place==='wall'&&d.sym!=='dist'&&it.k!=='s_pa'){const n=d.hc==='socket'||it.k==='n_d'?(it.cnt||1):it.k==='ta2'?1:1;add('Dosen',(it.mount==='HW'?'Hohlwanddose':it.mount==='AP'||/IP/.test(it.mount)?'Aufputzgehäuse/Feuchtraum':'Unterputz-Gerätedose')+' ('+mt+')',n)}
+    if(d.place==='ceil'&&LIGHTS.includes(it.k))add('Dosen','Deckendose/Leuchtenauslass',1);
+    if(d.hc==='socket')add('Geräte',kindName({...it,cnt:1,sw:false})+' (Einsatz)',it.cnt||1);
+    else if(isSw(it))add('Geräte',KINDS[it.k].name+' (Einsatz + Wippe)',1);
+    else if(LIGHTS.includes(it.k))add('Geräte','Auslass '+KINDS[it.k].name,1);
+    else if(it.k==='n_d')add('Geräte','Netzwerkdose Cat 6A, '+(it.cnt||1)+'-fach',1);
+    else if(d.sym!=='dist')add('Geräte',kindName(it),1);
+    if(d.place==='wall'&&(d.hc==='socket'||isSw(it)||it.k==='n_d')&&!/IP/.test(it.mount||''))add('Rahmen',`Rahmen ${d.hc==='socket'?(it.cnt||1):1}-fach`,1);
+    if(it.k==='n_d')add('Netzwerk','Patchpanel-Ports',it.cnt||1)}
+  for(const x of dists()){for(const dv of x.it.devs||[])add('Verteiler',dv.t==='other'?devLabel(dv):DEV[dv.t].n,1);add('Verteiler',`Verteilergehäuse ${x.it.rows}-reihig (${KINDS[x.it.k].tag})`,1)}
+  for(const c of circuits())add('Verteiler','LS '+c.prot,1);for(const x of dists())if(x.it.feedFrom&&x.it.feedProt)add('Verteiler','LS '+x.it.feedProt+' (Zuleitung)',1);
+  const ord=['Leitungen','Dosen','Geräte','Rahmen','Netzwerk','Verteiler'];return rows.sort((a,b)=>ord.indexOf(a.grp)-ord.indexOf(b.grp)||a.name.localeCompare(b.name,'de'))}
+function matWide(){const R=material(UI.matNew);let last='';
+  return `<div class="bhead"><h2>Materialliste</h2><span class="tag on">${UI.matNew?'nur neue Elemente':'gesamter Soll-Stand'}, alle Etagen</span></div>
+    ${R.length?`<div class="bwrap"><table class="sum ci"><thead><tr><th>Gruppe</th><th>Artikel</th><th>Menge</th><th>Hinweis</th></tr></thead><tbody>${R.map(r=>{const g=r.grp!==last?r.grp:'';last=r.grp;return `<tr><td><b>${esc(g)}</b></td><td>${esc(r.name)}</td><td>${r.n} ${r.u}</td><td>${esc(r.note||'')}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="hint">Noch nichts zu zählen.</p>'}
+    <p class="hint">Leitungslängen inklusive ${calc().res} cm Reserve je Anschluss und ${calc().cut} % Verschnitt, aufgerundet. Dosen ohne Abzweigdosen, weil in den Schalterdosen verdrahtet wird.</p>`}
+function matHtml(){return `<h2>Materialliste</h2><p class="hint">Für Einkauf und Angebot. Die Tabelle steht links.</p>
+  <div class="seg full" style="margin-bottom:12px"><button data-act="matnew" data-v="0" aria-pressed="${!UI.matNew}">Gesamter Soll-Stand</button><button data-act="matnew" data-v="1" aria-pressed="${!!UI.matNew}">Nur Neues</button></div>
+  <div class="stack"><button class="btn" data-act="matcsv">Als CSV speichern (Excel)</button><button class="btn" data-act="calcform">Rechenvorgaben ändern</button></div>
+  <p class="hint" style="margin-top:12px">Reserve ${calc().res} cm je Anschluss, Verschnitt ${calc().cut} %, Ringe ${esc(calc().rings)} m.</p>`}
+async function exportMat(){const q=v=>`"${String(v??'').replace(/"/g,'""')}"`,rows=[['Gruppe','Artikel','Menge','Einheit','Hinweis']];for(const r of material(UI.matNew))rows.push([r.grp,r.name,r.n,r.u,r.note||'']);
+  await saveFile(new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv'}),`materialliste-${new Date().toISOString().slice(0,10)}.csv`,'Materialliste')}
+function calcForm(){const c=calc();modal(`<h2>Rechenvorgaben</h2><p class="hint">Gelten für alle Leitungslängen und die Materialliste.</p>
+  <div class="grid2"><label class="f unit" data-u="cm">Reserve je Anschluss<input type="number" step="any" name="res" value="${c.res}"></label><label class="f unit" data-u="%">Verschnitt<input type="number" step="any" name="cut" value="${c.cut}"></label></div>
+  <div class="row" style="margin-top:8px"><label class="f">Ringgrößen in m<input name="rings" value="${esc(c.rings)}" placeholder="z. B. 50, 100"></label></div>
+  <p class="hint">Senkrechte Stücke rechnen bis zur Mitte der Zone: Deckenzone 30 cm unter der Decke, Fußbodenzone 30 cm über dem Boden, Arbeitsflächenzone 105 cm.</p>`,m=>{const v=n=>num(m.querySelector(`[name=${n}]`).value);S.settings.calc={res:v('res')>=0?v('res'):30,cut:v('cut')>=0?v('cut'):10,rings:m.querySelector('[name=rings]').value.trim()||'50, 100'};commit();renderAll()})}
 function defaultWallTypes(){return [
   {id:'aw',name:'Außenwand',t:36.5,shade:'dark',ext:true,builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Porenbeton'},{name:'Beton'},{name:'Holzrahmen + Dämmung',hollow:true}]},
   {id:'tw',name:'Tragende Innenwand',t:24,shade:'dark',builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Beton'}]},
@@ -902,7 +979,7 @@ function updBar(){$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-
   document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
   document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));$('#toolSeg').hidden=UI.mode!=='plan';const D=UI.mode==='dist';$('#svg').style.display=D?'none':'';$('#board').hidden=!D;$('#badge').hidden=D;$('#viewSeg').hidden=D;$('#meas').hidden=D;$('#fit').hidden=D}
 function renderVariants(){const v=$('#variants'),f=floor();if(UI.mode!=='elec'){v.innerHTML='';return}ensureLayouts(f);
-  v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button>`}
+  v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button><span style="width:10px"></span><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege</button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen</button>`}
 function renderFloorSel(){$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
 function renderAll(){renderFloorSel();renderPanel();updBar();render()}
 
@@ -1029,6 +1106,9 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'bdone':UI.selB=null;renderPanel();render();break;
     case 'bsel':UI.selB=b.dataset.id;renderPanel();render();break;
     case 'csv':exportCsv();break;
+    case 'matnew':UI.matNew=b.dataset.v==='1';renderPanel();render();break;
+    case 'matcsv':exportMat();break;
+    case 'calcform':calcForm();break;
     case 'boardpng':exportBoard();break;
     case 'pick':pick(b.dataset.k,+b.dataset.c||1);break;
     case 'pickend':UI.place=null;renderPanel();render();break;
@@ -1176,13 +1256,13 @@ function mainMenu(){const st=S.settings,H=S.settings.heights,row=(id,t,sub,cls='
   <h3 style="margin-top:4px">Projekt</h3><div class="mlist">${row('prj','Projekt und Plankopf',esc([S.project.name,S.project.address].filter(Boolean).join(', ')||'Name, Adresse, Bearbeiter, Planstand'))}${row('flm','Etagen',`${S.floors.length} ${S.floors.length===1?'Etage':'Etagen'} · Hauptverteiler ${esc(hvF?.name||'–')}`)}</div>
   <h3>Darstellung</h3><div class="grid2">${sel('sg','Raster',[[1,'1 cm'],[5,'5 cm'],[10,'10 cm'],[25,'25 cm']],st.grid)}${sel('ss','Einrasten',[[1,'An'],[0,'Aus']],st.snap?1:0)}
     ${sel('sd','Maße im Plan',[['inner','Innenmaß je Raum'],['raw','Rohbaumaß außen']],st.dims)}${sel('su','Etage darunter',[[1,'Einblenden'],[0,'Ausblenden']],st.underlay?1:0)}${sel('sy','Schaltzeichen',[[1,'Klein'],[1.5,'Mittel'],[2.2,'Groß']],st.sym||1.5)}${sel('scc','Elemente färben',[[1,'Nach Stromkreis'],[0,'Schwarz']],st.ciColor===false?0:1)}</div>
-  <h3>Vorlagen</h3><div class="mlist">${row('wty','Wandtypen und Bauarten',`${types().length} Wandtypen`)}${row('cab','Leitungen und Schutzorgane',`${cables().length} Leitungstypen, ${prots().length} Schutzorgane`)}${row('hgt','Standardhöhen',`Schalter ${fmt(heightOf('switch'))} cm, Steckdosen ${fmt(heightOf('socket'))} cm, Arbeitsplatte ${fmt(heightOf('work'))} cm`)}</div>
+  <h3>Vorlagen</h3><div class="mlist">${row('wty','Wandtypen und Bauarten',`${types().length} Wandtypen`)}${row('clc','Rechenvorgaben',`Reserve ${calc().res} cm, Verschnitt ${calc().cut} %, Ringe ${esc(calc().rings)} m`)}${row('cab','Leitungen und Schutzorgane',`${cables().length} Leitungstypen, ${prots().length} Schutzorgane`)}${row('hgt','Standardhöhen',`Schalter ${fmt(heightOf('switch'))} cm, Steckdosen ${fmt(heightOf('socket'))} cm, Arbeitsplatte ${fmt(heightOf('work'))} cm`)}</div>
   <h3>Teilen</h3><div class="mlist">${row('eimg','Als Bild speichern',`${esc(floor().name)}, ${UI.mode==='elec'?'Elektro, '+esc(layout().name):'Grundriss'}, ${esc(VIEWS[UI.view])}`)}${IN_ART?'':row('epdf','Als PDF drucken','Gleicher Plan über den Druckdialog')}</div>
   <h3>Daten</h3><div class="mlist">${IN_ART?'':row('gsy','GitHub-Sync',esc(SY.msg))}${row('exp','Sicherung speichern','Als Datei, z. B. in OneDrive')}${row('imp','Sicherung wiederherstellen','Datei „elektroplaner-…json“ wählen')}${row('rst','Alles zurücksetzen','Löscht alle Etagen, Wände und Elemente','danger')}</div>
   <p class="hint" style="margin-top:14px">${IN_ART?'Testversion: Die Daten bleiben in diesem Browser auf diesem Gerät. ':''}Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p>`);
   const on=(id,ev,fn)=>{const x=el.querySelector('#'+id);if(x)x.addEventListener(ev,fn)},go=fn=>()=>{close();fn()};
   on('sg','change',e=>{st.grid=+e.target.value;commit()});on('ss','change',e=>{st.snap=e.target.value==='1';commit()});
-  on('sd','change',e=>{st.dims=e.target.value;commit();render()});on('su','change',e=>{st.underlay=e.target.value==='1';commit();render()});on('sy','change',e=>{st.sym=+e.target.value;commit();render()});on('scc','change',e=>{st.ciColor=e.target.value==='1';commit();render()});on('cab','click',go(cabForm));
+  on('sd','change',e=>{st.dims=e.target.value;commit();render()});on('su','change',e=>{st.underlay=e.target.value==='1';commit();render()});on('sy','change',e=>{st.sym=+e.target.value;commit();render()});on('scc','change',e=>{st.ciColor=e.target.value==='1';commit();render()});on('cab','click',go(cabForm));on('clc','click',go(calcForm));
   on('prj','click',go(projectForm));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
   on('eimg','click',go(exportImage));on('epdf','click',go(printPlan));on('gsy','click',go(syncMenu));on('exp','click',go(exportData));on('imp','click',go(()=>$('#fileIn').click()));
   on('rst','click',go(()=>confirmBox('Alle Etagen, Wände und Elemente zurücksetzen?','Zurücksetzen',()=>{S=defaultState();UI.sel=null;UI.chain=null;commit();renderAll();fit()})))}
@@ -1293,7 +1373,7 @@ document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b
 document.querySelectorAll('#toolSeg button').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>{if(UI.mode===b.dataset.mode)return;UI.mode=b.dataset.mode;UI.place=null;UI.sel=null;if(UI.tool==='draw')setTool('sel');commit();updBar();renderPanel();render()});
 $('#board').addEventListener('click',e=>{const c=e.target.closest('[data-dv]');if(c){UI.dv=c.dataset.dv;UI.selB=null;renderAll();return}const g=e.target.closest('[data-board]');if(g){UI.selB=g.dataset.board.slice(2);if(UI.tab.dist!=='list')UI.tab.dist='bel';renderPanel();render()}});
-$('#variants').addEventListener('click',e=>{const b=e.target.closest('[data-lay]');if(!b)return;const f=floor(),id=b.dataset.lay;
+$('#variants').addEventListener('click',e=>{const tg=e.target.closest('[data-tog]');if(tg){const k=tg.dataset.tog;UI[k]=k==='showRoutes'?UI[k]===false:!UI[k];render();return}const b=e.target.closest('[data-lay]');if(!b)return;const f=floor(),id=b.dataset.lay;
   if(id==='+'){const cur=layout(f),map=new Map(cur.items.map(i=>[i.id,uid()])),n={id:uid(),name:'Variante '+String.fromCharCode(65+f.layouts.length),items:cur.items.map(i=>({...i,id:map.get(i.id),...(i.ctl?{ctl:i.ctl.map(c=>map.get(c))}:{})}))};f.layouts.push(n);f.activeLayout=n.id;UI.sel=null;commit();renderAll()}
   else if(id===f.activeLayout)variantMenu();else{f.activeLayout=id;UI.sel=null;commit();renderAll()}});
 $('#meas').onclick=toggleMeas;

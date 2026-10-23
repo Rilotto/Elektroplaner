@@ -8,7 +8,7 @@
 - [x] 1. Grundriss und Etagen
 - [x] 2. Elemente und Ist-Aufnahme (Schaltzeichen, Höhen, Montageart, Legende, Ebene Elektro, Varianten), erste Fassung
 - [x] 3. Verteiler und Stromkreise, erste Fassung
-- [ ] 4. Leitungen und Mengen
+- [x] 4. Leitungen und Mengen, erste Fassung
 - [ ] 5. Netzwerk, Klingel, Außen, Eltako
 - [ ] 6. Pläne und Ausgaben
-- [ ] 7. Automatische Verdrahtung
+- [ ] 7. Automatische Verdrahtung (vorerst nicht geplant)

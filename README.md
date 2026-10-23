@@ -30,6 +30,12 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Zuleitungen der Unterverteiler mit Absicherung im versorgenden Verteiler
 - Stromkreisliste für alle Etagen, Export als CSV, Belegung als Bild
 
+## Stand: Phase 4 – Leitungen und Mengen
+- Leitungswege je Stromkreis automatisch: im Raum entlang der Wände in der gewählten Zone, Raum- und Etagenwechsel markiert
+- Länge je Stromkreis und Leitungstyp: Weg + senkrechte Stücke zur Zone + Etagenwechsel + Reserve je Anschluss + Verschnitt
+- Senkrechte Installationszonen nach DIN 18015-3 einblendbar
+- Materialliste (Leitungen mit Ringen, Dosen je Montageart, Geräte, Rahmen, Ports, Verteilerbauteile) als CSV
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).
