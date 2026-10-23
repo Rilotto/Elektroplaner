@@ -47,6 +47,13 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - PNG je Etage, PDF mit einer Seite je Etage über den Druckdialog
 - CSV: Stromkreisliste, Verteilerbelegung, Materialliste, Netzwerk-Belegung
 
+## Stand: Version 0.7.0
+- Mehrere Projekte (Häuser) über den Projekt-Knopf oben links, je Projekt eigene Datei im Daten-Repo (`projekte/<id>.json`)
+- Versionsanzeige mit Änderungen im Menü
+- Leitungswege entlang der Wände und durch Kabeldurchlässe, Durchgänge und Türen, gebündelt mit Anzahl; Deckendurchlass für Etagenwechsel
+- Räume andocken, Fluchtlinien beim Zeichnen, Treppen mit Treppenauge in der Etage darüber, Öffnungen duplizieren
+- Stromkreis-Art und Räume je Stromkreis, Prüfung Licht und Steckdosen am selben FI
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).

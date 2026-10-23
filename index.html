@@ -253,7 +253,7 @@ const ST={keep:'Bestand bleibt',del:'Bestand entfällt',new:'Neu'};
 const VIEWS={ist:'Ist-Aufnahme',soll:'Soll-Plan',umbau:'Umbauplan'};
 const VIS={ist:x=>x.st!=='new',soll:x=>x.st!=='del',umbau:()=>true};
 const SHADES={dark:'Dunkel',mid:'Mittel',light:'Hell',hatch:'Schraffiert'};
-const OPT={door:'Tür',window:'Fenster',pass:'Durchgang'};
+const OPT={door:'Tür',window:'Fenster',pass:'Durchgang',cable:'Kabeldurchlass'};
 /* ---------- Elektro: Elementarten und Schaltzeichen ---------- */
 const HCLS={switch:'Schalter und Taster',socket:'Steckdosen',work:'Über Arbeitsplatte',net:'Netzwerkdosen',wlight:'Wandleuchten und Melder',bell:'Klingel und Sprechanlage',dist:'Verteiler (Unterkante)',other:'Sonstige Anschlüsse'};
 const DEF_H={switch:105,socket:30,work:115,net:30,wlight:200,bell:140,dist:110,other:30};
@@ -314,7 +314,7 @@ function symSvg(it,c,rot){const d=KINDS[it.k]||KINDS.ga,L=(a,b,x,y)=>`<line x1="
 const symCenter=it=>KINDS[it.k]?.place==='wall'?{x:0,y:9}:{x:0,y:0};
 function symIcon(k,cnt,src){const it=src?{...src,st:'keep'}:{k,cnt},d=KINDS[k],w=d?.sym==='dist'?30:d?.sym==='led'?18:11.5,cy=d?.place==='wall'?8:0;return `<svg viewBox="${-w} ${cy-10} ${2*w} 20" width="40" height="30" aria-hidden="true" style="flex:0 0 auto"><g fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke">${symSvg(it,'currentColor',0)}</g></svg>`}
 /* ---------- Elektro: Daten und Platzierung ---------- */
-function ensureLayouts(f){if(!Array.isArray(f.layouts)||!f.layouts.length){const l={id:uid(),name:'Variante A',items:[]};f.layouts=[l];f.activeLayout=l.id}
+function ensureLayouts(f){if(!Array.isArray(f.risers))f.risers=[];if(!Array.isArray(f.stairs))f.stairs=[];if(!Array.isArray(f.layouts)||!f.layouts.length){const l={id:uid(),name:'Variante A',items:[]};f.layouts=[l];f.activeLayout=l.id}
   if(!f.layouts.some(l=>l.id===f.activeLayout))f.activeLayout=f.layouts[0].id}
 const layout=(f=floor())=>{ensureLayouts(f);return f.layouts.find(l=>l.id===f.activeLayout)};
 const items=(f=floor())=>layout(f).items;
@@ -388,7 +388,7 @@ function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)
 function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
   const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc!=='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){p.x+=p.d.x*11*ks;p.y+=p.d.y*11*ks}return [it.id,p]}));
   const si=sel?.kind==='item'&&its.find(i=>i.id===sel.id);
-  if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=routeSvg(f,s,C,exp)+extraLines(f,s,exp);
+  if(!plan&&UI.showZones&&!exp)h+=zonesSvg(f,g,s);if(!plan&&UI.showRoutes!==false)h+=bundleSvg(f,s,C,exp)+extraLines(f,s,exp);
   if(!plan&&!exp){if(!UI.guides&&si&&KINDS[si.k]?.place==='ceil'){const A=alignGuides(f,g,si,si,0.6);UI._tg={it:si,gx:A.gx,gy:A.gy,x:A.gx.length?si.x:null,y:A.gy.length?si.y:null};const k_=UI.guides;UI.guides=UI._tg;h+=guidesSvg(f,g,s);UI.guides=k_}else h+=guidesSvg(f,g,s)}
   if(!plan)h+=grpLines(f,g,view,s,C,ks,sel);
   const pm=its.some(i=>i.k==='n_d'||i.k==='n_ap')?portsOfItem(netPlan()):new Map();
@@ -408,7 +408,8 @@ function groupsOf(f,view){const its=items(f).filter(i=>VIS[view](i)),by=new Map(
   for(const s of sws)for(const id of s.ctl)if(by.has(id)&&isLoad(by.get(id))){if(lo.has(id))par.set(fd(s.id),fd(lo.get(id)));else lo.set(id,s.id)}
   const gm=new Map();for(const s of sws){const r=fd(s.id);if(!gm.has(r))gm.set(r,[]);gm.get(r).push(s)}
   return [...gm.values()].map(list=>{const loads=[...new Set(list.flatMap(s=>s.ctl.filter(id=>by.has(id)&&isLoad(by.get(id)))))].map(id=>by.get(id)),sw=orderSw(list,loads);
-    return {id:sw.map(s=>s.id).sort()[0],sw,loads:orderLoads(sw[sw.length-1],loads,sw),taster:list.some(s=>s.k.startsWith('ta'))}})}
+    let sw2=sw;if(sw.length>1&&!list.every(s=>typeof s.seq==='number')){const c=ciOf(loads.find(l=>l.ci)||sw.find(x=>x.ci)),dv=c&&distBy(c.dist);if(dv&&dv.f===f){const d1=routeOn(f,itemPos(G(f,'soll'),dv.it),itemPos(G(f,'soll'),sw[0])).len,d2=routeOn(f,itemPos(G(f,'soll'),dv.it),itemPos(G(f,'soll'),sw[sw.length-1])).len;if(d2<d1)sw2=[...sw].reverse()}}
+    return {id:sw2.map(s=>s.id).sort()[0],sw:sw2,loads:orderLoads(sw2[sw2.length-1],loads,sw2),taster:list.some(s=>s.k.startsWith('ta'))}})}
 function orderSw(list,loads){if(list.length<2)return list;if(list.every(s=>typeof s.seq==='number'))return [...list].sort((a,b)=>a.seq-b.seq);
   const c=loads.reduce((a,l)=>({x:a.x+l.x/loads.length,y:a.y+l.y/loads.length}),{x:0,y:0}),cand=list.filter(s=>s.k==='sw_wech');
   let cur=(cand.length?cand:list).reduce((a,s)=>dist(s,c)>dist(a,c)?s:a);const out=[cur],rest=list.filter(s=>s!==cur);
@@ -429,7 +430,7 @@ function grpLines(f,g,view,s,C,ks,sel){const px=n=>n/s,grs=groupsOf(f,view);let 
   for(const gr of grs){const on=selG===gr,w=on?3.6:2.4,segs=[];
     for(let i=0;i+1<gr.sw.length;i++)segs.push([gr.sw[i],gr.sw[i+1],gr.taster?'steuer':'korr']);
     let prev=gr.sw[gr.sw.length-1];for(const l of gr.loads){segs.push([prev,l,gr.taster?'steuer':'last']);prev=l}
-    for(const [a,b,t] of segs){const P=mroute(cen(a),cen(b),g),dash=t==='steuer'?' stroke-dasharray="7 5"':'';
+    for(const [a,b,t] of segs){const P=segBetween(f,a,f,b,'top','','x').P,dash=t==='steuer'?' stroke-dasharray="7 5"':'';
       h+=`<polyline points="${pts(P)}" fill="none" stroke="${LC[t]}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"${dash} pointer-events="none" opacity="${selG&&!on?.45:1}"/>`;
       if(on){let best=0,bi=0;for(let i=0;i+1<P.length;i++){const L=dist(P[i],P[i+1]);if(L>best){best=L;bi=i}}if(best*s>60){const m={x:(P[bi].x+P[bi+1].x)/2,y:(P[bi].y+P[bi+1].y)/2},lbl=t==='korr'?'5×1,5':gr.sw.length===1&&gr.sw[0].k==='sw_ser'?'5×1,5':'3×1,5',bw=px(lbl.length*6.5+10);
         h+=`<rect x="${m.x-bw/2}" y="${m.y-px(9)}" width="${bw}" height="${px(18)}" rx="${px(9)}" fill="${LC[t]}" pointer-events="none"/><text x="${m.x}" y="${m.y}" font-size="${px(11.5)}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" pointer-events="none">${lbl}</text>`}}}
@@ -684,10 +685,13 @@ function perimPath(P,pa,pb){const n=P.length,L=[0];for(let i=0;i<n;i++)L.push(L[
   path.push(B.q,pb);return {len:Math.min(fw,T-fw)+A.d+B.d,path}}
 function stubOf(f,g,it,z){const d=KINDS[it.k],H=roomH(f,itemRoom(f,g,it)),zh=zoneH(z,H);if(!d||d.place!=='wall')return Math.abs(H-zh);const h=(it.h??heightOf(d.hc))+(d.sym==='dist'?40:0);return Math.abs(h-zh)}
 function segBetween(fa,a,fb,b,z,cable,kind){const res=calc().res;
-  if(fa!==fb){const ga=G(fa,'soll'),gb=G(fb,'soll'),pa=itemPos(ga,a),pb=itemPos(gb,b),plan=Math.abs(pa.x-pb.x)+Math.abs(pa.y-pb.y),vert=Math.abs(fa.level-fb.level);
-    return {f:fb,P:[pa,pb],len:plan+vert+stubOf(fa,ga,a,z)+stubOf(fb,gb,b,z)+2*res,cable,kind,cross:'Etage'}}
+  if(fa!==fb){const ga=G(fa,'soll'),gb=G(fb,'soll'),pa=itemPos(ga,a),pb=itemPos(gb,b),vert=Math.abs(fa.level-fb.level),st=stubOf(fa,ga,a,z)+stubOf(fb,gb,b,z)+2*res,lower=fa.level<=fb.level?fa:fb;let best=null;
+    for(const r of lower.risers||[]){const c=dist(pa,r)+dist(r,pb);if(!best||c<best.c)best={r,c}}
+    if(best){const A=routeOn(fa,pa,best.r),B=routeOn(fb,best.r,pb);return {f:fb,P:B.P,parts:[{f:fa,P:A.P,keys:A.keys,head:A.head,tail:A.tail,fb:A.fb},{f:fb,P:B.P,keys:B.keys,head:B.head,tail:B.tail,fb:B.fb}],len:A.len+B.len+vert+st,cable,kind,cross:null}}
+    return {f:fb,P:[pa,pb],len:Math.abs(pa.x-pb.x)+Math.abs(pa.y-pb.y)+vert+st,cable,kind,cross:'Etage'}}
   const g=G(fa,'soll'),pa=itemPos(g,a),pb=itemPos(g,b),off=p=>p.d?{x:p.x+p.d.x*3,y:p.y+p.d.y*3}:p,Fa=faceAt(g,off(pa)),Fb=faceAt(g,off(pb)),st=stubOf(fa,g,a,z)+stubOf(fa,g,b,z)+2*res;
-  if(Fa&&Fa===Fb&&z!=='ceil'){const pp=perimPath(Fa.poly,pa,pb);return {f:fa,P:pp.path,len:pp.len+st,cable,kind,cross:null}}
+  if(z!=='ceil'){const np=netPath(fa,pa,pb);if(np)return {f:fa,P:np.P,len:np.len+st,cable,kind,cross:null,keys:np.keys,head:np.head,tail:np.tail}
+    if(Fa&&Fa===Fb){const pp=perimPath(Fa.poly,pa,pb);return {f:fa,P:pp.path,len:pp.len+st,cable,kind,cross:null}}}
   const P=mroute(pa,pb,g),plan=P.reduce((s,p,i)=>i?s+dist(P[i-1],p):0,0);return {f:fa,P,len:plan+st,cable,kind,cross:Fa&&Fa===Fb?null:'Raum'}}
 function ciRoute(c){const z=zoneOf(c),its=ciItems(c),dv=distBy(c.dist),segs=[],gs=new Map();
   for(const f of S.floors)for(const gr of groupsOf(f,'soll'))if(gr.loads.some(l=>l.ci===c.id)||gr.sw.some(s=>s.ci===c.id))gs.set(gr,f);
@@ -846,9 +850,67 @@ function guidesSvg(f,g,s){const G_=UI.guides;if(!G_)return '';const pts_=g.walls
   if(G_.y!=null){h+=`<line x1="${bb.minX}" y1="${G_.y}" x2="${bb.maxX}" y2="${G_.y}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
     const nb=G_.gy.reduce((a,o)=>!a||Math.abs(o.x-it.x)<Math.abs(a.x-it.x)?o:a,null);if(nb)h+=lab((nb.x+it.x)/2,G_.y-px(22),fmt(Math.abs(nb.x-it.x))+' cm')}
   return h}
-function extraLines(f,s,exp){let h='';const b=bellPlan();if(b)for(const sg of b.segs){if(sg.f!==f||sg.cross==='Etage')continue;h+=`<polyline points="${pts(sg.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':'#C2417F'}" stroke-width="1.8" stroke-dasharray="5 3" vector-effect="non-scaling-stroke" pointer-events="none"/>`}
+function extraLines(f,s,exp){let h='';const b=bellPlan();if(b)for(const sg of b.segs)for(const pt of (sg.parts||[{f:sg.f,P:sg.P}])){if(pt.f!==f||sg.cross==='Etage')continue;h+=`<polyline points="${pts(pt.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':'#C2417F'}" stroke-width="1.8" stroke-dasharray="5 3" vector-effect="non-scaling-stroke" pointer-events="none"/>`}
   for(const v of netPlan().values())for(const p of v.ports){if(p.sf!==f||p.cross==='Etage'||p.i>0)continue;h+=`<polyline points="${pts(p.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':'#2E8B57'}" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`}
   return h}
+/* ---------- 0.7: Wegenetz durch Türen und Kabeldurchlässe, Bündelung, Deckendurchlass ---------- */
+const NETC=new Map();
+function netOf(f){const key=JSON.stringify([f.nodes,f.walls,f.openings]),c=NETC.get(f.id);if(c&&c.key===key)return c.val;
+  const g=G(f,'soll'),V=[],E=[],addV=p=>{V.push({x:p.x,y:p.y});E.push([]);return V.length-1},link=(a,b,c,kind)=>{E[a].push({to:b,c,kind});E[b].push({to:a,c,kind})},rooms=g.rooms,trans=[];
+  for(const o of f.openings){if(!VIS.soll(o)||o.type==='window')continue;const x=g.byId.get(o.wall);if(!x)continue;const t=o.off+o.w/2,c={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t};
+    trans.push({pts:[{x:c.x+x.n.x*x.h,y:c.y+x.n.y*x.h},{x:c.x-x.n.x*x.h,y:c.y-x.n.y*x.h}],c:2*x.h+(o.type==='cable'?0:o.type==='pass'?80:150),kind:o.type,v:[]})}
+  for(const tr of trans)for(const pp of tr.pts){let best=null;rooms.forEach((F,ri)=>{const P=F.poly;for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length],dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;if(l2<1e-6)continue;
+    const t=clamp(((pp.x-a.x)*dx+(pp.y-a.y)*dy)/l2,0,1),q={x:a.x+dx*t,y:a.y+dy*t},d=dist(q,pp);if(d<4&&(!best||d<best.d))best={d,ri,i,t,q}}});tr.v.push(best)}
+  const ring=rooms.map((F,ri)=>{const P=F.poly,ids=[];for(let i=0;i<P.length;i++){ids.push({p:P[i],s:i});for(const tr of trans)for(const b of tr.v)if(b&&b.ri===ri&&b.i===i)ids.push({p:b.q,s:i+Math.min(b.t,0.9999),tb:b})}
+    ids.sort((a,b)=>a.s-b.s);const vi=ids.map(o=>{const v=addV(o.p);if(o.tb)o.tb.vid=v;return v});for(let k=0;k<vi.length;k++){const a=vi[k],b=vi[(k+1)%vi.length];if(a!==b)link(a,b,dist(V[a],V[b]),'wall')}return {vi}});
+  for(const tr of trans){const [b1,b2]=tr.v;if(b1?.vid!=null&&b2?.vid!=null&&b1.ri!==b2.ri)link(b1.vid,b2.vid,tr.c,tr.kind)}
+  const val={V,E,ring,memo:new Map()};NETC.set(f.id,{key,val});return val}
+function netPath(f,pa,pb){const net=netOf(f),mk=`${r1(pa.x)},${r1(pa.y)}|${r1(pb.x)},${r1(pb.y)}`;if(net.memo.has(mk))return net.memo.get(mk);
+  const att=p=>{let best=null;for(const r of net.ring){const vi=r.vi;for(let k=0;k<vi.length;k++){const a=net.V[vi[k]],b=net.V[vi[(k+1)%vi.length]],dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy||1e-9,t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/l2,0,1),q={x:a.x+dx*t,y:a.y+dy*t},d=dist(q,p);if(!best||d<best.d)best={d,q,a:vi[k],b:vi[(k+1)%vi.length]}}}return best};
+  const A=att(pa),B=att(pb);let res=null;
+  if(A&&B&&A.d<60&&B.d<60){const n=net.V.length,SA=n,SB=n+1,dd=new Float64Array(n+2).fill(Infinity),pv=new Int32Array(n+2).fill(-1),done=new Uint8Array(n+2);
+    const nb=i=>{if(i===SA){const r=[{to:A.a,c:dist(A.q,net.V[A.a])},{to:A.b,c:dist(A.q,net.V[A.b])}];if((A.a===B.a&&A.b===B.b)||(A.a===B.b&&A.b===B.a))r.push({to:SB,c:dist(A.q,B.q)});return r}
+      const r=net.E[i].slice();if(i===B.a)r.push({to:SB,c:dist(net.V[i],B.q)});if(i===B.b)r.push({to:SB,c:dist(net.V[i],B.q)});return r};
+    dd[SA]=0;for(;;){let u=-1,m=Infinity;for(let i=0;i<n+2;i++)if(!done[i]&&dd[i]<m){m=dd[i];u=i}if(u<0||u===SB)break;done[u]=1;for(const e of nb(u)){const v=e.to,c=m+e.c;if(c<dd[v]){dd[v]=c;pv[v]=u}}}
+    if(isFinite(dd[SB])){const seq=[];for(let v=SB;v>=0;v=pv[v]){seq.push(v);if(v===SA)break}seq.reverse();const mid=seq.filter(v=>v<n),P=[pa,A.q,...mid.map(v=>net.V[v]),B.q,pb],keys=[];
+      for(let i=0;i+1<mid.length;i++)keys.push(mid[i]<mid[i+1]?mid[i]+'-'+mid[i+1]:mid[i+1]+'-'+mid[i]);const len=P.reduce((s,p,i)=>i?s+dist(P[i-1],p):0,0);
+      res={P,len,keys,head:mid.length?[pa,A.q,net.V[mid[0]]]:P,tail:mid.length?[net.V[mid[mid.length-1]],B.q,pb]:null}}}
+  if(net.memo.size>4000)net.memo.clear();net.memo.set(mk,res);return res}
+function routeOn(f,p,q){const np=netPath(f,p,q);if(np)return np;const P=mroute(p,q,G(f,'soll'));return {P,len:P.reduce((s,x,i)=>i?s+dist(P[i-1],x):0,0),keys:[],head:P,tail:null,fb:true}}
+function bundleSvg(f,s,C,exp){const px=n=>n/s,net=netOf(f),use=new Map(),loose=[],black=exp&&S.settings.ciColor===false;let h='';
+  for(const c of circuits()){const R=ciRoute(c),on=UI.selC===c.id||UI.assign===c.id;for(const sg of R.segs){if(sg.kind!=='feed')continue;for(const pt of (sg.parts||[{f:sg.f,P:sg.P,keys:sg.keys,head:sg.head,tail:sg.tail,fb:sg.cross}])){if(pt.f!==f)continue;
+    if(pt.keys?.length){for(const k of pt.keys){if(!use.has(k))use.set(k,new Set());use.get(k).add(c)}loose.push({c,P:pt.head,dash:false,on});if(pt.tail)loose.push({c,P:pt.tail,dash:false,on})}else loose.push({c,P:pt.P,dash:!!pt.fb,on})}
+    if(on)for(const sg of R.segs)for(const pt of (sg.parts||[{f:sg.f,P:sg.P}]))if(pt.f===f&&sg.kind==='feed')h+=`<polyline points="${pts(pt.P)}" fill="none" stroke="${black?'#22282C':c.color}" stroke-width="5" stroke-opacity=".35" stroke-linejoin="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`}}
+  for(const L of loose)h+=`<polyline points="${pts(L.P)}" fill="none" stroke="${black?'#22282C':L.c.color}" stroke-width="${L.on?3.4:2.2}" stroke-linejoin="round" vector-effect="non-scaling-stroke"${L.dash?' stroke-dasharray="2 5"':''} pointer-events="none"/>`;
+  for(const [k,set] of use){const [a,b]=k.split('-').map(Number),A=net.V[a],B=net.V[b],n=set.size,one=n===1?[...set][0]:null;
+    h+=`<line x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}" stroke="${black?'#22282C':one?one.color:C('muted')}" stroke-width="${2.2+Math.min(n-1,6)*0.9}" stroke-linecap="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+    if(n>1&&dist(A,B)*s>44){const m={x:(A.x+B.x)/2,y:(A.y+B.y)/2},bw=px(22);h+=`<rect x="${m.x-bw/2}" y="${m.y-px(9)}" width="${bw}" height="${px(18)}" rx="${px(9)}" fill="${black?'#22282C':C('muted')}" pointer-events="none"/><text x="${m.x}" y="${m.y}" font-size="${px(11.5)}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="700" pointer-events="none">${n}</text>`}}
+  return h}
+function riserSvg(f,s,C,exp,plan){const px=n=>n/s;let h='';const sel=UI.sel?.kind==='riser'?UI.sel.id:null;
+  for(const r of f.risers||[]){const on=sel===r.id;h+=`<g${plan&&!exp?` data-kind="riser" data-id="${r.id}"`:''}><circle cx="${r.x}" cy="${r.y}" r="9" fill="${C('floor')}" stroke="${on?C('accent'):C('wall')}" stroke-width="${on?2.5:1.4}" vector-effect="non-scaling-stroke"/><line x1="${r.x-6.4}" y1="${r.y-6.4}" x2="${r.x+6.4}" y2="${r.y+6.4}" stroke="${C('wall')}" stroke-width="1.2" vector-effect="non-scaling-stroke"/><line x1="${r.x-6.4}" y1="${r.y+6.4}" x2="${r.x+6.4}" y2="${r.y-6.4}" stroke="${C('wall')}" stroke-width="1.2" vector-effect="non-scaling-stroke"/>${plan&&!exp?`<circle cx="${r.x}" cy="${r.y}" r="${px(18)}" fill="transparent"/>`:''}</g>`}
+  const lf=lowerFloor(f);if(lf)for(const r of lf.risers||[])h+=`<circle cx="${r.x}" cy="${r.y}" r="9" fill="none" stroke="${C('muted')}" stroke-width="1.2" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+  return h}
+/* ---------- 0.7: Treppen ---------- */
+function stairPoly(t){const a=t.rot*Math.PI/180,c=Math.cos(a),sn=Math.sin(a),hw=t.w/2,hl=t.l/2;return [[-hw,-hl],[hw,-hl],[hw,hl],[-hw,hl]].map(([x,y])=>({x:t.x+x*c-y*sn,y:t.y+x*sn+y*c}))}
+function stairSvg(f,s,C,exp,plan){const px=n=>n/s;let h='';const sel=UI.sel?.kind==='stair'?UI.sel.id:null,up=S.floors.filter(o=>o.level>f.level).sort((a,b)=>a.level-b.level)[0];
+  for(const t of f.stairs||[]){const P=stairPoly(t),a=t.rot*Math.PI/180,c=Math.cos(a),sn=Math.sin(a),L=(lx,ly)=>({x:t.x+lx*c-ly*sn,y:t.y+lx*sn+ly*c}),n=Math.max(2,t.steps||16),on=sel===t.id;
+    h+=`<g${plan&&!exp?` data-kind="stair" data-id="${t.id}"`:''}><polygon points="${pts(P)}" fill="${C('floor')}" stroke="${on?C('accent'):C('wall')}" stroke-width="${on?2.5:1.4}" vector-effect="non-scaling-stroke"/>`;
+    for(let i=1;i<n;i++){const y=-t.l/2+t.l*i/n,A=L(-t.w/2,y),B=L(t.w/2,y);h+=`<line x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}" stroke="${C('wall')}" stroke-width="0.8" vector-effect="non-scaling-stroke"/>`}
+    const S0=L(0,t.l/2-6),E0=L(0,-t.l/2+10),ar1=L(-7,-t.l/2+20),ar2=L(7,-t.l/2+20);
+    h+=`<circle cx="${r1(S0.x)}" cy="${r1(S0.y)}" r="4" fill="${C('wall')}"/><line x1="${r1(S0.x)}" y1="${r1(S0.y)}" x2="${r1(E0.x)}" y2="${r1(E0.y)}" stroke="${C('wall')}" stroke-width="1.4" vector-effect="non-scaling-stroke"/><polyline points="${pts([ar1,E0,ar2])}" fill="none" stroke="${C('wall')}" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
+    const lp=L(t.w/2+px(14),0);h+=`<text x="${r1(lp.x)}" y="${r1(lp.y)}" font-size="${px(12)}" fill="${C('muted')}" font-family="Barlow Condensed,'Arial Narrow',sans-serif" dominant-baseline="middle">${up?'↑ '+esc(up.name):'Treppe'} · ${n} Stufen</text></g>`}
+  const lf=lowerFloor(f);if(lf)for(const t of lf.stairs||[]){const P=stairPoly(t),cx=t.x,cy=t.y;
+    h+=`<polygon points="${pts(P)}" fill="url(#hT)" fill-opacity=".5" stroke="${C('wall')}" stroke-width="1.4" stroke-dasharray="7 4" vector-effect="non-scaling-stroke" pointer-events="none"/><text x="${cx}" y="${cy}" font-size="${px(12)}" text-anchor="middle" dominant-baseline="middle" fill="${C('ink')}" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" pointer-events="none">Treppenauge · Aufgang von ${esc(lf.name)}</text>`}
+  return h}
+function addStair(p){const f=floor(),gr=S.settings.snap?S.settings.grid:0,t={id:uid(),x:gr?round(p.x,gr):r1(p.x),y:gr?round(p.y,gr):r1(p.y),w:100,l:300,rot:0,steps:Math.max(2,Math.round((f.height+f.slab)/18.5))};
+  f.stairs.push(t);UI.stairM=false;UI.sel={kind:'stair',id:t.id};commit();renderPanel();render();flash('Treppe gesetzt. In der Etage darüber erscheint das Treppenauge automatisch.')}
+function stairPanel(f,t){const up=S.floors.filter(o=>o.level>f.level).sort((a,b)=>a.level-b.level)[0],rise=(f.height+f.slab)/Math.max(2,t.steps||16);
+  return `<h2>Treppe</h2><p class="hint">${up?`Führt nach ${esc(up.name)}. Dort erscheint das Treppenauge automatisch.`:'Über dieser Etage gibt es noch keine. Lege eine neue Etage an, dann erscheint dort das Treppenauge.'}</p>
+    <div class="grid2">${inp('Breite','w',t.w,'stair')}${inp('Länge','l',t.l,'stair')}</div>
+    <div class="grid2" style="margin-top:8px">${inp('Stufen','steps',t.steps||16,'stair','')}<label class="f">Steigung<input disabled value="${fmt(rise)} cm"></label></div>
+    <div class="row" style="margin-top:10px"><button class="btn" data-act="stairRot" data-v="-90">−90°</button><button class="btn" data-act="stairRot" data-v="90">+90°</button><button class="btn" data-act="stairRot" data-v="180">Richtung umkehren</button></div>
+    <p class="hint">Zum Verschieben ziehen. Der Punkt markiert den Antritt, der Pfeil zeigt nach oben.</p>
+    <div class="row"><button class="btn danger" data-act="delStair">Entfernen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>`}
 function defaultWallTypes(){return [
   {id:'aw',name:'Außenwand',t:36.5,shade:'dark',ext:true,builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Porenbeton'},{name:'Beton'},{name:'Holzrahmen + Dämmung',hollow:true}]},
   {id:'tw',name:'Tragende Innenwand',t:24,shade:'dark',builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Beton'}]},
@@ -980,7 +1042,9 @@ function interiorPoint(P){const c=centroid(P);if(inside(c,P))return c;const bb=b
 const last=a=>a[a.length-1];
 
 /* Baut aus Knoten und Wänden die Wandkörper mit sauberen Stößen und erkennt die Räume (Flächen des Graphen). */
-function G(f,view){
+const GC=new Map();
+function G(f,view){const key=JSON.stringify([f.nodes,f.walls]),ck=f.id+'|'+view,c=GC.get(ck);if(c&&c.key===key)return c.val;const val=G0(f,view);GC.set(ck,{key,val});return val}
+function G0(f,view){
   const N=new Map(f.nodes.map(n=>[n.id,n])),vis=VIS[view],adj=new Map(),walls=[],byId=new Map();
   for(const w of f.walls){if(!vis(w))continue;const A=N.get(w.a),B=N.get(w.b);if(!A||!B||w.a===w.b)continue;
     const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy);if(L<0.05)continue;const u={x:dx/L,y:dy/L},g={w,A,B,L,u,n:{x:-u.y,y:u.x},h:Math.max(0.5,w.t/2)};
@@ -1070,6 +1134,8 @@ function validateSel(){const s=UI.sel,f=floor();if(!s)return;const g=G(f,UI.view
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o||!g.byId.has(o.wall)||!VIS[UI.view](o))UI.sel=null}
   else if(s.kind==='node'&&!g.adj.has(s.id))UI.sel=null;
   else if(s.kind==='room'&&!f.rooms.some(r=>r.id===s.id))UI.sel=null
+  else if(s.kind==='riser'&&!(f.risers||[]).some(r=>r.id===s.id))UI.sel=null
+  else if(s.kind==='stair'&&!(f.stairs||[]).some(t=>t.id===s.id))UI.sel=null
   else if(s.kind==='item'){const it=items(f).find(x=>x.id===s.id);if(!it||!VIS[UI.view](it))UI.sel=null}}
 
 /* ---------- Ansicht ---------- */
@@ -1106,6 +1172,7 @@ function sceneSvg(vp,VW,VH,exp,view){
   // Öffnungen
   for(const o of f.openings){const x=g.byId.get(o.wall);if(!x||!VIS[view](o))continue;const {u,n}=x,hh=x.h+px(0.8),A={x:x.A.x+u.x*o.off,y:x.A.y+u.y*o.off},B={x:x.A.x+u.x*(o.off+o.w),y:x.A.y+u.y*(o.off+o.w)};
     const off=(p,k)=>({x:p.x+n.x*k,y:p.y+n.y*k}),cls=view==='umbau'&&o.st!=='keep'?' op-'+o.st:'',sc=view==='umbau'&&o.st==='new'?C('new'):view==='umbau'&&o.st==='del'?C('del'):C('wall');
+    if(o.type==='cable'){const c={x:(A.x+B.x)/2,y:(A.y+B.y)/2},rr=Math.min(x.h,o.w/2+2);h+=`<g><circle cx="${r1(c.x)}" cy="${r1(c.y)}" r="${rr}" fill="${C('floor')}" stroke="${sc}" stroke-width="1.3" vector-effect="non-scaling-stroke"/><line x1="${r1(c.x+n.x*x.h)}" y1="${r1(c.y+n.y*x.h)}" x2="${r1(c.x-n.x*x.h)}" y2="${r1(c.y-n.y*x.h)}" stroke="${sc}" stroke-width="1.3" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"/></g>`;if(!elec&&sel?.kind==='op'&&sel.id===o.id)h+=`<circle cx="${r1(c.x)}" cy="${r1(c.y)}" r="${rr+3}" fill="none" stroke="var(--accent)" stroke-width="3" vector-effect="non-scaling-stroke"/>`;continue}
     const closed=view==='umbau'&&o.st==='del';
     h+=`<g class="op${cls}"><polygon class="gap" points="${pts([off(A,hh),off(B,hh),off(B,-hh),off(A,-hh)])}" fill="${closed?C('new-soft'):C('floor')}"/>`;
     const ln=(p,q,c)=>`<line class="${c}" vector-effect="non-scaling-stroke" stroke="${sc}" x1="${r1(p.x)}" y1="${r1(p.y)}" x2="${r1(q.x)}" y2="${r1(q.y)}"/>`;
@@ -1116,6 +1183,7 @@ function sceneSvg(vp,VW,VH,exp,view){
       h+=ln(Hf,arc[0],'dline')+`<polyline class="darc" vector-effect="non-scaling-stroke" stroke="${sc}" points="${pts(arc)}"/>`}
     h+=`</g>`;
     if(!elec&&sel?.kind==='op'&&sel.id===o.id)h+=`<line class="opsel" vector-effect="non-scaling-stroke" x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}"/>`}
+  h+=stairSvg(f,s,C,exp,UI.mode==='plan'&&UI.tool==='sel')+riserSvg(f,s,C,exp,UI.mode==='plan'&&UI.tool==='sel');
   if(elec)h+=`</g>`;
   // Maße
   const dimLbl=(p,q,nn,on)=>{const L=dist(p,q);if(L*s<46)return '';const m={x:(p.x+q.x)/2+nn.x*px(12),y:(p.y+q.y)/2+nn.y*px(12)};let a=Math.atan2(q.y-p.y,q.x-p.x)*180/Math.PI;if(a>90)a-=180;if(a<-90)a+=180;
@@ -1190,8 +1258,10 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
       <p class="hint" style="margin-top:6px">${bx?esc(bx)+'. ':''}${ch.length>1?`Typ, Bauart und Dicke gelten für die ganze gerade Wand (${ch.length} Abschnitte).`:''}${t.ext?' Bei Außenwänden bleibt die Innenseite stehen.':''}</p>
       <h3>Länge</h3><div class="grid2">${inp('Seite '+esc(nmA),'sP',x.lP,'wall')}${inp('Seite '+esc(nmB),'sM',x.lM,'wall')}</div>
       <div class="row" style="margin-top:8px">${inp('Achse','len',x.L,'wall')}</div><p class="hint">Alles hinter dem Wandende rückt mit.</p>
-      <h3>Einsetzen</h3><div class="grid3"><button class="btn" data-act="addOp" data-v="door">Tür</button><button class="btn" data-act="addOp" data-v="window">Fenster</button><button class="btn" data-act="addOp" data-v="pass">Durchgang</button></div>
+      <h3>Einsetzen</h3><div class="grid3"><button class="btn" data-act="addOp" data-v="door">Tür</button><button class="btn" data-act="addOp" data-v="window">Fenster</button><button class="btn" data-act="addOp" data-v="pass">Durchgang</button><button class="btn" data-act="addOp" data-v="cable">Kabeldurchlass</button></div>
       <div class="stack" style="margin-top:10px"><button class="btn" data-act="split">Ecke in der Mitte einfügen</button><button class="btn danger" data-act="delWall">${delLbl}</button></div>`}
+  else if(s?.kind==='stair'&&(f.stairs||[]).some(t=>t.id===s.id)){h=stairPanel(f,f.stairs.find(t=>t.id===s.id))}
+  else if(s?.kind==='riser'&&(f.risers||[]).some(r=>r.id===s.id)){h=`<h2>Deckendurchlass</h2><p class="hint">Verbindet diese Etage mit der darüber. Leitungen, die die Etage wechseln, nehmen den nächstgelegenen Durchlass, statt am Verteiler senkrecht hochzugehen. In der Etage darüber erscheint er gestrichelt.</p><p class="hint">Zum Verschieben ziehen.</p><div class="row"><button class="btn danger" data-act="delRiser">Entfernen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>`}
   else if(s?.kind==='node'&&g.adj.has(s.id)){const q=nodeOf(f,s.id),dg=deg(f,s.id);
     h=`<h2>Ecke</h2><p class="hint">Ziehen verschiebt die Ecke, alle Wände daran gehen mit. Auf eine andere Ecke oder Wand gezogen, wird sie damit verbunden.</p>
       <div class="grid2">${inp('X','x',q.x,'node')}${inp('Y','y',q.y,'node')}</div>
@@ -1216,6 +1286,9 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
   if(!h){const d={type:(f.walls.length?types().find(t=>!t.ext&&t.t<15)||types().find(t=>!t.ext):null)?.id||(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
     h=`<h2>Grundriss ${esc(f.name)}</h2><p class="hint">Wand, Ecke, Tür oder Raum antippen, um sie zu bearbeiten. Räume entstehen von selbst, sobald Wände eine Fläche umschließen.</p>
       <div class="row"><button class="btn primary" data-act="tool" data-v="draw" style="flex:1">Wand zeichnen</button></div>
+      <div class="grid2"><button class="btn" data-act="riserMode" aria-pressed="${!!UI.riser}">Deckendurchlass setzen</button><button class="btn" data-act="stairMode" aria-pressed="${!!UI.stairM}">Treppe setzen</button></div>
+      ${UI.riser?'<div class="note" style="margin-top:8px">Stelle im Raum antippen, an der Leitungen in die Etage darüber gehen sollen.</div>':''}${UI.stairM?'<div class="note" style="margin-top:8px">Stelle antippen, an der die Treppe beginnt. Danach lassen sich Maße, Richtung und Stufen einstellen.</div>':''}
+      <p class="hint" style="margin-top:6px">Kabeldurchlässe in Wänden setzt du über eine Wand → Einsetzen. Leitungen nutzen sie bevorzugt.</p>
       <h3>Raum aus Innenmaßen</h3>
       <div class="grid2">${inp('Breite innen','w',400,'mk','cm','id="mkw"')}${inp('Länge innen','l',350,'mk','cm','id="mkl"')}</div>
       <div class="grid2" style="margin-top:8px"><label class="f">Wandtyp<select id="mkt">${typeOpts(d.type)}</select></label>${inp('Dicke','t',typeOf({type:d.type}).t,'mk','cm','id="mkd"')}</div>
@@ -1241,6 +1314,7 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
     else if(fld==='cnt')it.cnt=+v;else if(fld==='h')it.h=Math.max(0,v);else if(fld==='off'){it.off=Math.max(0,v);const pp=comboPartner(f,it);if(pp)pp.off=it.off}else if(fld==='w')it.w=Math.max(20,v);else it[fld]=v;
     commit();renderPanel();render();return}
   if(sc==='ci'){const c=circuits().find(x=>x.id===(UI.selC||UI.selB));if(!c)return;if(fld==='dist'){c.dist=v||null;c.rcd=distBy(c.dist)?.it.devs?.find(d=>d.t==='rcd')?.id||null}else if(fld==='rcd')c.rcd=v||null;else c[fld]=String(v).trim()||c[fld];commit();renderPanel();render();return}
+  if(sc==='stair'){const t=f.stairs.find(x=>x.id===s?.id);if(!t)return;t[fld]=fld==='steps'?clamp(Math.round(v),2,40):Math.max(30,v);commit();renderPanel();render();return}
   if(sc==='grp'){const x=allItems().find(y=>y.it.id===el.dataset.v);if(x){x.it.akt=v;commit();renderPanel();render()}return}
   if(sc==='dist'){const dv=boardBy(UI.dv);if(!dv)return;if(fld==='pp')dv.it.pp=+v;if(fld==='rows')dv.it.rows=clamp(Math.round(v),1,12);if(fld==='te')dv.it.te=clamp(Math.round(v),4,30);commit();renderPanel();render();return}
   if(sc==='dev'){const dv=distBy(UI.dv),d=dv?.it.devs?.find(x=>x.id===UI.selB);if(!d)return;if(fld==='te')d.te=clamp(Math.round(v),1,12);else{if(String(v).trim())d.lbl=String(v).trim();else delete d.lbl}commit();renderPanel();render();return}
@@ -1277,7 +1351,7 @@ function mkRoom(){const f=floor(),w=num($('#mkw').value),l=num($('#mkl').value),
   let ox=0,oy=0;if(P.length){const bb=bbox(P);ox=bb.maxX+100+t;oy=bb.minY+t}
   const c=[{x:ox-h,y:oy-h},{x:ox+w+h,y:oy-h},{x:ox+w+h,y:oy+l+h},{x:ox-h,y:oy+l+h}].map(p=>addNode(f,p)),pr={t,type:ty.id,build:ty.builds[0]?.name||'',st:newStatus()};
   for(let i=0;i<4;i++)addWall(f,c[i],c[(i+1)%4],pr);UI.sel=null;commit();renderPanel();fit()}
-function addOpening(type){const f=floor(),w=f.walls.find(x=>x.id===UI.sel?.id);if(!w)return;const L=wlen(f,w),dw=type==='door'?90:type==='window'?120:90,ow=Math.min(dw,Math.max(10,L-10));
+function addOpening(type){const f=floor(),w=f.walls.find(x=>x.id===UI.sel?.id);if(!w)return;const L=wlen(f,w),dw=type==='door'?90:type==='window'?120:type==='cable'?10:90,ow=Math.min(dw,Math.max(10,L-10));
   const o={id:uid(),wall:w.id,type,off:Math.max(0,(L-ow)/2),w:ow,st:newStatus(),h:type==='window'?130:201};if(type==='window')o.sill=90;if(type==='door'){o.hinge='a';o.side=1}
   f.openings.push(o);UI.sel={kind:'op',id:o.id};commit();renderPanel();render()}
 function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
@@ -1312,6 +1386,10 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'irot':{const it=items(f).find(x=>x.id===s?.id);if(it){it.rot=((it.rot||0)+90)%360;commit();render()}}break;
     case 'idup':{const it=items(f).find(x=>x.id===s?.id);if(it){const c={...it,id:uid()};delete c.ctl;if(c.wall)c.off+=25;else{c.x+=25;c.y+=25}if(c.k==='v_hv'){flash('Es gibt nur einen Hauptverteiler.');return}items(f).push(c);UI.sel={kind:'item',id:c.id};commit();renderPanel();render()}}break;
     case 'mkRoom':mkRoom();break;
+    case 'riserMode':UI.riser=!UI.riser;UI.stairM=false;UI.dock=null;renderPanel();break;
+    case 'stairMode':UI.stairM=!UI.stairM;UI.riser=false;UI.dock=null;renderPanel();break;
+    case 'delRiser':case 'delStair':deleteSel();break;
+    case 'stairRot':{const t=f.stairs.find(x=>x.id===s?.id);if(t){t.rot=((t.rot+ +b.dataset.v)%360+360)%360;commit();render()}}break;
     case 'mkDock':{const w=num($('#mkw').value),l=num($('#mkl').value),t=num($('#mkd').value);if(w>=20&&l>=20&&t>0){UI.dock={w,l,t,type:$('#mkt').value};renderPanel();flash('Jetzt auf die Wand tippen, an die der Raum soll.')}}break;
     case 'mkDockEnd':UI.dock=null;renderPanel();break;
     case 'selRoom':UI.tab[UI.mode]='edit';select({kind:'room',id:b.dataset.id});break;
@@ -1341,6 +1419,8 @@ function deleteSel(){const f=floor(),s=UI.sel;if(!s)return;
   if(s.kind==='item'){const it=items(f).find(x=>x.id===s.id);if(!it)return;if(UI.view==='ist'||it.st==='new'){layout(f).items=items(f).filter(x=>x!==it)}else it.st=it.st==='del'?'keep':'del'}
   else if(s.kind==='wall'){const w=f.walls.find(x=>x.id===s.id);if(!w)return;if(UI.view==='ist'||w.st==='new')deleteWall(f,w);else{w.st=w.st==='del'?'keep':'del'}}
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o)return;if(UI.view==='ist'||o.st==='new')f.openings=f.openings.filter(x=>x!==o);else o.st=o.st==='del'?'keep':'del'}
+  else if(s.kind==='riser'){f.risers=f.risers.filter(r=>r.id!==s.id)}
+  else if(s.kind==='stair'){f.stairs=f.stairs.filter(t=>t.id!==s.id)}
   else if(s.kind==='node'){if(!dissolveNode(f,s.id))return}
   else return;
   UI.sel=null;commit();validateSel();renderPanel();render()}
@@ -1553,7 +1633,7 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   const base={sx:e.clientX,sy:e.clientY,moved:false};drag={...base,type:'pan',tx0:UI.vp.tx,ty0:UI.vp.ty,w};
   if(UI.measOn){const p=measSnap(w);drag={...base,type:'meas',a:p};UI.meas={a:p,b:p};return}
   if(UI.tool==='draw'&&UI.mode==='plan'){drag={...base,type:'draw'};UI.cur=snapDraw(w);render();return}
-  if(UI.dock&&UI.mode==='plan')return;
+  if((UI.dock||UI.riser||UI.stairM)&&UI.mode==='plan')return;
   if(!t)return;const k=t.dataset.kind,id=t.dataset.id;
   if(UI.mode==='elec'){if(UI.place)return;if(UI.assign&&k==='item'){const it=items(f).find(x=>x.id===id);if(it){assignCi(f,it,it.ci===UI.assign?null:UI.assign);drag=null;commit();renderPanel();render()}return}if(k==='item'){const it=items(f).find(x=>x.id===id);if(!it)return;UI.place=null;if(UI.sel?.id!==id)select({kind:'item',id});const p=itemPos(G(f,UI.view),it);drag={...base,type:'item',it,ox:w.x-p.x,oy:w.y-p.y}}
     else if(k==='room'){select({kind:'room',id})}return}
@@ -1561,7 +1641,9 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   else if(k==='wall'){const x=f.walls.find(q=>q.id===id);select({kind:'wall',id});const A=nodeOf(f,x.a),B=nodeOf(f,x.b),L=wlen(f,x);
     const ids=[...new Set(lineOf(f,x).flatMap(c=>[c.a,c.b]))];drag={...base,type:'wall',p0:ids.map(i=>{const q=nodeOf(f,i);return {q,x:q.x,y:q.y}}),n:{x:-(B.y-A.y)/L,y:(B.x-A.x)/L},w0:w}}
   else if(k==='op'){const o=f.openings.find(x=>x.id===id);select({kind:'op',id});const x=f.walls.find(q=>q.id===o.wall),A=nodeOf(f,x.a),u=unitOf(f,x);drag={...base,type:'op',o,grab:(w.x-A.x)*u.x+(w.y-A.y)*u.y-o.off}}
-  else if(k==='room'){const r=f.rooms.find(x=>x.id===id);select({kind:'room',id});drag={...base,type:'room',r,ox:w.x-r.x,oy:w.y-r.y,x0:r.x,y0:r.y}}});
+  else if(k==='room'){const r=f.rooms.find(x=>x.id===id);select({kind:'room',id});drag={...base,type:'room',r,ox:w.x-r.x,oy:w.y-r.y,x0:r.x,y0:r.y}}
+  else if(k==='stair'){const t=f.stairs.find(x=>x.id===id);if(t){select({kind:'stair',id});drag={...base,type:'stair',r:t,ox:w.x-t.x,oy:w.y-t.y}}}
+  else if(k==='riser'){const r=f.risers.find(x=>x.id===id);if(r){select({kind:'riser',id});drag={...base,type:'riser',r,ox:w.x-r.x,oy:w.y-r.y}}}});
 svg.addEventListener('pointermove',e=>{
   if(!ptrs.has(e.pointerId)){if(e.pointerType==='mouse'&&UI.tool==='draw'&&!UI.measOn&&UI.chain){UI.cur=snapDraw(toWorld(e.clientX,e.clientY));render()}return}
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -1577,6 +1659,7 @@ svg.addEventListener('pointermove',e=>{
     case 'node':{const p={x:w.x-drag.ox,y:w.y-drag.oy};snapNode(p,drag.id);const q=nodeOf(f,drag.id);q.x=r1(p.x);q.y=r1(p.y);break}
     case 'wall':{let t=(w.x-drag.w0.x)*drag.n.x+(w.y-drag.w0.y)*drag.n.y;if(gr)t=round(t,gr);for(const o of drag.p0){o.q.x=r1(o.x+drag.n.x*t);o.q.y=r1(o.y+drag.n.y*t)}break}
     case 'op':{const x=f.walls.find(q=>q.id===drag.o.wall);if(!x)break;const A=nodeOf(f,x.a),u=unitOf(f,x),L=wlen(f,x);let off=(w.x-A.x)*u.x+(w.y-A.y)*u.y-drag.grab;if(gr)off=round(off,gr);drag.o.off=clamp(off,0,L-drag.o.w);break}
+    case 'stair':case 'riser':drag.r.x=gr?round(w.x-drag.ox,gr):r1(w.x-drag.ox);drag.r.y=gr?round(w.y-drag.oy,gr):r1(w.y-drag.oy);break
     case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break
     case 'item':{const it=drag.it,q={x:w.x-drag.ox,y:w.y-drag.oy};if(KINDS[it.k]?.place==='wall'){const sn=snapWall(G(f,UI.view),{x:w.x,y:w.y},Math.max(60,60/UI.vp.s));if(sn){it.wall=sn.wall;it.side=sn.side;it.off=gr?round(sn.off,gr):sn.off;const pp=comboPartner(f,it);if(pp){pp.wall=it.wall;pp.side=it.side;pp.off=it.off}}}else{let x=gr?round(q.x,gr):r1(q.x),y=gr?round(q.y,gr):r1(q.y);const A=alignGuides(f,null,it,{x,y},12/UI.vp.s);UI.guides={it,gx:A.gx,gy:A.gy};if(A.gx.length){x=A.gx[0].x;UI.guides.x=x}if(A.gy.length){y=A.gy[0].y;UI.guides.y=y}it.x=x;it.y=y}break}}
   render()});
@@ -1587,6 +1670,8 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(d.type==='draw'){if(e.type==='pointercancel'){UI.cur=null;render();return}const c=UI.cur||snapDraw(toWorld(e.clientX,e.clientY));drawTo(c);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.place){placeAt(d.w);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.dock){dockRoom(d.w);return}
+  if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.riser){const gr=S.settings.snap?S.settings.grid:0,f=floor(),r={id:uid(),x:gr?round(d.w.x,gr):r1(d.w.x),y:gr?round(d.w.y,gr):r1(d.w.y)};f.risers.push(r);UI.riser=false;UI.sel={kind:'riser',id:r.id};commit();renderPanel();render();flash('Deckendurchlass gesetzt.');return}
+  if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.stairM){addStair(d.w);return}
   if(d.type==='pan'&&!d.moved){const F=faceAt(G(floor(),UI.view),d.w),r=F&&floor().rooms.find(r=>inside(r,F.poly));select(r?{kind:'room',id:r.id}:null);return}
   UI.guides=null;UI.wg=null;
   if(!d.moved||d.type==='pan')return;
