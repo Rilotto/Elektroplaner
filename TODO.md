@@ -27,7 +27,7 @@
 ## Bedienung und Design
 - [x] Bedienkonzept überarbeiten: Designkonzept in der Projektdoku „Elektroplaner-Designkonzept“, Testversion im Branch `design` (Artifact „Elektroplaner Design-Test“)
 - [x] `design` in `main` übernommen (0.7.1)
-- [ ] Offene Punkte aus dem Designkonzept (Auswahlfeld mit „Mehr“, feste Aktionsleiste unten im Seitenfeld, Meldungen unten, Raumränder nur bei gewähltem Stromkreis)
+- [ ] Offene Punkte aus dem Designkonzept (Auswahlfeld mit „Mehr“, feste Aktionsleiste unten im Seitenfeld, Meldungen unten); Raumränder nur bei gewähltem Stromkreis kommt mit 0.7.4
 
 ## Fahrplan (mehrere kleine Zwischenschritte)
 
@@ -59,6 +59,10 @@
 - [ ] Gespeichert je Teilstück (von Element zu Element), Längen und Material rechnen mit dem eigenen Verlauf; eigene Strecken werden leicht anders markiert
 - [ ] Verlegeart je Strecke: „an der Wand“ (heute) oder „über die Decke direkt“ (z. B. Leuchte zu Leuchte in einer Reihe, ohne Abstecher zur Wand); auch als Voreinstellung je Stromkreis/Schaltung
 - [ ] Reihenfolge der Leuchten in einer Schaltung festlegen (wer an wem hängt), damit Ketten Leuchte→Leuchte sinnvoll laufen
+- [ ] Stromkreis hervorheben: Stromkreis antippen (Reiter „Stromkreise“ in ② Elektro, Stromkreisliste/Belegung in ③ Verteiler) → im Plan werden seine Elemente mit farbigem Ring markiert, seine Leitungen kräftig in der Stromkreisfarbe gezeichnet (auch innerhalb von Bündeln), alles andere tritt blass zurück; die Räume des Stromkreises bekommen einen leichten Farbton
+- [ ] Dazu: Etagen-Leiste zeigt einen Farbpunkt an Etagen, auf denen der Stromkreis ebenfalls liegt; Infozeile unten rechts „Stromkreis 4 · 6 Elemente · 23 m“; Antippen eines Elements im Plan wählt dessen Stromkreis, wenn der Reiter „Stromkreise“ offen ist; Antippen ins Leere hebt die Hervorhebung auf
+- [ ] Im Verteiler: LS antippen → „Im Plan zeigen“ springt zu ② Elektro mit hervorgehobenem Stromkreis
+- [ ] Raumränder nach Stromkreis nur noch bei gewähltem Stromkreis (Punkt aus dem Designkonzept, hier mit erledigt)
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
