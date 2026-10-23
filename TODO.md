@@ -47,7 +47,7 @@
 - [ ] Schalter verknüpfen per Drag and Drop: Schalter auf Schalter ziehen → „Mehrfachkombination“ (gemeinsamer 2-/3-fach-Rahmen, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz, zwei Wippen); auch Schalter + Steckdose als Kombination; Lösen per Knopf; Material zählt Rahmen, Einsätze und Dosen richtig
 - [ ] Schalter → Leuchte per Ziehen zuordnen
 - [ ] Grundausstattung (immer da, kein Modul) ergänzen: TV/SAT-Antennendose, Leerdose mit Leerrohr (für später), Rollladenschalter/-taster und Motoranschluss (einfache Ausführung), Video-Türsprechanlage / Innenstation; Türsprechanlage und Rauchwarnmelder sind schon drin
-- [ ] Neutralleiter in jeder Schalterdose als Projekteinstellung (Standard an, wichtig für spätere Smart-Home-Aktoren); Schalterdosen wahlweise als tiefe Elektronikdosen im Material
+- [ ] Schalterdosen: Einstellung „tiefe Elektronikdosen“ (Material passt sich an, Standard aus); im Schaltbild und in der Leitungsliste sichtbar machen, dass N und PE in jeder Schalterdose ankommen (ist bei der Verdrahtung ohne Abzweigdosen schon so)
 
 ## 0.7.4 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
 - [ ] Bündel antippen → fächert sich auf: alle Leitungen dieser Strecke einzeln nebeneinander gezeichnet, jede mit Farbe und Beschriftung (Leitungstyp, Stromkreis-Nr., Ziel/Raum); klappt wieder zu, sobald woanders getippt wird
@@ -59,6 +59,14 @@
 - [ ] Gespeichert je Teilstück (von Element zu Element), Längen und Material rechnen mit dem eigenen Verlauf; eigene Strecken werden leicht anders markiert
 - [ ] Verlegeart je Strecke: „an der Wand“ (heute) oder „über die Decke direkt“ (z. B. Leuchte zu Leuchte in einer Reihe, ohne Abstecher zur Wand); auch als Voreinstellung je Stromkreis/Schaltung
 - [ ] Reihenfolge der Leuchten in einer Schaltung festlegen (wer an wem hängt), damit Ketten Leuchte→Leuchte sinnvoll laufen
+
+## 0.7.5 – Dosenbelegung und Abzweigdosen
+- [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
+- [ ] Belegung prüfen: Leitungen und Adern je Dose zählen; Hinweis (ignorierbar), wenn es eng wird, z. B. mehr als 4 Leitungen in einer normalen Dose, mehr als 3 mit Aktor, oder viele Klemmen; Vorschlag: tiefe Dose oder Abzweigdose
+- [ ] Einstellung Verdrahtung (Menü → Vorgaben): „nur in Schalterdosen“ (Standard) · „Abzweigdosen vorschlagen“ · „Abzweigdosen frei verwenden“
+- [ ] Vorschläge im Plan (Schalter im Menü „Ebenen“): gestrichelte Punkte, wo eine Abzweigdose sinnvoll ist, z. B. überfüllte Schalterdose, Verzweigung zu mehreren Leuchten in verschiedene Richtungen, langer Rückweg Schalter → Leuchte, der sich mit Abzweigdose deutlich verkürzt; Antippen zeigt den Grund und die Ersparnis (m Leitung, Leitungen je Dose), „Übernehmen“ setzt eine echte Abzweigdose und führt die Schaltung darüber
+- [ ] Abzweigdose als Element (Katalog, Suchwörter „Verteilerdose, Klemmdose“), manuell setzbar, Schaltung zuordnen; Hinweis, dass Abzweigdosen zugänglich bleiben müssen (nicht zuputzen/zutapezieren)
+- [ ] Hängt am Leitungsverlauf aus 0.7.4 (eigene Wege, Reihenfolge der Leuchten)
 
 ## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
 - [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume); Umbau-Ansicht vergleicht beide; bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
