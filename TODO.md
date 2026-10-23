@@ -6,7 +6,7 @@
 
 ## Phasen
 - [x] 1. Grundriss und Etagen
-- [ ] 2. Elemente und Ist-Aufnahme (Schaltzeichen, Höhen, Legende, Ebene Elektroinstallation, Varianten)
+- [x] 2. Elemente und Ist-Aufnahme (Schaltzeichen, Höhen, Montageart, Legende, Ebene Elektro, Varianten), erste Fassung
 - [ ] 3. Verteiler und Stromkreise
 - [ ] 4. Leitungen und Mengen
 - [ ] 5. Netzwerk, Klingel, Außen, Eltako

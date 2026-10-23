@@ -60,6 +60,13 @@ main{flex:1;display:flex;min-height:0}
 #badge{position:absolute;left:10px;bottom:10px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 20px);pointer-events:none}
 #badge span{min-height:30px;padding:4px 12px;border-radius:15px;border:1px solid var(--line);background:var(--floor);font-size:14px;display:inline-flex;align-items:center;gap:6px}
 #badge i{width:12px;height:12px;border-radius:3px;display:inline-block}
+#variants{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 20px)}
+#variants button{min-height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--floor);font-size:14px}
+#variants button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:600}
+.cat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cat .btn span{min-width:0;overflow-wrap:anywhere}
+[hidden]{display:none!important}
+.cat .btn{justify-content:flex-start;white-space:normal;text-align:left;line-height:1.15;padding:4px 8px;min-height:46px;font-size:14px;gap:8px}
 h2{font-size:17px;font-weight:600;margin:0 0 10px}
 h3{font-size:14px;font-weight:600;margin:18px 0 8px;color:var(--muted)}
 p.hint{color:var(--muted);margin:0 0 12px;font-size:14px}
@@ -101,7 +108,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 .sheet ol li{margin-bottom:4px}
 .sheet a{color:var(--accent)}
 .btn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
-#toolhint{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:var(--ink);color:var(--panel);font-size:14px;padding:6px 12px;border-radius:16px;display:none;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#toolhint{position:absolute;left:50%;top:52px;transform:translateX(-50%);background:var(--ink);color:var(--panel);font-size:14px;padding:6px 12px;border-radius:16px;display:none;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 #toolhint.on{display:block}
 #printArea{display:none}
 @media print{
@@ -139,6 +146,8 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 .wl{fill:var(--muted);font-family:var(--fc);font-weight:500}
 .wl.on{fill:var(--accent)}
 .dimbg{fill:var(--paper);opacity:.9}
+.sy *{vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.sy text{stroke:none}
 .dim,.dimt,.dimbg,.wl,.wsel,.rlsel,.opsel,.vtx,.wo,.wdel,.ul,.gap,.jamb,.win,.dline,.darc,.prev,.meas,.measend{pointer-events:none}
 .prev{fill:var(--accent);fill-opacity:.22;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:6 4}
 .pcur{fill:none;stroke:var(--accent);stroke-width:2}
@@ -152,6 +161,9 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
   <button class="btn" id="floorMenu">Etagen</button>
   <div class="seg" role="group" aria-label="Ansicht" id="viewSeg">
     <button data-view="ist">Ist</button><button data-view="soll">Soll</button><button data-view="umbau">Umbau</button>
+  </div>
+  <div class="seg" role="group" aria-label="Ebene" id="modeSeg">
+    <button data-mode="plan">Grundriss</button><button data-mode="elec">Elektro</button>
   </div>
   <div class="seg" role="group" aria-label="Werkzeug" id="toolSeg">
     <button data-tool="sel">Auswählen</button><button data-tool="draw">Wand zeichnen</button>
@@ -168,6 +180,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
   <div id="stage">
     <svg id="svg"><g id="world"></g></svg>
     <div id="badge"></div>
+    <div id="variants"></div>
     <div id="toolhint"></div>
   </div>
   <aside id="panel"></aside>
@@ -197,24 +210,154 @@ const VIEWS={ist:'Ist-Aufnahme',soll:'Soll-Plan',umbau:'Umbauplan'};
 const VIS={ist:x=>x.st!=='new',soll:x=>x.st!=='del',umbau:()=>true};
 const SHADES={dark:'Dunkel',mid:'Mittel',light:'Hell',hatch:'Schraffiert'};
 const OPT={door:'Tür',window:'Fenster',pass:'Durchgang'};
+/* ---------- Elektro: Elementarten und Schaltzeichen ---------- */
+const HCLS={switch:'Schalter und Taster',socket:'Steckdosen',work:'Über Arbeitsplatte',net:'Netzwerkdosen',wlight:'Wandleuchten und Melder',bell:'Klingel und Sprechanlage',dist:'Verteiler (Unterkante)',other:'Sonstige Anschlüsse'};
+const DEF_H={switch:105,socket:30,work:115,net:30,wlight:200,bell:140,dist:110,other:30};
+const MOUNT={UP:'Unterputz',HW:'Hohlwand',AP:'Aufputz',IP44:'Außen IP44',IP65:'Außen IP65'};
+const LIGHTS=['l_deck','l_wand','l_spot','l_led','l_spieg','a_l'];
+const CAT=[
+  {g:'Steckdosen',l:[['sd','Steckdose',1],['sd','Steckdose 2-fach',2],['sd','Steckdose 3-fach',3],['sd','Steckdose 4-fach',4],['sdk','Steckdose mit Klappdeckel'],['sd400','Kraftsteckdose 400 V'],['ga','Geräteanschlussdose'],['wm','Waschmaschine / Trockner']]},
+  {g:'Schalter',l:[['sw_aus','Ausschalter'],['sw_ser','Serienschalter'],['sw_wech','Wechselschalter'],['sw_kreuz','Kreuzschalter'],['sw_kon','Kontrollschalter'],['sw_dim','Dimmer']]},
+  {g:'Taster',l:[['ta','Taster'],['ta2','Doppeltaster']]},
+  {g:'Leuchten',l:[['l_deck','Deckenauslass'],['l_wand','Wandauslass'],['l_spot','Einbaustrahler'],['l_led','LED-Band'],['l_spieg','Spiegelleuchte']]},
+  {g:'Außen',l:[['entry','Vorlage Hauseingang'],['a_l','Außenleuchte'],['a_bwm','Bewegungsmelder'],['a_dae','Dämmerungsschalter'],['a_sd','Außensteckdose IP44'],['a_gar','Gartenanschluss']]},
+  {g:'Klingel',l:[['k_t','Klingeltaster'],['k_g','Gong'],['k_ts','Türsprechanlage']]},
+  {g:'Netzwerk',l:[['n_d','Netzwerkdose',1],['n_d','Netzwerkdose 2-fach',2],['n_ap','WLAN-Access-Point'],['n_r','Router'],['n_sw','Switch'],['n_hak','Hausanschluss Telefon/Glasfaser/Kabel']]},
+  {g:'Verteiler',l:[['v_hv','Hauptverteiler (Zählerschrank)'],['v_uv','Unterverteiler'],['v_dv','Datenverteiler mit Patchpanel']]},
+  {g:'Sonstiges',l:[['s_rm','Rauchwarnmelder'],['s_herd','Herd-/Backofenauslass'],['s_hz','Heizungsanschluss'],['s_pa','Potentialausgleich']]}];
+const KD=(name,place,sym,hc,o={})=>({name,place,sym,hc,...o});
+const KINDS={
+  sd:KD('Schuko-Steckdose','wall','sock','socket',{cnt:true}),sdk:KD('Steckdose mit Klappdeckel','wall','sock','socket',{tag:'K'}),sd400:KD('Kraftsteckdose 400 V','wall','sock','socket',{tag:'3~'}),
+  ga:KD('Geräteanschlussdose','wall','box','other',{tag:'GA'}),wm:KD('Anschluss Waschmaschine/Trockner','wall','sock','socket',{tag:'WM'}),
+  sw_aus:KD('Ausschalter','wall','sw','switch',{lev:1}),sw_ser:KD('Serienschalter','wall','sw','switch',{lev:2}),sw_wech:KD('Wechselschalter','wall','sw','switch',{lev:3}),
+  sw_kreuz:KD('Kreuzschalter','wall','sw','switch',{lev:4}),sw_kon:KD('Kontrollschalter','wall','sw','switch',{lev:1,kon:true}),sw_dim:KD('Dimmer','wall','sw','switch',{lev:1,dim:true}),
+  ta:KD('Taster','wall','ta','switch'),ta2:KD('Doppeltaster','wall','ta2','switch'),
+  l_deck:KD('Deckenauslass','ceil','lamp'),l_wand:KD('Wandauslass','wall','lamp','wlight'),l_spot:KD('Einbaustrahler','ceil','spot'),l_led:KD('LED-Band','ceil','led'),l_spieg:KD('Spiegelleuchte','wall','mirror','wlight'),
+  a_l:KD('Außenleuchte','wall','lamp','wlight',{tag:'A',mount:'IP44'}),a_bwm:KD('Bewegungsmelder','wall','bwm','wlight',{mount:'IP44'}),a_dae:KD('Dämmerungsschalter','wall','box','wlight',{tag:'DS',mount:'IP44'}),
+  a_sd:KD('Außensteckdose','wall','sock','socket',{tag:'IP',mount:'IP44'}),a_gar:KD('Gartenanschluss','ceil','box','other',{tag:'GS',mount:'IP65'}),
+  k_t:KD('Klingeltaster','wall','ta','bell',{tag:'K'}),k_g:KD('Gong','wall','gong','bell'),k_ts:KD('Türsprechanlage','wall','box','bell',{tag:'TS'}),
+  n_d:KD('Netzwerkdose','wall','box','net',{tag:'RJ',cnt:true}),n_ap:KD('WLAN-Access-Point','ceil','ap'),n_r:KD('Router','wall','box','other',{tag:'R'}),n_sw:KD('Switch','wall','box','other',{tag:'SW'}),
+  n_hak:KD('Hausanschluss','wall','box','other',{tag:'HA',hak:true}),
+  v_hv:KD('Hauptverteiler','wall','dist','dist',{tag:'HV',w:55}),v_uv:KD('Unterverteiler','wall','dist','dist',{tag:'UV',w:55}),v_dv:KD('Datenverteiler','wall','dist','dist',{tag:'DV',w:40}),
+  s_rm:KD('Rauchwarnmelder','ceil','box','other',{tag:'RM'}),s_herd:KD('Herd-/Backofenauslass','wall','box','other',{tag:'H'}),s_hz:KD('Heizungsanschluss','wall','box','other',{tag:'HZ'}),s_pa:KD('Potentialausgleich','wall','pa','other')};
+const HAK={tel:'Telefon',gf:'Glasfaser',kab:'Kabel'};
+const kindOrder=Object.keys(KINDS);
+function kindName(it){const d=KINDS[it.k];if(!d)return 'Element';if(d.cnt&&it.cnt>1)return d.name+' '+it.cnt+'-fach';if(d.hak&&it.hak)return 'Hausanschluss '+HAK[it.hak];return d.name}
+function legendKey(it){const d=KINDS[it.k];return it.k+(d?.cnt?'|'+(it.cnt||1):'')+(d?.hak?'|'+(it.hak||''):'')}
+/* Schaltzeichen in Anlehnung an DIN EN 60617. Lokale Einheiten in cm, y zeigt von der Wand in den Raum. */
+function symSvg(it,c,rot){const d=KINDS[it.k]||KINDS.ga,L=(a,b,x,y)=>`<line x1="${a}" y1="${b}" x2="${x}" y2="${y}"/>`,
+  T=(t,x,y,fs=5)=>`<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" dominant-baseline="central" fill="${c}" stroke="none" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" transform="rotate(${-rot} ${x} ${y})">${esc(t)}</text>`,
+  O=(x,y,r,fill='none')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>`,cy=d.place==='wall'?9:0;let s='';
+  const lever=(sx,n)=>{const u={x:.6*sx,y:.8},E={x:u.x*8.5,y:9+u.y*8.5},p={x:.8*sx,y:-.6*sx};let r=L(u.x*3.5,9+u.y*3.5,E.x,E.y);for(let i=0;i<n;i++){const Q={x:E.x-u.x*2.4*i,y:E.y-u.y*2.4*i};r+=L(Q.x,Q.y,Q.x+p.x*2.8,Q.y+p.y*2.8)}return r};
+  switch(d.sym){
+    case 'sock':s=L(0,0,0,3)+`<path d="M-6 3A6 6 0 0 0 6 3"/>`+L(-7.5,3,7.5,3)+(it.cnt>1?T(String(it.cnt),10.5,8,6.5):'')+(d.tag?T(d.tag,0,13.5,4.6):'');break;
+    case 'box':{const y0=d.place==='wall'?2:-5;s=(d.place==='wall'?L(0,0,0,2):'')+`<rect x="-7" y="${y0}" width="14" height="10"/>`+T(d.tag||'',0,y0+5,d.tag?.length>2?4.2:5)+(it.cnt>1?T(String(it.cnt),10.5,y0+5,6.5):'');break}
+    case 'sw':s=L(0,0,0,5.5)+O(0,9,3.5)+(d.lev===4?lever(1,1)+lever(-1,1)+`<g transform="rotate(180 0 9)">${lever(1,1)+lever(-1,1)}</g>`:d.lev===3?lever(1,1)+`<g transform="rotate(180 0 9)">${lever(1,1)}</g>`:lever(1,d.lev))+
+      (d.kon?L(-2.4,6.6,2.4,11.4)+L(-2.4,11.4,2.4,6.6):'')+(d.dim?T('D',-7,13,5):'');break;
+    case 'ta':s=L(0,0,0,5.5)+O(0,9,3.5)+O(0,9,1.3,c)+(d.tag?T(d.tag,7.5,9,5):'');break;
+    case 'ta2':s=L(0,0,0,2)+L(-4.5,2,4.5,2)+L(-4.5,2,-4.5,5.5)+L(4.5,2,4.5,5.5)+O(-4.5,9,3.5)+O(-4.5,9,1.3,c)+O(4.5,9,3.5)+O(4.5,9,1.3,c);break;
+    case 'lamp':{const r=d.place==='wall'?5:6;s=(d.place==='wall'?L(0,0,0,cy-r):'')+O(0,cy,r)+L(-r*.71,cy-r*.71,r*.71,cy+r*.71)+L(-r*.71,cy+r*.71,r*.71,cy-r*.71)+(d.tag?T(d.tag,r+4,cy,5):'');break}
+    case 'spot':s=O(0,0,5)+O(0,0,3)+L(-2.1,-2.1,2.1,2.1)+L(-2.1,2.1,2.1,-2.1);break;
+    case 'led':s=`<rect x="-16" y="-2" width="32" height="4"/>`+[-10,-4,2,8].map(x=>L(x,-2,x+4,2)).join('');break;
+    case 'mirror':s=L(0,0,0,2)+`<rect x="-9" y="2" width="18" height="6"/>`+L(-9,2,9,8)+L(-9,8,9,2);break;
+    case 'bwm':s=L(0,0,0,3)+`<path d="M-6 3A6 6 0 0 0 6 3Z"/>`+`<path d="M-3 11.5l3 2.5 3-2.5"/>`;break;
+    case 'gong':s=L(0,0,0,3)+`<path d="M-5 12Q-5 3 0 3Q5 3 5 12Z"/>`+L(-6.5,12,6.5,12)+O(0,14,1.2,c);break;
+    case 'ap':s=O(0,0,2.6)+`<path d="M-5 -3.5A6.5 6.5 0 0 1 5 -3.5M-8 -6A10 10 0 0 1 8 -6"/>`;break;
+    case 'pa':s=L(0,0,0,6)+L(-6,6,6,6)+L(-4,8.5,4,8.5)+L(-2,11,2,11);break;
+    case 'dist':{const w=it.w||d.w||55;s=`<rect x="${-w/2}" y="0.5" width="${w}" height="12"/><path d="M${-w/2} 12.5L${w/2} 0.5V12.5Z" fill="${c}"/>`+T(d.tag,0,19,6.5);break}}
+  if(it.st==='del'&&c!=='currentColor')s+=`<line x1="-10" y1="${cy+10}" x2="10" y2="${cy-10}" stroke-width="1.4"/>`;
+  return s}
+const symCenter=it=>KINDS[it.k]?.place==='wall'?{x:0,y:9}:{x:0,y:0};
+function symIcon(k,cnt){const it={k,cnt},d=KINDS[k],w=d?.sym==='dist'?30:d?.sym==='led'?18:11.5,cy=d?.place==='wall'?8:0;return `<svg viewBox="${-w} ${cy-10} ${2*w} 20" width="40" height="30" aria-hidden="true" style="flex:0 0 auto"><g fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke">${symSvg(it,'currentColor',0)}</g></svg>`}
+/* ---------- Elektro: Daten und Platzierung ---------- */
+function ensureLayouts(f){if(!Array.isArray(f.layouts)||!f.layouts.length){const l={id:uid(),name:'Variante A',items:[]};f.layouts=[l];f.activeLayout=l.id}
+  if(!f.layouts.some(l=>l.id===f.activeLayout))f.activeLayout=f.layouts[0].id}
+const layout=(f=floor())=>{ensureLayouts(f);return f.layouts.find(l=>l.id===f.activeLayout)};
+const items=(f=floor())=>layout(f).items;
+const heightOf=hc=>S.settings.heights?.[hc]??DEF_H[hc]??30;
+function snapWall(g,p,maxD){let best=null;for(const x of g.walls){let t=(p.x-x.A.x)*x.u.x+(p.y-x.A.y)*x.u.y;if(t<-maxD||t>x.L+maxD)continue;t=clamp(t,2,Math.max(2,x.L-2));
+  const q={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t},dv=(p.x-q.x)*x.n.x+(p.y-q.y)*x.n.y,side=dv<0?-1:1,dd=Math.abs(dv);if(dd>x.h+maxD)continue;
+  const sc=Math.abs(dd-x.h)+Math.max(0,dist(p,q)-dd)*2;if(!best||sc<best.sc)best={sc,wall:x.w.id,side,off:r1(t)}}return best}
+function itemPos(g,it){const x=it.wall&&g.byId.get(it.wall);
+  if(x){const d={x:x.n.x*it.side,y:x.n.y*it.side},o=clamp(it.off,0,x.L);return {x:x.A.x+x.u.x*o+d.x*x.h,y:x.A.y+x.u.y*o+d.y*x.h,rot:Math.atan2(-d.x,d.y)*180/Math.PI,d}}
+  return {x:it.x,y:it.y,rot:it.rot||0,d:null}}
+function normItems(f){ensureLayouts(f);const g=G(f,'umbau');for(const l of f.layouts){const ids=new Set(l.items.map(i=>i.id));for(const it of l.items){
+  if(KINDS[it.k]?.place==='wall'){const x=it.wall&&g.byId.get(it.wall);if(!x||it.off<0||it.off>x.L){const s=snapWall(g,it,30);if(s)Object.assign(it,{wall:s.wall,side:s.side,off:s.off});else delete it.wall}
+    const p=itemPos(g,it);it.x=r1(p.x);it.y=r1(p.y);it.rot=r1(p.rot)}
+  if(it.ctl){it.ctl=it.ctl.filter(i=>ids.has(i));if(!it.ctl.length)delete it.ctl}}}}
+function itemRoom(f,g,it){const p=itemPos(g,it),q=p.d?{x:p.x+p.d.x*4,y:p.y+p.d.y*4}:p,F=faceAt(g,q);return F?f.rooms.find(r=>inside(r,F.poly)):null}
+function flash(t){UI.flash=t;updInfo();clearTimeout(UI.flashT);UI.flashT=setTimeout(()=>{UI.flash=null;updInfo()},2600)}
+function newItem(f,k,cnt,p,snap){const d=KINDS[k],it={id:uid(),k,st:newStatus()};if(d.cnt)it.cnt=cnt||1;if(d.hak)it.hak='gf';if(d.sym==='dist')it.w=d.w;
+  if(d.place==='wall'){const w=f.walls.find(x=>x.id===snap.wall);Object.assign(it,{wall:snap.wall,side:snap.side,off:snap.off,h:heightOf(d.hc),mount:d.mount||(w&&buildOf(w)?.hollow?'HW':'UP')})}
+  else{const gr=S.settings.snap?S.settings.grid:0;Object.assign(it,{x:gr?round(p.x,gr):r1(p.x),y:gr?round(p.y,gr):r1(p.y),rot:0,mount:d.mount||'UP'})}
+  return it}
+const hvElsewhere=()=>S.floors.find(fl=>items(fl).some(i=>i.k==='v_hv'&&i.st!=='del'));
+function placeAt(p){const f=floor(),g=G(f,UI.view),{k,cnt}=UI.place,maxD=Math.max(45,30/UI.vp.s);
+  if(k==='entry'){const s=snapWall(g,p,maxD);if(!s){flash('Tippe auf die Außenwand neben der Haustür.');return}
+    const L=wlen(f,f.walls.find(w=>w.id===s.wall));const add=[['k_t',0,140],['a_l',45,200],['a_bwm',-45,230]].map(([kk,dx,hh])=>{const it=newItem(f,kk,1,p,{...s,off:clamp(s.off+dx,2,L-2)});it.h=hh;return it});
+    items().push(...add);UI.place=null;UI.sel={kind:'item',id:add[0].id};commit();renderPanel();render();flash('Klingeltaster, Außenleuchte und Bewegungsmelder gesetzt.');return}
+  const d=KINDS[k];let snap=null;if(d.place==='wall'){snap=snapWall(g,p,maxD);if(!snap){flash('Tippe auf eine Wand oder direkt daneben.');return}}
+  if(k==='v_hv'){const ex=hvElsewhere();if(ex){flash(`Es gibt schon einen Hauptverteiler (${ex.name}).`);return}S.hv=f.id}
+  const it=newItem(f,k,cnt,p,snap);items().push(it);UI.sel=null;commit();renderPanel();render();flash(kindName(it)+' gesetzt. Weiter antippen oder „Fertig mit Setzen“.')}
+function pick(k,cnt){UI.place=UI.place&&UI.place.k===k&&UI.place.cnt===cnt?null:{k,cnt};UI.sel=null;renderPanel();render()}
+function usedLegend(f,view){const m=new Map();for(const it of items(f)){if(!VIS[view](it))continue;const key=legendKey(it);if(!m.has(key))m.set(key,{it,n:0});m.get(key).n++}
+  return [...m.values()].sort((a,b)=>kindOrder.indexOf(a.it.k)-kindOrder.indexOf(b.it.k)||(a.it.cnt||1)-(b.it.cnt||1))}
+function itemPanel(f,it){const d=KINDS[it.k],gs=G(f,'soll'),r=itemRoom(f,gs,it),wall=d.place==='wall',lk=it.st==='del'&&UI.view!=='ist';
+  const sameRoom=x=>{const rr=itemRoom(f,gs,x);return rr&&r&&rr.id===r.id};
+  const lights=(d.hc==='switch')?items(f).filter(x=>LIGHTS.includes(x.k)&&VIS[UI.view](x)&&sameRoom(x)):[];
+  const delLbl=UI.view==='ist'||it.st==='new'?'Löschen':it.st==='del'?'Rückbau aufheben':'Als Rückbau markieren';
+  return `<div class="row" style="align-items:center;flex-wrap:nowrap;gap:10px">${symIcon(it.k,it.cnt)}<h2 style="margin:0;flex:1;min-width:0">${esc(kindName(it))}</h2></div>
+    <p class="hint">${r?esc(r.name):'Keinem Raum zugeordnet'}${wall?(it.wall?' · auf der Wand, zum Verschieben ziehen':' · nicht an einer Wand, bitte an eine Wand ziehen'):''}</p>
+    <h3 style="margin-top:0">Status</h3>${stSeg(it.st,'itst')}
+    <div class="grid2" style="margin-top:12px">${wall?inp('Montagehöhe','h',it.h??heightOf(d.hc),'item','cm','id="ih"'):''}<label class="f">Montageart<select data-f="mount" data-scope="item">${Object.entries(MOUNT).map(([k,v])=>`<option value="${k}"${k===it.mount?' selected':''}>${v}</option>`).join('')}</select></label></div>
+    ${d.cnt?`<div class="row" style="margin-top:8px"><label class="f">Anzahl<select data-f="cnt" data-scope="item">${[1,2,3,4].slice(0,it.k==='n_d'?2:4).map(n=>`<option value="${n}"${n===(it.cnt||1)?' selected':''}>${n}-fach</option>`).join('')}</select></label></div>`:''}
+    ${d.hak?`<div class="row" style="margin-top:8px"><label class="f">Anschluss<select data-f="hak" data-scope="item">${Object.entries(HAK).map(([k,v])=>`<option value="${k}"${k===it.hak?' selected':''}>${v}</option>`).join('')}</select></label></div>`:''}
+    ${d.sym==='dist'?`<div class="row" style="margin-top:8px">${inp('Breite','w',it.w||d.w,'item')}</div><p class="hint">Reihen und Teilungseinheiten folgen in Phase 3.</p>`:''}
+    ${wall?`<div class="row" style="margin-top:8px">${inp('Abstand Wandanfang','off',it.off??0,'item')}</div>`:`<div class="row" style="margin-top:8px"><button class="btn" data-act="irot">Um 90° drehen</button></div>`}
+    ${d.hc==='socket'||d.hc==='switch'?`<label class="chk"><input type="checkbox" data-f="work" data-scope="item" ${it.work?'checked':''}>Über Arbeitsplatte (${fmt(heightOf('work'))} cm)</label>`:''}
+    ${d.hc==='socket'||['ga','s_herd','wm'].includes(it.k)?`<label class="chk"><input type="checkbox" data-f="own" data-scope="item" ${it.own?'checked':''}>Eigener Stromkreis</label>`:''}
+    ${d.hc==='switch'?`<h3>Schaltet</h3>${lights.length?`<div class="stack">${lights.map(l=>`<label class="chk"><input type="checkbox" data-f="ctl" data-v="${l.id}" data-scope="item" ${(it.ctl||[]).includes(l.id)?'checked':''}>${esc(l.name||kindName(l))}</label>`).join('')}</div>`:'<p class="hint">Im Raum gibt es noch keine Leuchte.</p>'}`:''}
+    <div class="row" style="margin-top:10px"><label class="f">Bezeichnung (optional)<input data-f="name" data-scope="item" value="${esc(it.name||'')}" placeholder="z. B. Bett links"></label></div>
+    <div class="row"><button class="btn" data-act="idup">Duplizieren</button><button class="btn danger" data-act="idel">${delLbl}</button></div>
+    <div class="row end"><button class="btn primary" data-act="done">Fertig</button></div>`}
+function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
+  let h=`<h2>Elektro ${esc(f.name)}</h2>`;
+  if(pl){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k].name;
+    h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'} Du kannst mehrere nacheinander setzen.</div>
+      <div class="row"><button class="btn primary" data-act="pickend" style="flex:1">Fertig mit Setzen</button></div>`}
+  else h+=`<p class="hint">Element wählen und im Plan antippen. Wanddosen rasten an der Wandseite ein. Der Grundriss ist hier gesperrt. Neue Elemente kommen in dieser Ansicht als <b>${newStatus()==='keep'?'Bestand':'neu'}</b>.</p>`;
+  for(const c of CAT)h+=`<h3>${c.g}</h3><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div>`;
+  if(lg.length)h+=`<h3>Legende ${esc(layout(f).name)}</h3><ul class="lst">${lg.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`;
+  return h}
+function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
+  const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
+function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
+  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>[it.id,itemPos(g,it)]));
+  const si=sel?.kind==='item'&&its.find(i=>i.id===sel.id);
+  if(si&&si.ctl){const a=pos.get(si.id);for(const id of si.ctl){const b=pos.get(id);if(b)h+=`<line x1="${r1(a.x)}" y1="${r1(a.y)}" x2="${r1(b.x)}" y2="${r1(b.y)}" stroke="${C('accent')}" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`}}
+  for(const it of its){const p=pos.get(it.id),col=view==='umbau'&&it.st==='new'?C('new'):view==='umbau'&&it.st==='del'?C('del'):C('ink'),cc=symCenter(it),on=si&&si.id===it.id;
+    h+=`<g class="sy" transform="translate(${r1(p.x)} ${r1(p.y)}) rotate(${r1(p.rot)}) scale(${r1(ks*100)/100})" fill="none" stroke="${col}" stroke-width="1.5"${plan?' opacity=".3" pointer-events="none"':''}>${symSvg(it,col,p.rot)}`+
+      (on?`<circle cx="${cc.x}" cy="${cc.y}" r="14" stroke="${C('accent')}" stroke-width="2" stroke-dasharray="4 3"/>`:'')+
+      (!exp&&!plan?`<circle class="ihit" data-kind="item" data-id="${it.id}" cx="${cc.x}" cy="${cc.y}" r="13" fill="transparent" stroke="none"/>`:'')+`</g>`}
+  return h}
 function defaultWallTypes(){return [
   {id:'aw',name:'Außenwand',t:36.5,shade:'dark',ext:true,builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Porenbeton'},{name:'Beton'},{name:'Holzrahmen + Dämmung',hollow:true}]},
   {id:'tw',name:'Tragende Innenwand',t:24,shade:'dark',builds:[{name:'Ziegel'},{name:'Kalksandstein'},{name:'Beton'}]},
   {id:'iw',name:'Nichttragende Innenwand',t:11.5,shade:'mid',builds:[{name:'Ziegel'},{name:'Porenbeton'},{name:'Gipsdielen'}]},
   {id:'tb',name:'Trockenbauwand',t:12.5,shade:'hatch',builds:[{name:'Metallständer + Gipskarton',hollow:true},{name:'Holzständer + Gipskarton',hollow:true}]},
   {id:'vs',name:'Vorsatzschale',t:10,shade:'light',builds:[{name:'Gipskarton auf Unterkonstruktion',hollow:true}]}]}
-function newFloor(name,level=0,height=250,slab=20){return {id:uid(),name,level,height,slab,nodes:[],walls:[],openings:[],rooms:[]}}
+function newFloor(name,level=0,height=250,slab=20){return {id:uid(),name,level,height,slab,nodes:[],walls:[],openings:[],rooms:[],layouts:[{id:'la',name:'Variante A',items:[]}],activeLayout:'la'}}
 function defaultState(){const f=newFloor('EG',0);return {v:1,app:'elektroplaner',floors:[f],activeFloor:f.id,hv:f.id,
-  project:{name:'',address:'',author:'',stand:''},settings:{grid:5,snap:true,dims:'inner',underlay:true,wallTypes:defaultWallTypes()}}}
+  project:{name:'',address:'',author:'',stand:''},settings:{grid:5,snap:true,dims:'inner',underlay:true,sym:1.5,heights:{...DEF_H},wallTypes:defaultWallTypes()}}}
 function valid(s){return !!(s&&s.app==='elektroplaner'&&Array.isArray(s.floors)&&s.floors.length&&s.settings&&Array.isArray(s.settings.wallTypes)&&s.settings.wallTypes.length&&
   s.floors.every(f=>Array.isArray(f.nodes)&&Array.isArray(f.walls)&&Array.isArray(f.openings)&&Array.isArray(f.rooms)))}
 function upgrade(s){const d=defaultState();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
-  if(!s.floors.some(f=>f.id===s.activeFloor))s.activeFloor=s.floors[0].id;if(!s.floors.some(f=>f.id===s.hv))s.hv=s.floors[0].id;return s}
+  s.settings.heights={...DEF_H,...(s.settings.heights||{})};s.floors.forEach(ensureLayouts);if(!s.floors.some(f=>f.id===s.activeFloor))s.activeFloor=s.floors[0].id;if(!s.floors.some(f=>f.id===s.hv))s.hv=s.floors[0].id;return s}
 function load(){try{const j=localStorage.getItem(KEY);if(!j)return null;const s=JSON.parse(j);return valid(s)?upgrade(s):null}catch(e){return null}}
 
 let S=load()||defaultState();
 let hist=[JSON.stringify(S)],hp=0;
-const UI={view:'ist',tool:'sel',sel:null,vp:{s:1,tx:0,ty:0},chain:null,cur:null,meas:null,measOn:false,draw:null};
+const UI={mode:'plan',place:null,flash:null,view:'ist',tool:'sel',sel:null,vp:{s:1,tx:0,ty:0},chain:null,cur:null,meas:null,measOn:false,draw:null};
 
 const floor=()=>S.floors.find(f=>f.id===S.activeFloor)||S.floors[0];
 const types=()=>S.settings.wallTypes;
@@ -383,12 +526,13 @@ function syncRooms(f){const g=G(f,'soll'),fs=g.rooms,has=F=>f.rooms.some(r=>!r._
     if(best){r.x=r1(best.c.x);r.y=r1(best.c.y);r._o=false;free.splice(free.indexOf(best.F),1)}else r._drop=true}
   f.rooms=f.rooms.filter(r=>!r._drop);for(const r of f.rooms)delete r._o;
   for(const F of fs)if(!f.rooms.some(r=>inside(r,F.poly))){const c=interiorPoint(F.poly);f.rooms.push({id:uid(),name:nextRoomName(f),x:r1(c.x),y:r1(c.y)})}}
-function normalize(f){dedupe(f);clampOpenings(f);const keep=new Set([UI.chain?.last,UI.chain?.start]);f.nodes=f.nodes.filter(n=>keep.has(n.id)||deg(f,n.id)>0);syncRooms(f)}
+function normalize(f){dedupe(f);clampOpenings(f);const keep=new Set([UI.chain?.last,UI.chain?.start]);f.nodes=f.nodes.filter(n=>keep.has(n.id)||deg(f,n.id)>0);syncRooms(f);normItems(f)}
 function validateSel(){const s=UI.sel,f=floor();if(!s)return;const g=G(f,UI.view);
   if(s.kind==='wall'&&!g.byId.has(s.id))UI.sel=null;
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o||!g.byId.has(o.wall)||!VIS[UI.view](o))UI.sel=null}
   else if(s.kind==='node'&&!g.adj.has(s.id))UI.sel=null;
-  else if(s.kind==='room'&&!f.rooms.some(r=>r.id===s.id))UI.sel=null}
+  else if(s.kind==='room'&&!f.rooms.some(r=>r.id===s.id))UI.sel=null
+  else if(s.kind==='item'){const it=items(f).find(x=>x.id===s.id);if(!it||!VIS[UI.view](it))UI.sel=null}}
 
 /* ---------- Ansicht ---------- */
 const svg=$('#svg'),world=$('#world'),stage=$('#stage');
@@ -413,7 +557,9 @@ function sceneSvg(vp,VW,VH,exp,view){
     for(let x=Math.floor(x0/step)*step;x<=x1;x+=step)h+=`<line class="gl${x%100===0?' m':''}" vector-effect="non-scaling-stroke" x1="${x}" y1="${y0}" x2="${x}" y2="${y1}"/>`;
     for(let y=Math.floor(y0/step)*step;y<=y1;y+=step)h+=`<line class="gl${y%100===0?' m':''}" vector-effect="non-scaling-stroke" x1="${x0}" y1="${y}" x2="${x1}" y2="${y}"/>`;
 }
+  const elec=UI.mode==='elec';
   for(const F of g.rooms)h+=`<polygon class="rf" points="${pts(F.poly)}" fill="${C('floor')}"/>`;
+  if(elec)h+=`<g opacity=".5" pointer-events="none">`;
   if(!exp){const lf=S.settings.underlay&&lowerFloor(f);if(lf){const lg=G(lf,'soll');for(const F of lg.faces)h+=`<polygon class="ul" vector-effect="non-scaling-stroke" points="${pts(F.poly)}"/>`}}
   for(const x of [...g.walls].sort((a,b)=>a.h-b.h)){const fl=wallFill(x.w,view,C);h+=`<polygon data-kind="wall" data-id="${x.w.id}" points="${pts(x.poly)}" fill="${fl}" stroke="${fl.startsWith('url')?'none':fl}" stroke-width="${px(.8)}"/>`}
   for(const J of g.joints){const fl=wallFill(J.w,view,C);h+=`<polygon data-kind="wall" data-id="${J.w.id}" points="${pts(J.poly)}" fill="${fl}" stroke="${fl.startsWith('url')?'none':fl}" stroke-width="${px(.8)}"/>`}
@@ -431,22 +577,24 @@ function sceneSvg(vp,VW,VH,exp,view){
       for(let k=0;k<=14;k++){const t=k/14*Math.PI/2;arc.push({x:Hf.x+o.w*(n.x*sd*Math.cos(t)+v2.x*Math.sin(t)),y:Hf.y+o.w*(n.y*sd*Math.cos(t)+v2.y*Math.sin(t))})}
       h+=ln(Hf,arc[0],'dline')+`<polyline class="darc" vector-effect="non-scaling-stroke" stroke="${sc}" points="${pts(arc)}"/>`}
     h+=`</g>`;
-    if(sel?.kind==='op'&&sel.id===o.id)h+=`<line class="opsel" vector-effect="non-scaling-stroke" x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}"/>`}
+    if(!elec&&sel?.kind==='op'&&sel.id===o.id)h+=`<line class="opsel" vector-effect="non-scaling-stroke" x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}"/>`}
+  if(elec)h+=`</g>`;
   // Maße
   const dimLbl=(p,q,nn,on)=>{const L=dist(p,q);if(L*s<46)return '';const m={x:(p.x+q.x)/2+nn.x*px(12),y:(p.y+q.y)/2+nn.y*px(12)};let a=Math.atan2(q.y-p.y,q.x-p.x)*180/Math.PI;if(a>90)a-=180;if(a<-90)a+=180;
     return `<text class="wl${on?' on':''}" font-size="${px(12.5)}" fill="${on?C('accent'):C('muted')}" text-anchor="middle" dominant-baseline="middle" transform="translate(${r1(m.x)} ${r1(m.y)}) rotate(${r1(a)})">${fmt(L)}</text>`};
   const selW=sel?.kind==='wall'?sel.id:null;
-  if(S.settings.dims==='inner'){for(const F of g.rooms)for(const e of F.hes){const sd=e.end==='a'?e.g.sP:e.g.sM,nn={x:-e.d.y,y:e.d.x};if(e.g.w.id===selW)continue;h+=dimLbl(sd[0],sd[1],nn,false)}}
+  if(elec);else if(S.settings.dims==='inner'){for(const F of g.rooms)for(const e of F.hes){const sd=e.end==='a'?e.g.sP:e.g.sM,nn={x:-e.d.y,y:e.d.x};if(e.g.w.id===selW)continue;h+=dimLbl(sd[0],sd[1],nn,false)}}
   else for(const x of g.walls){if(x.w.id===selW)continue;const P=x.lP>=x.lM;h+=dimLbl(...(P?x.sP:x.sM),P?x.n:{x:-x.n.x,y:-x.n.y},false)}
   if(selW){const x=g.byId.get(selW);if(x){h+=dimLbl(x.sP[0],x.sP[1],x.n,true)+dimLbl(x.sM[0],x.sM[1],{x:-x.n.x,y:-x.n.y},true);h+=`<polygon class="wsel" vector-effect="non-scaling-stroke" points="${pts([x.sP[0],x.sP[1],x.sM[1],x.sM[0]])}"/>`}}
   // Räume
   for(const r of f.rooms){const F=faceAt(g,r);if(!F&&view==='soll')continue;const on=sel?.kind==='room'&&sel.id===r.id,fs=px(14),lbl=esc(r.name),ar=F?fmtA(F.area/1e4)+' m²':'';
     if(on&&F)h+=`<polygon class="rlsel" vector-effect="non-scaling-stroke" points="${pts(F.poly)}"/>`;
     const bw=Math.max(r.name.length*fs*.56,ar.length*fs*.5)+px(14),bh=fs*2.7;
-    h+=`<g data-kind="room" data-id="${r.id}" transform="translate(${r1(r.x)} ${r1(r.y)})"><rect class="rlb" x="${-bw/2}" y="${-bh/2}" width="${bw}" height="${bh}" rx="${px(5)}" fill="${C('floor')}" ${on?`stroke="${C('accent')}" stroke-width="${px(1.5)}"`:''}/>`+
+    h+=`<g data-kind="room" data-id="${r.id}" transform="translate(${r1(r.x)} ${r1(r.y-(elec?px(40)+(S.settings.sym||1.5)*8:0))})"${elec?' opacity=".75"':''}><rect class="rlb" x="${-bw/2}" y="${-bh/2}" width="${bw}" height="${bh}" rx="${px(5)}" fill="${C('floor')}" ${on?`stroke="${C('accent')}" stroke-width="${px(1.5)}"`:''}/>`+
       `<text class="rl" fill="${C('ink')}" font-size="${fs}" font-weight="600" text-anchor="middle" y="${-px(2)}">${lbl}</text><text class="rl a" fill="${C('muted')}" font-size="${px(13)}" text-anchor="middle" y="${px(14)}">${ar}</text></g>`}
+  h+=itemsSvg(f,g,view,s,C,exp,sel);
   if(!exp){
-    if(UI.tool==='sel'){for(const x of g.walls)h+=`<line class="hit" data-kind="wall" data-id="${x.w.id}" vector-effect="non-scaling-stroke" x1="${r1(x.A.x)}" y1="${r1(x.A.y)}" x2="${r1(x.B.x)}" y2="${r1(x.B.y)}"/>`;
+    if(UI.tool==='sel'&&!elec){for(const x of g.walls)h+=`<line class="hit" data-kind="wall" data-id="${x.w.id}" vector-effect="non-scaling-stroke" x1="${r1(x.A.x)}" y1="${r1(x.A.y)}" x2="${r1(x.B.x)}" y2="${r1(x.B.y)}"/>`;
       for(const o of f.openings){const x=g.byId.get(o.wall);if(!x||!VIS[view](o))continue;const A={x:x.A.x+x.u.x*o.off,y:x.A.y+x.u.y*o.off},B={x:x.A.x+x.u.x*(o.off+o.w),y:x.A.y+x.u.y*(o.off+o.w)};
         h+=`<line class="hit" data-kind="op" data-id="${o.id}" vector-effect="non-scaling-stroke" x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}"/>`}
       for(const p of visNodes(f,g)){const on=sel?.kind==='node'&&sel.id===p.id;h+=`<circle class="vtx${on?' on':''}" vector-effect="non-scaling-stroke" cx="${p.x}" cy="${p.y}" r="${px(on?7:5)}"/><circle class="nhit" data-kind="node" data-id="${p.id}" cx="${p.x}" cy="${p.y}" r="${px(16)}"/>`}}
@@ -463,12 +611,15 @@ function sceneSvg(vp,VW,VH,exp,view){
         `<rect x="${m.x-bw/2}" y="${m.y-bh/2-px(18)}" width="${bw}" height="${bh}" rx="${px(11)}" fill="var(--accent)"/><text class="dimt" style="fill:var(--accent-ink)" font-size="${px(15)}" text-anchor="middle" dominant-baseline="central" x="${m.x}" y="${m.y-px(18)}">${lbl}</text>`}}}
   return h}
 function render(){const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
-function updInfo(){const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;
+function updInfo(){const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
   const b=$('#badge');let h=`<span>${esc(VIEWS[UI.view])}</span>`;if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
-  const th=$('#toolhint'),t=UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
+  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
 function updBar(){$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
-  document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool))}
+  document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));$('#toolSeg').hidden=UI.mode!=='plan'}
+function renderVariants(){const v=$('#variants'),f=floor();if(UI.mode!=='elec'){v.innerHTML='';return}ensureLayouts(f);
+  v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button>`}
 function renderFloorSel(){$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
 function renderAll(){renderFloorSel();renderPanel();updBar();render()}
 
@@ -480,7 +631,9 @@ const stSeg=(cur,act)=>`<div class="seg full">${Object.entries(ST).map(([k,v])=>
 function boxHint(w){const b=buildOf(w);return b?(b.hollow?'Hohlwanddosen':'Unterputzdosen'):''}
 function renderPanel(){const p=$('#panel'),f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
   const stNew=newStatus()==='keep'?'Bestand':'neu';
-  if(UI.tool==='draw'){const d=drawDefaults();
+  if(UI.mode==='elec'&&s?.kind==='item'){const it=items(f).find(x=>x.id===s.id);h=it?itemPanel(f,it):elecPanel(f)}
+  else if(UI.mode==='elec'&&s?.kind!=='room')h=elecPanel(f);
+  else if(UI.tool==='draw'){const d=drawDefaults();
     h=`<h2>Wand zeichnen</h2><p class="hint">Punkte nacheinander antippen. Neue Wände werden in dieser Ansicht als <b>${stNew}</b> angelegt. Mit zwei Fingern verschieben und zoomen.</p>
       <div class="row"><label class="f">Wandtyp<select data-f="type" data-scope="draw">${typeOpts(d.type)}</select></label></div>
       <div class="grid2"><label class="f">Bauart<select data-f="build" data-scope="draw">${buildOpts(d.type,d.build)}</select></label>${inp('Dicke','t',d.t,'draw')}</div>`;
@@ -520,7 +673,7 @@ function renderPanel(){const p=$('#panel'),f=floor(),s=UI.sel,g=G(f,UI.view);let
       <label class="chk"><input type="checkbox" data-f="work" data-scope="room" ${r.work?'checked':''}>Raum mit Arbeitsflächen (Küche, Bad, Werkstatt)</label>
       <p class="hint">Dort gilt später zusätzlich die Installationszone 90 bis 120 cm.</p>
       <div class="row" style="margin-top:12px"><button class="btn danger" data-act="delRoom" ${multi||!F?'':'disabled'}>Name löschen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>
-      ${multi||!F?'':'<p class="hint">Ein Raum entsteht aus seinen Wänden. Zum Entfernen die Wände löschen.</p>'}`}}
+      ${multi||!F?'':'<p class="hint">Ein Raum entsteht aus seinen Wänden. Zum Entfernen die Wände löschen.</p>'}${UI.mode==='elec'?roomElec(f,r):''}`}}
   if(!h){const d={type:(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
     h=`<h2>Grundriss ${esc(f.name)}</h2><p class="hint">Wand, Ecke, Tür oder Raum antippen, um sie zu bearbeiten. Räume entstehen von selbst, sobald Wände eine Fläche umschließen.</p>
       <div class="row"><button class="btn primary" data-act="tool" data-v="draw" style="flex:1">Wand zeichnen</button></div>
@@ -538,6 +691,12 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
   if(sc==='mk')return;
   if(sc==='drawlen'){if(UI.chain)UI.chain.len=v;return}
   if(!final&&!(sc==='room'&&fld==='name'))return;
+  if(sc==='item'){const it=items(f).find(x=>x.id===s?.id);if(!it)return;const d=KINDS[it.k];
+    if(fld==='name'){if(v.trim())it.name=v;else delete it.name;if(!final)return}
+    else if(fld==='ctl'){const id=el.dataset.v,c=new Set(it.ctl||[]);v?c.add(id):c.delete(id);it.ctl=[...c]}
+    else if(fld==='work'||fld==='own'){if(v)it[fld]=true;else delete it[fld];if(fld==='work'&&d.place==='wall')it.h=heightOf(v?'work':d.hc)}
+    else if(fld==='cnt')it.cnt=+v;else if(fld==='h')it.h=Math.max(0,v);else if(fld==='off')it.off=Math.max(0,v);else if(fld==='w')it.w=Math.max(20,v);else it[fld]=v;
+    commit();renderPanel();render();return}
   if(sc==='wall'){const w=f.walls.find(x=>x.id===s?.id);if(!w)return;const ch=chainOf(f,w);
     if(fld==='type'){const t=types().find(t=>t.id===v);for(const c of ch){c.type=v;if(!t.builds.some(b=>b.name===c.build))c.build=t.builds[0]?.name||''}setThickness(f,w,t.t,ch)}
     else if(fld==='build'){for(const c of ch)c.build=v}
@@ -566,6 +725,12 @@ function addOpening(type){const f=floor(),w=f.walls.find(x=>x.id===UI.sel?.id);i
 function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
   switch(a){
     case 'tool':setTool(b.dataset.v);break;
+    case 'pick':pick(b.dataset.k,+b.dataset.c||1);break;
+    case 'pickend':UI.place=null;renderPanel();render();break;
+    case 'itst':{const it=items(f).find(x=>x.id===s?.id);if(it){it.st=b.dataset.v;commit();validateSel();renderPanel();render()}}break;
+    case 'idel':deleteSel();break;
+    case 'irot':{const it=items(f).find(x=>x.id===s?.id);if(it){it.rot=((it.rot||0)+90)%360;commit();render()}}break;
+    case 'idup':{const it=items(f).find(x=>x.id===s?.id);if(it){const c={...it,id:uid()};delete c.ctl;if(c.wall)c.off+=25;else{c.x+=25;c.y+=25}if(c.k==='v_hv'){flash('Es gibt nur einen Hauptverteiler.');return}items(f).push(c);UI.sel={kind:'item',id:c.id};commit();renderPanel();render()}}break;
     case 'mkRoom':mkRoom();break;
     case 'selRoom':select({kind:'room',id:b.dataset.id});break;
     case 'done':select(null);break;
@@ -584,7 +749,8 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'delRoom':{f.rooms=f.rooms.filter(r=>r.id!==s.id);UI.sel=null;commit();renderPanel();render()}break;
   }}
 function deleteSel(){const f=floor(),s=UI.sel;if(!s)return;
-  if(s.kind==='wall'){const w=f.walls.find(x=>x.id===s.id);if(!w)return;if(UI.view==='ist'||w.st==='new')deleteWall(f,w);else{w.st=w.st==='del'?'keep':'del'}}
+  if(s.kind==='item'){const it=items(f).find(x=>x.id===s.id);if(!it)return;if(UI.view==='ist'||it.st==='new'){layout(f).items=items(f).filter(x=>x!==it)}else it.st=it.st==='del'?'keep':'del'}
+  else if(s.kind==='wall'){const w=f.walls.find(x=>x.id===s.id);if(!w)return;if(UI.view==='ist'||w.st==='new')deleteWall(f,w);else{w.st=w.st==='del'?'keep':'del'}}
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o)return;if(UI.view==='ist'||o.st==='new')f.openings=f.openings.filter(x=>x!==o);else o.st=o.st==='del'?'keep':'del'}
   else if(s.kind==='node'){if(!dissolveNode(f,s.id))return}
   else return;
@@ -685,12 +851,19 @@ function projectForm(){const p=S.project;modal(`<h2>Projekt und Plankopf</h2>
   <div class="row"><label class="f">Adresse<input name="address" value="${esc(p.address)}"></label></div>
   <div class="grid2"><label class="f">Bearbeiter<input name="author" value="${esc(p.author)}"></label><label class="f">Planstand<input name="stand" value="${esc(p.stand)}" placeholder="z. B. Entwurf 1"></label></div>
   <p class="hint" style="margin-top:8px">Erscheint auf exportierten Plänen. Das Datum wird beim Export eingesetzt.</p>`,m=>{for(const k of ['name','address','author','stand'])p[k]=m.querySelector(`[name=${k}]`).value.trim();commit()})}
+function variantMenu(){const f=floor(),l=layout(f);const {el,close}=modal(`<h2>${esc(l.name)}</h2><p class="hint">Varianten gelten für die Elektroplanung dieser Etage. Der Grundriss ist für alle gleich.</p><div class="row"><label class="f">Name<input name="n" value="${esc(l.name)}"></label></div>
+  <div class="stack"><button class="btn danger" id="vdel" ${f.layouts.length<2?'disabled':''}>Variante löschen</button></div>`,m=>{l.name=m.querySelector('[name=n]').value.trim()||l.name;commit();renderAll()});
+  el.querySelector('#vdel').addEventListener('click',()=>{close();f.layouts=f.layouts.filter(x=>x!==l);f.activeLayout=f.layouts[0].id;UI.sel=null;commit();renderAll()})}
+function heightsForm(){const H=S.settings.heights;modal(`<h2>Standardhöhen</h2><p class="hint">Gilt für neu gesetzte Elemente, gemessen ab Oberkante Fertigfußboden bis Mitte Dose. Jedes Element lässt sich einzeln ändern.</p>
+  <div class="grid2">${Object.entries(HCLS).map(([k,v])=>`<label class="f unit" data-u="cm">${v}<input type="number" step="any" name="${k}" value="${heightOf(k)}"></label>`).join('')}</div>
+  <div class="row" style="margin-top:10px"><label class="f">Größe der Schaltzeichen<select name="sym">${[[1,'Klein'],[1.5,'Mittel'],[2.2,'Groß']].map(([v,n])=>`<option value="${v}"${v===(S.settings.sym||1.5)?' selected':''}>${n}</option>`).join('')}</select></label></div>`,m=>{
+  for(const k in HCLS){const v=num(m.querySelector(`[name=${k}]`).value);if(v>=0)H[k]=v}S.settings.sym=+m.querySelector('[name=sym]').value;commit();renderPanel();render()})}
 function mainMenu(){const st=S.settings;const {el,close}=modal(`<h2>Einstellungen</h2>
   <div class="grid2"><label class="f">Raster<select id="sg">${[1,5,10,25].map(g=>`<option value="${g}"${g===st.grid?' selected':''}>${g} cm</option>`).join('')}</select></label>
   <label class="f">Einrasten<select id="ss"><option value="1"${st.snap?' selected':''}>An</option><option value="0"${!st.snap?' selected':''}>Aus</option></select></label>
   <label class="f">Maße im Plan<select id="sd"><option value="inner"${st.dims==='inner'?' selected':''}>Innenmaß (je Raum)</option><option value="raw"${st.dims==='raw'?' selected':''}>Rohbaumaß (Wand außen)</option></select></label>
   <label class="f">Etage darunter<select id="su"><option value="1"${st.underlay?' selected':''}>Einblenden</option><option value="0"${!st.underlay?' selected':''}>Ausblenden</option></select></label></div>
-  <div class="stack" style="margin-top:12px"><button class="btn" id="wty">Wandtypen und Bauarten</button><button class="btn" id="prj">Projekt und Plankopf</button></div>
+  <div class="stack" style="margin-top:12px"><button class="btn" id="wty">Wandtypen und Bauarten</button><button class="btn" id="hgt">Standardhöhen und Schaltzeichen</button><button class="btn" id="prj">Projekt und Plankopf</button></div>
   <h3>Plan teilen</h3><p class="hint">Zeigt die aktuelle Etage in der gewählten Ansicht (${esc(VIEWS[UI.view])}).</p>
   <div class="stack" style="margin-bottom:6px"><button class="btn" id="eimg">Als Bild speichern</button>${IN_ART?'':'<button class="btn" id="epdf">Als PDF drucken</button>'}</div>
   <h3>Daten</h3><p class="hint">${IN_ART?'Testversion: Alles bleibt in diesem Browser auf diesem Gerät. Der GitHub-Sync gibt es in der Version auf GitHub Pages.':sync?"Wird automatisch in GitHub gesichert. Eine Sicherung in OneDrive ist ein zusätzliches Extra.":"Alles wird automatisch auf diesem Gerät gespeichert. Mit dem GitHub-Sync hast du denselben Stand auf allen Geräten."}</p>
@@ -698,7 +871,7 @@ function mainMenu(){const st=S.settings;const {el,close}=modal(`<h2>Einstellunge
   <p class="hint" style="margin-top:14px">Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p>`);
   el.querySelector('#sg').onchange=e=>{st.grid=+e.target.value;commit()};el.querySelector('#ss').onchange=e=>{st.snap=e.target.value==='1';commit()};
   el.querySelector('#sd').onchange=e=>{st.dims=e.target.value;commit();render()};el.querySelector('#su').onchange=e=>{st.underlay=e.target.value==='1';commit();render()};
-  el.querySelector('#wty').onclick=()=>{close();typesMenu()};el.querySelector('#prj').onclick=()=>{close();projectForm()};
+  el.querySelector('#wty').onclick=()=>{close();typesMenu()};el.querySelector('#prj').onclick=()=>{close();projectForm()};el.querySelector('#hgt').onclick=()=>{close();heightsForm()};
   el.querySelector('#eimg').onclick=()=>{close();exportImage()};el.querySelector('#epdf')?.addEventListener('click',()=>{close();printPlan()});el.querySelector('#gsy')?.addEventListener('click',()=>{close();syncMenu()});if(0)el.querySelector('#gsy').onclick=()=>{close();syncMenu()};el.querySelector('#exp').onclick=()=>{close();exportData()};el.querySelector('#imp').onclick=()=>{close();$('#fileIn').click()};
   el.querySelector('#rst').onclick=()=>{close();confirmBox('Alle Etagen und Wände zurücksetzen?','Zurücksetzen',()=>{S=defaultState();UI.sel=null;UI.chain=null;commit();renderAll();fit()})}}
 
@@ -708,15 +881,16 @@ function planSvg(){const f=floor(),view=UI.view,g=G(f,view),P=g.walls.flatMap(x=
   const sc=Math.min(1500/bw,1100/bh,4),pad=70,top=110,W=Math.max(Math.round(bw*sc+2*pad),1100),PH=bh*sc+2*pad;
   const v={s:sc,tx:(W-bw*sc)/2-bb.minX*sc,ty:top+pad-bb.minY*sc},F=LIGHT.f,pr=S.project,area=g.rooms.reduce((s,x)=>s+x.area,0)/1e4;
   const usedT=types().filter(t=>g.walls.some(x=>x.w.type===t.id)),leg=[...usedT.map(t=>({fill:t.shade==='hatch'?'url(#hT)':LIGHT['w-'+t.shade],txt:`${t.name}  ${fmt(t.t)} cm`}))];
+  const elx=UI.mode==='elec';if(elx){leg.length=0;for(const {it,n} of usedLegend(f,view))leg.push({sym:it,txt:`${kindName(it)}  (${n})`})}
   if(view==='umbau')leg.push({fill:LIGHT['w-dark'],txt:'Bestand bleibt'},{fill:'url(#hDel)',txt:'Bestand entfällt'},{fill:LIGHT.new,txt:'Neu'});
   const cols=W>=1400?3:2,cw=(W-2*pad)/cols,LH=leg.length?Math.ceil(leg.length/cols)*36+60:0,H=Math.round(top+PH+LH+30);
   let lg='';if(leg.length){const y0=top+PH+14;lg+=`<text x="${pad}" y="${y0+16}" font-family="${F}" font-size="20" font-weight="600" fill="${LIGHT.ink}">Legende</text>`;
-    leg.forEach((l,i)=>{const x=pad+(i%cols)*cw,y=y0+38+Math.floor(i/cols)*36;lg+=`<rect x="${x}" y="${y}" width="34" height="20" fill="${l.fill}" stroke="${LIGHT.wall}" stroke-width="1"/><text x="${x+46}" y="${y+16}" font-family="${F}" font-size="18" fill="${LIGHT.ink}">${esc(l.txt)}</text>`})}
+    leg.forEach((l,i)=>{const x=pad+(i%cols)*cw,y=y0+38+Math.floor(i/cols)*36;lg+=(l.sym?`<g class="sy" transform="translate(${x+17} ${y+10-symCenter(l.sym).y*(KINDS[l.sym.k].sym==='dist'?.55:1.5)}) scale(${KINDS[l.sym.k].sym==='dist'?.55:1.5})" fill="none" stroke="${LIGHT.ink}" stroke-width="1.5">${symSvg({...l.sym,st:'keep'},LIGHT.ink,0)}</g>`:`<rect x="${x}" y="${y}" width="34" height="20" fill="${l.fill}" stroke="${LIGHT.wall}" stroke-width="1"/>`)+`<text x="${x+46}" y="${y+16}" font-family="${F}" font-size="18" fill="${LIGHT.ink}">${esc(l.txt)}</text>`})}
   const right=[pr.address,[pr.author,pr.stand].filter(Boolean).join(' · '),new Date().toLocaleDateString('de-DE')].filter(Boolean);
   const hs=7;const defs=`<defs><pattern id="hT" patternUnits="userSpaceOnUse" width="${hs}" height="${hs}" patternTransform="rotate(45)"><rect width="${hs}" height="${hs}" fill="#fff"/><line x1="0" y1="0" x2="0" y2="${hs}" stroke="${LIGHT['w-mid']}" stroke-width="1.6"/></pattern><pattern id="hDel" patternUnits="userSpaceOnUse" width="${hs}" height="${hs}" patternTransform="rotate(45)"><rect width="${hs}" height="${hs}" fill="#fff"/><line x1="0" y1="0" x2="0" y2="${hs}" stroke="${LIGHT.del}" stroke-width="1.6"/></pattern></defs>`;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><style>${exportCss()}</style>${defs}<rect width="${W}" height="${H}" fill="#fff"/>`+
     `<text x="${pad}" y="52" font-family="${F}" font-size="30" font-weight="600" fill="${LIGHT.ink}">${esc(pr.name||'Elektroplaner')}: ${esc(f.name)}</text>`+
-    `<text x="${pad}" y="82" font-family="${F}" font-size="18" fill="${LIGHT.muted}">${esc(VIEWS[view])}, ${g.rooms.length} Räume, ${fmtA(area)} m² Innenfläche, Maße in cm</text>`+
+    `<text x="${pad}" y="82" font-family="${F}" font-size="18" fill="${LIGHT.muted}">${elx?'Elektroinstallation, '+esc(layout(f).name)+', ':''}${esc(VIEWS[view])}, ${g.rooms.length} Räume, ${fmtA(area)} m² Innenfläche, Maße in cm</text>`+
     right.map((t,i)=>`<text x="${W-pad}" y="${44+i*24}" text-anchor="end" font-family="${F}" font-size="17" fill="${LIGHT.muted}">${esc(t)}</text>`).join('')+
     `<line x1="${pad}" y1="${top-8}" x2="${W-pad}" y2="${top-8}" stroke="${LIGHT.line}" stroke-width="1.5"/>`+
     `<g transform="translate(${v.tx} ${v.ty}) scale(${v.s})">${sceneSvg(v,W,H,true,view)}</g>${lg}</svg>`;
@@ -755,8 +929,10 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   const t=e.target.closest('[data-kind]'),w=toWorld(e.clientX,e.clientY),f=floor();
   const base={sx:e.clientX,sy:e.clientY,moved:false};drag={...base,type:'pan',tx0:UI.vp.tx,ty0:UI.vp.ty,w};
   if(UI.measOn){const p=measSnap(w);drag={...base,type:'meas',a:p};UI.meas={a:p,b:p};return}
-  if(UI.tool==='draw'){drag={...base,type:'draw'};UI.cur=snapDraw(w);render();return}
+  if(UI.tool==='draw'&&UI.mode==='plan'){drag={...base,type:'draw'};UI.cur=snapDraw(w);render();return}
   if(!t)return;const k=t.dataset.kind,id=t.dataset.id;
+  if(UI.mode==='elec'){if(k==='item'){const it=items(f).find(x=>x.id===id);if(!it)return;UI.place=null;if(UI.sel?.id!==id)select({kind:'item',id});const p=itemPos(G(f,UI.view),it);drag={...base,type:'item',it,ox:w.x-p.x,oy:w.y-p.y}}
+    else if(k==='room'){select({kind:'room',id})}return}
   if(k==='node'){select({kind:'node',id});const p=nodeOf(f,id);drag={...base,type:'node',id,ox:w.x-p.x,oy:w.y-p.y}}
   else if(k==='wall'){const x=f.walls.find(q=>q.id===id);select({kind:'wall',id});const A=nodeOf(f,x.a),B=nodeOf(f,x.b),L=wlen(f,x);
     const ids=[...new Set(lineOf(f,x).flatMap(c=>[c.a,c.b]))];drag={...base,type:'wall',p0:ids.map(i=>{const q=nodeOf(f,i);return {q,x:q.x,y:q.y}}),n:{x:-(B.y-A.y)/L,y:(B.x-A.x)/L},w0:w}}
@@ -777,13 +953,15 @@ svg.addEventListener('pointermove',e=>{
     case 'node':{const p={x:w.x-drag.ox,y:w.y-drag.oy};snapNode(p,drag.id);const q=nodeOf(f,drag.id);q.x=r1(p.x);q.y=r1(p.y);break}
     case 'wall':{let t=(w.x-drag.w0.x)*drag.n.x+(w.y-drag.w0.y)*drag.n.y;if(gr)t=round(t,gr);for(const o of drag.p0){o.q.x=r1(o.x+drag.n.x*t);o.q.y=r1(o.y+drag.n.y*t)}break}
     case 'op':{const x=f.walls.find(q=>q.id===drag.o.wall);if(!x)break;const A=nodeOf(f,x.a),u=unitOf(f,x),L=wlen(f,x);let off=(w.x-A.x)*u.x+(w.y-A.y)*u.y-drag.grab;if(gr)off=round(off,gr);drag.o.off=clamp(off,0,L-drag.o.w);break}
-    case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break}
+    case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break
+    case 'item':{const it=drag.it,q={x:w.x-drag.ox,y:w.y-drag.oy};if(KINDS[it.k]?.place==='wall'){const sn=snapWall(G(f,UI.view),{x:w.x,y:w.y},Math.max(60,60/UI.vp.s));if(sn){it.wall=sn.wall;it.side=sn.side;it.off=gr?round(sn.off,gr):sn.off}}else{it.x=gr?round(q.x,gr):r1(q.x);it.y=gr?round(q.y,gr):r1(q.y)}break}}
   render()});
 function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(pinch){if(ptrs.size<2)pinch=null;drag=null;return}
   if(!drag)return;const d=drag;drag=null;
   if(d.type==='meas'){if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)<5)UI.meas=null;render();return}
   if(d.type==='draw'){if(e.type==='pointercancel'){UI.cur=null;render();return}const c=UI.cur||snapDraw(toWorld(e.clientX,e.clientY));drawTo(c);return}
+  if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.place){placeAt(d.w);return}
   if(d.type==='pan'&&!d.moved){const F=faceAt(G(floor(),UI.view),d.w),r=F&&floor().rooms.find(r=>inside(r,F.poly));select(r?{kind:'room',id:r.id}:null);return}
   if(!d.moved||d.type==='pan')return;
   if(d.type==='node')dropNode(d.id);
@@ -801,6 +979,10 @@ panel.addEventListener('change',e=>{const el=e.target;if(el.dataset.f&&el.tagNam
 panel.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='dlen'){e.preventDefault();e.target.blur();return}if(e.target.dataset.f)e.target.blur()});
 document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b.dataset.view;UI.chain=null;UI.cur=null;validateSel();commit();updBar();renderPanel();render()});
 document.querySelectorAll('#toolSeg button').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>{if(UI.mode===b.dataset.mode)return;UI.mode=b.dataset.mode;UI.place=null;UI.sel=null;if(UI.tool==='draw')setTool('sel');commit();updBar();renderPanel();render()});
+$('#variants').addEventListener('click',e=>{const b=e.target.closest('[data-lay]');if(!b)return;const f=floor(),id=b.dataset.lay;
+  if(id==='+'){const cur=layout(f),map=new Map(cur.items.map(i=>[i.id,uid()])),n={id:uid(),name:'Variante '+String.fromCharCode(65+f.layouts.length),items:cur.items.map(i=>({...i,id:map.get(i.id),...(i.ctl?{ctl:i.ctl.map(c=>map.get(c))}:{})}))};f.layouts.push(n);f.activeLayout=n.id;UI.sel=null;commit();renderAll()}
+  else if(id===f.activeLayout)variantMenu();else{f.activeLayout=id;UI.sel=null;commit();renderAll()}});
 $('#meas').onclick=toggleMeas;
 $('#undo').onclick=undo;$('#redo').onclick=redo;$('#fit').onclick=fit;$('#menu').onclick=mainMenu;$('#floorMenu').onclick=floorMenu;
 $('#floorSel').onchange=e=>switchFloor(e.target.value);

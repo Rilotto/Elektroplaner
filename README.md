@@ -14,6 +14,12 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Türen, Fenster, Durchgänge; Maße wahlweise innen oder als Rohbaumaß außen
 - Etage darunter als Unterlage, Maßband, Rückgängig, Export als Bild und PDF
 
+## Stand: Phase 2 – Elemente
+- Ebene „Elektro“ mit Katalog: Steckdosen, Schalter, Taster, Leuchten, Außen (inkl. Vorlage Hauseingang), Klingel, Netzwerk, Verteiler, Rauchwarnmelder u. a.
+- Schaltzeichen in Anlehnung an DIN EN 60617, Wanddosen rasten an der Wandseite ein und wandern mit der Wand
+- Status bleibt/entfällt/neu, Montagehöhe (Standardhöhen in den Einstellungen), Montageart nach Bauart, Fachzahl
+- Schalter ordnen ihre Leuchten zu, Legende mit Stückzahlen, Varianten je Etage
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).
