@@ -37,11 +37,11 @@
 - [x] Elementsuche im Katalog (vorgezogen aus der alten Liste)
 - [x] Ansicht je Arbeitsschritt gemerkt (Grundriss = Ist, Elektro = Soll)
 
-## 0.7.2 – Kleinigkeiten, die beim Testen sofort helfen
-- [ ] Maße beim ausgewählten Wandelement: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür-/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (Raumseite) statt „Abstand Wandanfang“, beide editierbar
-- [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen
-- [ ] Hinweise ignorierbar machen (je Hinweis „Ignorieren“, je Projekt gespeichert, Liste der ignorierten wiederherstellbar, Zähler zählt nur offene)
-- [ ] Serienschalter: je Leuchte festlegen, an welcher Wippe sie hängt (Wippe 1 / 2), im Schaltbild und in der Leitungsliste
+## 0.7.2 – Maße, Hinweise, Wippen (erledigt)
+- [x] Maße beim gewählten Wandelement: Maßlinien im Plan bis Raumecke bzw. Tür-/Fenster-/Durchgangskante; im Seitenfeld „Abstand links“ / „Abstand rechts“ (mit Blick auf die Wand, bis Dosenmitte) statt „Abstand Wandanfang“, beide editierbar
+- [x] Deckenelemente: Maßlinien zur nächsten Wand in x und y, im Seitenfeld alle vier Abstände
+- [x] Hinweise ignorierbar (je Hinweis „Ignorieren“, gespeichert im Projekt als `S.ignored` über den Hinweistext; ändert sich der Hinweis, erscheint er wieder; Bereich „Ignorierte Hinweise“ mit „Wieder zeigen“; Zähler zählt nur offene)
+- [x] Serienschalter: Zuordnung je Leuchte gab es schon (als „Kreis 1/2“, im Schaltbild berücksichtigt), jetzt als „Wippe 1/2“ benannt
 
 ## 0.7.3 – Schalter verknüpfen und Grundausstattung ergänzen
 - [ ] Schalter verknüpfen per Drag and Drop: Schalter auf Schalter ziehen → „Mehrfachkombination“ (gemeinsamer 2-/3-fach-Rahmen, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz, zwei Wippen); auch Schalter + Steckdose als Kombination; Lösen per Knopf; Material zählt Rahmen, Einsätze und Dosen richtig
