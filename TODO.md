@@ -64,6 +64,10 @@
 - [ ] Im Verteiler: LS antippen → „Im Plan zeigen“ springt zu ② Elektro mit hervorgehobenem Stromkreis
 - [ ] Raumränder nach Stromkreis nur noch bei gewähltem Stromkreis (Punkt aus dem Designkonzept, hier mit erledigt)
 - [ ] Mehrfachkombination im Plan hintereinander statt nebeneinander zeichnen (wie Schalter + Steckdose seit 0.6.2): Glieder senkrecht zur Wand gestaffelt in den Raum hinein, Rahmen-Umriss entsprechend; Reihenfolge nach Lage im Rahmen
+- [ ] Setzen einfacher beenden: Ein Element wird standardmäßig einmal gesetzt, danach ist der Setz-Modus vorbei und das neue Element ist ausgewählt (Seitenfeld zeigt es, beim Schalter gleich mit ⊕-Punkt zum Verbinden)
+- [ ] „Mehrere setzen“ als Schalter im Hinweisfeld beim Setzen (Stecknadel), z. B. für Steckdosenreihen; bleibt bis „Fertig“
+- [ ] Im Setz-Modus wählt ein Tipp auf ein vorhandenes Element dieses aus und beendet den Setz-Modus (statt nichts zu tun)
+- [ ] Schwebende Anzeige unten am Plan „Setzen: Ausschalter ✕“, solange der Modus aktiv ist; ✕ oder Esc beendet ihn
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
