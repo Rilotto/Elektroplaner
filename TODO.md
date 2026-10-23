@@ -14,7 +14,8 @@
 - [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
 ## Nächste Version
-- [ ] Stromkreis-Art als Symbol: nur Licht, nur Steckdosen, gemischt, Gerät, Außen, Klingeltrafo; in Stromkreisliste, Verteiler-Beschriftung und auf dem LS; Filter in der Verteiler-Ansicht und Hinweis zur FI-Pflicht
+- [ ] Stromkreis-Art als Symbol: nur Licht, nur Steckdosen, gemischt, Gerät, Außen, Klingeltrafo; in Stromkreisliste, Verteiler-Beschriftung und auf dem LS; Filter in der Verteiler-Ansicht; Prüfung „Licht und Steckdosen eines Raums am selben FI“
+- [ ] Stromkreis-Übersicht (Verteiler und Elektro) mit Räumen: Elemente je Raum, z. B. „Raum 1: 1 Steckdose · Raum 3: 1 Leuchte“; Räume auch in Stromkreisliste und CSV
 - [ ] Neues Grundriss-Element „Kabeldurchlass“ (Wand- oder Deckendurchbruch für Leitungen), das die Leitungsführung bevorzugt nutzt
 - [ ] Unterlage der anderen Etage: Innenwände per Knopf ausblenden (nur Außenwände zeigen)
 - [ ] Treppen im Grundriss, mit automatischem Treppenauge/Aufgang in der Etage darüber
