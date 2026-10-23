@@ -1,5 +1,11 @@
 # To-dos
 
+## Arbeitsregeln für jedes Update
+1. **Baut auf der Vorversion auf:** Jedes Update startet vom aktuellen Stand von `main` (der zuletzt veröffentlichten Version) und ändert nur, was das Update betrifft. Keine Neuschreibung von Teilen, die nicht dazugehören.
+2. **Folgt dem Designkonzept** (Projektdoku „Elektroplaner-Designkonzept“): Plan als Arbeitsfläche; Arbeitsschritte ① Grundriss ② Elektro ③ Verteiler ④ Ausgabe; Plan-Werkzeuge schweben am Plan (Stand/Varianten/Ebenen oben links, Etagen rechts oben, Werkzeuge unten links); Element-Daten im Seitenfeld; Akzentblau nur für Bedienbares und Ausgewähltes; Statusfarben nur mit Bedeutung; Ziele ≥ 44 px; kurze Texte in Du-Form. Neue Funktionen bekommen ihren Platz in dieser Struktur (z. B. neue Ebenen ins Menü „Ebenen“, neue Ausgaben in ④ Ausgabe), keine neuen Knöpfe in der Kopfzeile.
+3. **Weicht ein Wunsch vom Konzept ab**, wird das vorher kurz angesprochen und bei Zustimmung im Designkonzept nachgetragen.
+4. **Zu jedem Update:** Versionsnummer + Änderungsliste (CHANGELOG in der App), Service-Worker-Cache hochzählen, bestehende Daten weiter lesbar (Migration in `upgrade`), Test mit der Testwohnung im Quer- und Hochformat, danach Projektdoku „Stand“ und diese Liste aktualisieren.
+
 ## Einrichtung
 - [ ] GitHub Pages einschalten (Settings → Pages → main / root)
 - [ ] Privates Repo `Elektroplaner-daten` anlegen, Token nur dafür erstellen und am Tablet verbinden
@@ -20,24 +26,30 @@
 
 ## Bedienung und Design
 - [x] Bedienkonzept überarbeiten: Designkonzept in der Projektdoku „Elektroplaner-Designkonzept“, Testversion im Branch `design` (Artifact „Elektroplaner Design-Test“)
-- [ ] Nach Rückmeldung: `design` in `main` übernehmen (als 0.7.1), danach die offenen Punkte aus dem Designkonzept (Auswahlfeld mit „Mehr“, feste Aktionsleiste unten im Seitenfeld, Meldungen unten, Raumränder nur bei gewähltem Stromkreis)
+- [x] `design` in `main` übernommen (0.7.1)
+- [ ] Offene Punkte aus dem Designkonzept (Auswahlfeld mit „Mehr“, feste Aktionsleiste unten im Seitenfeld, Meldungen unten, Raumränder nur bei gewähltem Stromkreis)
 
 ## Fahrplan (mehrere kleine Zwischenschritte)
 
-## 0.7.1 – Kleinigkeiten, die beim Testen sofort helfen
-- [ ] Suchleiste im Elemente-Katalog: Suche über Namen, Gruppen und Stichwörter (z. B. „Klingel“, „Herd“, „PoE“, „Zigbee“), Treffer aus allen Gruppen, aufgeklappt; Tippen setzt das Element wie bisher; letzte/zuletzt genutzte Elemente oben
+## 0.7.1 – Neues Bedienkonzept (erledigt)
+- [x] Arbeitsschritte ① Grundriss ② Elektro ③ Verteiler ④ Ausgabe, Ausgabe mit Druckvorschau
+- [x] Werkzeuge, Stand, Ebenen und Etagen am Plan; Kopfzeile aufgeräumt
+- [x] Elementsuche im Katalog (vorgezogen aus der alten Liste)
+- [x] Ansicht je Arbeitsschritt gemerkt (Grundriss = Ist, Elektro = Soll)
+
+## 0.7.2 – Kleinigkeiten, die beim Testen sofort helfen
 - [ ] Maße beim ausgewählten Wandelement: Maßketten im Plan von der Dose bis zur nächsten Raumecke bzw. Tür-/Fensterkante links und rechts (im Raum gemessen, nicht ab Wandanfang); im Panel „Abstand links“ / „Abstand rechts“ (Raumseite) statt „Abstand Wandanfang“, beide editierbar
 - [ ] Gleiches für Deckenelemente: Abstand zu den nächsten Wänden in x und y beim Auswählen
 - [ ] Hinweise ignorierbar machen (je Hinweis „Ignorieren“, je Projekt gespeichert, Liste der ignorierten wiederherstellbar, Zähler zählt nur offene)
 - [ ] Serienschalter: je Leuchte festlegen, an welcher Wippe sie hängt (Wippe 1 / 2), im Schaltbild und in der Leitungsliste
 
-## 0.7.2 – Schalter verknüpfen und Grundausstattung ergänzen
+## 0.7.3 – Schalter verknüpfen und Grundausstattung ergänzen
 - [ ] Schalter verknüpfen per Drag and Drop: Schalter auf Schalter ziehen → „Mehrfachkombination“ (gemeinsamer 2-/3-fach-Rahmen, z. B. Licht innen + Licht außen) oder „Serienschalter“ (ein Einsatz, zwei Wippen); auch Schalter + Steckdose als Kombination; Lösen per Knopf; Material zählt Rahmen, Einsätze und Dosen richtig
 - [ ] Schalter → Leuchte per Ziehen zuordnen
 - [ ] Grundausstattung (immer da, kein Modul) ergänzen: TV/SAT-Antennendose, Leerdose mit Leerrohr (für später), Rollladenschalter/-taster und Motoranschluss (einfache Ausführung), Video-Türsprechanlage / Innenstation; Türsprechanlage und Rauchwarnmelder sind schon drin
 - [ ] Neutralleiter in jeder Schalterdose als Projekteinstellung (Standard an, wichtig für spätere Smart-Home-Aktoren); Schalterdosen wahlweise als tiefe Elektronikdosen im Material
 
-## 0.7.3 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
+## 0.7.4 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
 - [ ] Bündel antippen → fächert sich auf: alle Leitungen dieser Strecke einzeln nebeneinander gezeichnet, jede mit Farbe und Beschriftung (Leitungstyp, Stromkreis-Nr., Ziel/Raum); klappt wieder zu, sobald woanders getippt wird
 - [ ] Alle Leitungsarten bündeln, nicht nur Stromkreis-Zuleitungen: auch Schalter→Leuchte, Klingel, Netzwerk, Bus, damit die Zahl im Bündel stimmt
 - [ ] Datenleitungen (CAT, Telefon, Koax) getrennt von Starkstrom führen: eigenes Wegenetz-Bündel, eigener Schlitz; beim automatischen Verlauf parallel mit einstellbarem Mindestabstand (Standard z. B. 10 cm, vgl. DIN EN 50174-2) statt in derselben Strecke; Kreuzungen möglichst rechtwinklig; Hinweis, wenn eine Datenleitung (auch selbst verschoben) zu nah an einer Stromleitung liegt. Klingel und Bus (Kleinspannung) ebenfalls getrennt, als Einstellung
