@@ -43,6 +43,7 @@ header{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1p
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .btn.danger{color:var(--warn)}
 .btn.warn{color:var(--warn);border-color:var(--warn);font-weight:600}
+.catg{border-top:1px solid var(--line)}.catg>summary{min-height:44px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;cursor:pointer;list-style:none}.catg>summary::-webkit-details-marker{display:none}.catg>summary::before{content:'▸';color:var(--muted);transition:transform .15s}.catg[open]>summary::before{transform:rotate(90deg)}.catg .cat{padding-bottom:10px}
 .lgrp{border-top:1px solid var(--line);padding:6px 0}.lgrp>b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px}.lgrp summary{cursor:pointer;min-height:36px;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
 .btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -185,6 +186,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 </head>
 <body>
 <header>
+  <button class="btn" id="projBtn" style="max-width:170px;overflow:hidden;text-overflow:ellipsis">Projekt</button>
   <select id="floorSel" class="btn" aria-label="Etage wählen"></select>
   <button class="btn" id="floorMenu">Etagen</button>
   <div class="seg" role="group" aria-label="Ansicht" id="viewSeg">
@@ -224,7 +226,19 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KEY='elektroplaner.v1';
+const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
+const APP_VERSION='0.7.0',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[
+ ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
+ ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
+ ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
+ ['0.6','Pläne und Listen ausgeben: Installationsplan mit Plankopf, PDF, PNG, alle Listen als CSV'],
+ ['0.5','Datenverteiler mit Patchpanel und Port-Belegung, Klingelanlage, Eltako-Aktoren mit Schaltbild, Außen-Hinweise'],
+ ['0.4','Leitungswege und Längen je Stromkreis, Installationszonen, Materialliste'],
+ ['0.3','Stromkreise, Verteiler-Ansicht mit Reihen und TE, Zuleitungen, Stromkreisliste'],
+ ['0.2.1','Reiter, neues Menü, schaltbare Steckdosen, Wechsel- und Kreuzschaltungen, Schaltbild'],
+ ['0.2','Elektro-Ebene mit Schaltzeichen, Höhen, Montageart, Legende, Varianten'],
+ ['0.1','Grundriss und Etagen: Wände mit Dicke und Bauart, Räume, Türen und Fenster, Ist/Soll/Umbau']];
 const IN_ART=/claude\.ai|claudeusercontent/.test(location.host);
 const round=(v,g)=>Math.round(v/g)*g;
 const r1=v=>Math.round(v*10)/10;
@@ -367,7 +381,7 @@ function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
     h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&pl.k!=='kombi'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'} Du kannst mehrere nacheinander setzen.</div>
       <div class="row"><button class="btn primary" data-act="pickend" style="flex:1">Fertig mit Setzen</button></div>`}
   else h+=`<p class="hint">Element wählen und im Plan antippen. Wanddosen rasten an der Wandseite ein. Der Grundriss ist hier gesperrt. Neue Elemente kommen in dieser Ansicht als <b>${newStatus()==='keep'?'Bestand':'neu'}</b>.</p>`;
-  for(const c of CAT)h+=`<h3>${c.g}</h3><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div>`;
+  UI.catOpen=UI.catOpen||{Steckdosen:true};for(const c of CAT){const op=UI.catOpen[c.g]||(pl&&c.l.some(e=>e[0]===pl.k));h+=`<details class="catg" data-g="${c.g}"${op?' open':''}><summary>${c.g} <span class="tag">${c.l.length}</span></summary><div class="cat">${c.l.map(([k,lbl,cnt])=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}</span></button>`).join('')}</div></details>`}
   return h}
 function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
   const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
@@ -833,11 +847,40 @@ function defaultState(){const f=newFloor('EG',0);return {v:1,app:'elektroplaner'
   project:{name:'',address:'',author:'',stand:''},settings:{grid:5,snap:true,dims:'inner',underlay:true,sym:1.5,heights:{...DEF_H},wallTypes:defaultWallTypes()}}}
 function valid(s){return !!(s&&s.app==='elektroplaner'&&Array.isArray(s.floors)&&s.floors.length&&s.settings&&Array.isArray(s.settings.wallTypes)&&s.settings.wallTypes.length&&
   s.floors.every(f=>Array.isArray(f.nodes)&&Array.isArray(f.walls)&&Array.isArray(f.openings)&&Array.isArray(f.rooms)))}
-function upgrade(s){const d=defaultState();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
+function upgrade(s){const d=defaultState();if(!s.pid)s.pid=uid();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
   s.settings.heights={...DEF_H,...(s.settings.heights||{})};s.circuits=Array.isArray(s.circuits)?s.circuits:[];s.floors.forEach(ensureLayouts);if(!s.floors.some(f=>f.id===s.activeFloor))s.activeFloor=s.floors[0].id;if(!s.floors.some(f=>f.id===s.hv))s.hv=s.floors[0].id;return s}
 function load(){try{const j=localStorage.getItem(KEY);if(!j)return null;const s=JSON.parse(j);return valid(s)?upgrade(s):null}catch(e){return null}}
+const pName=s=>s?.project?.name||'Projekt ohne Namen';
+function idx(){try{return JSON.parse(localStorage.getItem(IDX))||[]}catch(e){return []}}
+function idxSave(L){try{localStorage.setItem(IDX,JSON.stringify(L))}catch(e){}}
+function idxTouch(){const L=idx(),e=L.find(x=>x.id===S.pid);if(e){e.name=pName(S);e.t=Date.now()}else L.push({id:S.pid,name:pName(S),t:Date.now()});idxSave(L)}
+function stashActive(){try{localStorage.setItem(PKEY(S.pid),hist[hp]);localStorage.setItem(PKEY(S.pid)+'.t',String(localTs()||Date.now()))}catch(e){}idxTouch()}
+function activate(s,ts){S=upgrade(s);hist=[JSON.stringify(S)];hp=0;try{localStorage.setItem(KEY,hist[0]);localStorage.setItem(KEY+'.t',String(ts||Date.now()))}catch(e){}
+  idxTouch();UI.sel=null;UI.chain=null;UI.selC=null;UI.selB=null;UI.assign=null;UI.place=null;UI.dv=null;SY.sha=null;renderAll();fit();if(sync)syncNow()}
+function switchProject(id){if(id===S.pid)return;stashActive();let s=null,ts=0;try{s=JSON.parse(localStorage.getItem(PKEY(id)));ts=+localStorage.getItem(PKEY(id)+'.t')||0}catch(e){}
+  if(!s||!valid(s)){flash('Projekt konnte nicht geladen werden.');return}activate(s,ts);flash(`Projekt „${pName(S)}“ geöffnet.`)}
+function newProject(name,copy){stashActive();const s=copy?JSON.parse(hist[hp]):defaultState();s.pid=uid();s.project={...(copy?s.project:{name:'',address:'',author:'',stand:''}),name};activate(s,Date.now());flash(`Projekt „${name}“ angelegt.`)}
+function deleteProject(id){const L=idx().filter(x=>x.id!==id);idxSave(L);try{localStorage.removeItem(PKEY(id));localStorage.removeItem(PKEY(id)+'.t')}catch(e){}}
+function projectsMenu(){stashActive();const L=idx().sort((a,b)=>a.name.localeCompare(b.name,'de'));const {el,close}=modal(`<h2>Projekte</h2><p class="hint">Jedes Projekt ist ein eigenes Haus mit Etagen, Stromkreisen und Verteilern.</p>
+  <div class="mlist">${L.map(p=>`<button class="mrow" data-po="${p.id}"><span><b>${esc(p.name)}${p.id===S.pid?' <span class="tag on">geöffnet</span>':''}</b><small>zuletzt geändert ${new Date(p.t).toLocaleString('de-DE')}</small></span><span class="chev" aria-hidden="true">›</span></button>`).join('')}</div>
+  <div class="row" style="margin-top:12px"><label class="f">Neues Projekt<input id="pnn" placeholder="z. B. Haus Musterstraße 3"></label></div>
+  <div class="stack"><button class="btn primary" id="pnew">Leeres Projekt anlegen</button><button class="btn" id="pdup">Geöffnetes Projekt als Kopie anlegen</button>${sync&&!IN_ART?'<button class="btn" id="pgh">Projekte aus GitHub laden</button>':''}<button class="btn danger" id="pdel" ${L.length<2?'disabled':''}>Geöffnetes Projekt löschen</button></div>
+  <p class="hint" style="margin-top:10px">Umbenennen über Menü → Projekt und Plankopf. Gelöschte Projekte bleiben im GitHub-Daten-Repo erhalten.</p>`);
+  el.querySelectorAll('[data-po]').forEach(b=>b.onclick=()=>{close();switchProject(b.dataset.po)});
+  const nm=()=>el.querySelector('#pnn').value.trim();
+  el.querySelector('#pnew').onclick=()=>{const n=nm();if(!n){el.querySelector('#pnn').focus();return}close();newProject(n,false)};
+  el.querySelector('#pdup').onclick=()=>{close();newProject(nm()||pName(S)+' (Kopie)',true)};
+  el.querySelector('#pgh')?.addEventListener('click',()=>{close();ghProjects()});
+  el.querySelector('#pdel').onclick=()=>{if(L.length<2)return;close();confirmBox(`„${pName(S)}“ von diesem Gerät löschen?`,'Löschen',()=>{const old=S.pid,next=idx().find(x=>x.id!==old);deleteProject(old);let s=null;try{s=JSON.parse(localStorage.getItem(PKEY(next.id)))}catch(e){}if(s)activate(s,next.t)})}}
+async function ghProjects(){try{const r=await fetch(`https://api.github.com/repos/${sync.repo}/contents/projekte`,{cache:'no-store',headers:{Authorization:'Bearer '+sync.token,Accept:'application/vnd.github+json'}});
+  if(r.status===404){flash('Im Daten-Repo liegen noch keine Projekte.');return}if(!r.ok)throw r.status;const files=(await r.json()).filter(x=>/\.json$/.test(x.name)),have=new Set(idx().map(x=>x.id));
+  const {el,close}=modal(`<h2>Projekte in GitHub</h2><div class="mlist">${files.map(x=>{const id=x.name.replace(/\.json$/,'');return `<button class="mrow" data-gp="${esc(x.path)}" ${have.has(id)?'disabled':''}><span><b>${esc(id)}</b><small>${have.has(id)?'schon auf diesem Gerät':'Antippen lädt das Projekt'}</small></span><span class="chev">›</span></button>`}).join('')||'<p class="hint">Keine Projekte gefunden.</p>'}</div>`);
+  el.querySelectorAll('[data-gp]').forEach(b=>b.onclick=async()=>{close();try{const g=await fetch(`https://api.github.com/repos/${sync.repo}/contents/${b.dataset.gp}`,{cache:'no-store',headers:{Authorization:'Bearer '+sync.token,Accept:'application/vnd.github+json'}});if(!g.ok)throw g.status;
+    const s=JSON.parse(b64d((await g.json()).content));if(!valid(s))throw 0;const t=s.updatedAt||Date.now();delete s.updatedAt;stashActive();activate(s,t);flash(`Projekt „${pName(S)}“ aus GitHub geladen.`)}catch(e){flash('Laden fehlgeschlagen: '+syncErr(e))}})}catch(e){flash(syncErr(e))}}
+function versionMenu(){modal(`<h2>Elektroplaner ${APP_VERSION}</h2><p class="hint">Du nutzt gerade Version <b>${APP_VERSION}</b>. Alle Änderungen im Detail stehen in der <a href="${REPO_URL}/commits/main" target="_blank" rel="noopener">Versionsgeschichte auf GitHub</a>.</p>
+  <div class="mlist">${CHANGELOG.map(([v,t])=>`<div class="mrow" style="cursor:default"><span><b>Version ${v}${v===APP_VERSION?' <span class="tag on">aktuell</span>':''}</b><small>${esc(t)}</small></span></div>`).join('')}</div>`)}
 
-let S=load()||defaultState();
+let S=load()||defaultState();if(!S.pid)S.pid=uid();
 let hist=[JSON.stringify(S)],hp=0;
 const UI={tab:{plan:'edit',elec:'edit',dist:'bel'},dv:null,selB:null,selC:null,assign:null,grp:null,mode:'plan',place:null,flash:null,view:'ist',tool:'sel',sel:null,vp:{s:1,tx:0,ty:0},chain:null,cur:null,meas:null,measOn:false,draw:null};
 
@@ -849,7 +892,7 @@ const nodeOf=(f,id)=>f.nodes.find(n=>n.id===id);
 const newStatus=()=>UI.view==='ist'?'keep':'new';
 function drawDefaults(){if(!UI.draw||!types().some(t=>t.id===UI.draw.type)){const t=types()[0];UI.draw={type:t.id,build:t.builds[0]?.name||'',t:t.t}}return UI.draw}
 
-function save(){try{localStorage.setItem(KEY,hist[hp]);localStorage.setItem(KEY+'.t',String(Date.now()))}catch(e){}schedulePush()}
+function save(){try{localStorage.setItem(KEY,hist[hp]);localStorage.setItem(KEY+'.t',String(Date.now()))}catch(e){}idxTouch();schedulePush()}
 function commit(){normalize(floor());const j=JSON.stringify(S);if(j===hist[hp])return;hist=hist.slice(0,hp+1);hist.push(j);if(hist.length>150)hist.shift();hp=hist.length-1;save();updBar()}
 function restore(){S=JSON.parse(hist[hp]);validateSel();if(UI.chain&&!nodeOf(floor(),UI.chain.last))UI.chain=null;save();renderAll()}
 function undo(){if(hp>0){hp--;restore()}}
@@ -863,7 +906,7 @@ const localTs=()=>{try{return +localStorage.getItem(KEY+'.t')||0}catch(e){return
 function setSync(st,msg){SY.state=st;SY.msg=msg;const b=$('#sync');if(b){b.dataset.st=st;b.title=msg;b.setAttribute('aria-label','Speicherort: '+msg)}}
 const b64e=str=>{const b=new TextEncoder().encode(str);let r='';for(let i=0;i<b.length;i+=0x8000)r+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(r)};
 const b64d=str=>new TextDecoder().decode(Uint8Array.from(atob(str.replace(/\s/g,'')),c=>c.charCodeAt(0)));
-function gh(method,body,cfg=sync){return fetch(`https://api.github.com/repos/${cfg.repo}/contents/${DATA_PATH}`,{method,cache:'no-store',
+function gh(method,body,cfg=sync){return fetch(`https://api.github.com/repos/${cfg.repo}/contents/projekte/${S.pid}.json`,{method,cache:'no-store',
   headers:{Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body:body?JSON.stringify(body):undefined})}
 async function pull(cfg=sync){const r=await gh('GET',null,cfg);if(r.status===404)return null;if(!r.ok)throw r.status;const j=await r.json();SY.sha=j.sha;return JSON.parse(b64d(j.content))}
 function syncErr(e){return e===401?'Token ungültig oder abgelaufen':e===403?'Token hat keinen Zugriff auf das Repo':e===404?'Repo nicht gefunden':'Keine Verbindung, Änderungen bleiben auf dem Gerät'}
@@ -1102,7 +1145,7 @@ function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=h
   document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));$('#toolSeg').hidden=UI.mode!=='plan';const D=UI.mode==='dist';$('#svg').style.display=D?'none':'';$('#board').hidden=!D;$('#badge').hidden=D;$('#viewSeg').hidden=D;$('#meas').hidden=D;$('#fit').hidden=D}
 function renderVariants(){const v=$('#variants'),f=floor();if(UI.mode!=='elec'){v.innerHTML='';return}ensureLayouts(f);
   v.innerHTML=f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button><span style="width:10px"></span><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege</button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen</button>`}
-function renderFloorSel(){$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
+function renderFloorSel(){const pb=$('#projBtn');if(pb){pb.textContent=pName(S);pb.title='Projekt wechseln: '+pName(S)}$('#floorSel').innerHTML=S.floors.map(f=>`<option value="${f.id}"${f.id===floor().id?' selected':''}>${esc(f.name)}</option>`).join('')}
 function renderAll(){renderFloorSel();renderPanel();updBar();render()}
 
 /* ---------- Seitenleiste ---------- */
@@ -1379,19 +1422,19 @@ function cabForm(){modal(`<h2>Leitungen und Schutzorgane</h2><p class="hint">Ein
 function mainMenu(){const st=S.settings,H=S.settings.heights,row=(id,t,sub,cls='')=>`<button class="mrow ${cls}" id="${id}"><span><b>${t}</b>${sub?`<small>${sub}</small>`:''}</span><span class="chev" aria-hidden="true">›</span></button>`,
   sel=(id,lbl,opts,cur)=>`<label class="f">${lbl}<select id="${id}">${opts.map(([v,n])=>`<option value="${v}"${String(v)===String(cur)?' selected':''}>${n}</option>`).join('')}</select></label>`,hvF=S.floors.find(x=>x.id===S.hv);
   const {el,close}=modal(`<h2>Menü</h2>
-  <h3 style="margin-top:4px">Projekt</h3><div class="mlist">${row('prj','Projekt und Plankopf',esc([S.project.name,S.project.address].filter(Boolean).join(', ')||'Name, Adresse, Bearbeiter, Planstand'))}${row('flm','Etagen',`${S.floors.length} ${S.floors.length===1?'Etage':'Etagen'} · Hauptverteiler ${esc(hvF?.name||'–')}`)}</div>
+  <h3 style="margin-top:4px">Projekt</h3><div class="mlist">${row('pmn','Projekte',`Geöffnet: ${esc(pName(S))} · ${idx().length} Projekt${idx().length===1?'':'e'}`)}${row('prj','Projekt und Plankopf',esc([S.project.name,S.project.address].filter(Boolean).join(', ')||'Name, Adresse, Bearbeiter, Planstand'))}${row('flm','Etagen',`${S.floors.length} ${S.floors.length===1?'Etage':'Etagen'} · Hauptverteiler ${esc(hvF?.name||'–')}`)}</div>
   <h3>Darstellung</h3><div class="grid2">${sel('sg','Raster',[[1,'1 cm'],[5,'5 cm'],[10,'10 cm'],[25,'25 cm']],st.grid)}${sel('ss','Einrasten',[[1,'An'],[0,'Aus']],st.snap?1:0)}
     ${sel('sd','Maße im Plan',[['inner','Innenmaß je Raum'],['raw','Rohbaumaß außen']],st.dims)}${sel('su','Etage darunter',[[1,'Einblenden'],[0,'Ausblenden']],st.underlay?1:0)}${sel('sy','Schaltzeichen',[[1,'Klein'],[1.5,'Mittel'],[2.2,'Groß']],st.sym||1.5)}${sel('scc','Elemente färben',[[1,'Nach Stromkreis'],[0,'Schwarz']],st.ciColor===false?0:1)}</div>
   <h3>Vorlagen</h3><div class="mlist">${row('wty','Wandtypen und Bauarten',`${types().length} Wandtypen`)}${row('clc','Rechenvorgaben',`Reserve ${calc().res} cm, Verschnitt ${calc().cut} %, Ringe ${esc(calc().rings)} m`)}${row('cab','Leitungen und Schutzorgane',`${cables().length} Leitungstypen, ${prots().length} Schutzorgane`)}${row('hgt','Standardhöhen',`Schalter ${fmt(heightOf('switch'))} cm, Steckdosen ${fmt(heightOf('socket'))} cm, Arbeitsplatte ${fmt(heightOf('work'))} cm`)}</div>
   <h3>Teilen</h3><div class="mlist">${row('eout','Pläne und Listen ausgeben','Installationspläne je Etage mit Plankopf, PDF, PNG und alle Listen als CSV')}${row('eimg','Schnell als Bild',`${esc(floor().name)}, ${UI.mode==='elec'?'Elektro, '+esc(layout().name):'Grundriss'}, ${esc(VIEWS[UI.view])}`)}</div>
   <h3>Daten</h3><div class="mlist">${IN_ART?'':row('gsy','GitHub-Sync',esc(SY.msg))}${row('exp','Sicherung speichern','Als Datei, z. B. in OneDrive')}${row('imp','Sicherung wiederherstellen','Datei „elektroplaner-…json“ wählen')}${row('rst','Alles zurücksetzen','Löscht alle Etagen, Wände und Elemente','danger')}</div>
-  <p class="hint" style="margin-top:14px">${IN_ART?'Testversion: Die Daten bleiben in diesem Browser auf diesem Gerät. ':''}Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p>`);
+  <p class="hint" style="margin-top:14px">${IN_ART?'Testversion: Die Daten bleiben in diesem Browser auf diesem Gerät. ':''}Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p><div class="mlist" style="margin-top:8px">${row('ver','Version '+APP_VERSION,'Was ist neu, Versionsgeschichte')}</div>`);
   const on=(id,ev,fn)=>{const x=el.querySelector('#'+id);if(x)x.addEventListener(ev,fn)},go=fn=>()=>{close();fn()};
   on('sg','change',e=>{st.grid=+e.target.value;commit()});on('ss','change',e=>{st.snap=e.target.value==='1';commit()});
   on('sd','change',e=>{st.dims=e.target.value;commit();render()});on('su','change',e=>{st.underlay=e.target.value==='1';commit();render()});on('sy','change',e=>{st.sym=+e.target.value;commit();render()});on('scc','change',e=>{st.ciColor=e.target.value==='1';commit();render()});on('cab','click',go(cabForm));on('clc','click',go(calcForm));
-  on('prj','click',go(projectForm));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
+  on('prj','click',go(projectForm));on('pmn','click',go(projectsMenu));on('ver','click',go(versionMenu));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
   on('eimg','click',go(exportImage));on('eout','click',go(outputsForm));on('epdf','click',go(printPlan));on('gsy','click',go(syncMenu));on('exp','click',go(exportData));on('imp','click',go(()=>$('#fileIn').click()));
-  on('rst','click',go(()=>confirmBox('Alle Etagen, Wände und Elemente zurücksetzen?','Zurücksetzen',()=>{S=defaultState();UI.sel=null;UI.chain=null;commit();renderAll();fit()})))}
+  on('rst','click',go(()=>confirmBox('Alle Etagen, Wände und Elemente zurücksetzen?','Zurücksetzen',()=>{const pid=S.pid,pn=S.project.name;S=defaultState();S.pid=pid;S.project.name=pn;UI.sel=null;UI.chain=null;commit();renderAll();fit()})))}
 
 /* ---------- Export ---------- */
 function exportCss(){const t=document.querySelector('style').textContent;return t.slice(t.indexOf('/* svg */')).replace(/var\(--([\w-]+)\)/g,(m,k)=>LIGHT[k]||'#000')}
@@ -1458,7 +1501,7 @@ async function printPlan(){const pa=$('#printArea');try{const png=await planPng(
   catch(e){pa.innerHTML='';modal('<h2>Drucken nicht möglich</h2><p class="hint">Speichere den Plan stattdessen als Bild.</p>')}}
 async function exportData(){const json=JSON.stringify(S,null,1),name=`elektroplaner-${new Date().toISOString().slice(0,10)}.json`;
   return saveFile(new Blob([json],{type:'application/json'}),name,'Elektroplaner-Sicherung')}
-$('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const s=JSON.parse(rd.result);if(!valid(s))throw 0;delete s.updatedAt;S=upgrade(s);UI.sel=null;UI.chain=null;commit();renderAll();fit()}
+$('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const s=JSON.parse(rd.result);if(!valid(s))throw 0;delete s.updatedAt;stashActive();if(!s.pid||idx().some(x=>x.id===s.pid))s.pid=uid();activate(s,Date.now());flash(`Sicherung als Projekt „${pName(S)}“ geöffnet.`)}
   catch(_){modal(`<h2>Wiederherstellen nicht möglich</h2><p class="hint">Diese Datei ist keine Elektroplaner-Sicherung. Wähle eine Datei, die mit „elektroplaner-“ beginnt.</p>`)}};rd.readAsText(f);e.target.value=''});
 
 /* ---------- Zeiger ---------- */
@@ -1523,6 +1566,7 @@ svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,U
 const panel=$('#panel');
 panel.addEventListener('click',e=>{const tb=e.target.closest('.tabs [data-tab]');if(tb){UI.tab[UI.mode]=tb.dataset.tab;UI.selB=null;UI.selC=null;if(tb.dataset.tab!=='edit')UI.place=null;renderPanel();render();return}const b=e.target.closest('[data-act]');if(b&&!b.disabled)act(b)});
 panel.addEventListener('input',e=>{const el=e.target;if(el.id==='mkt'){const t=types().find(t=>t.id===el.value);if(t)$('#mkd').value=t.t;return}if(el.dataset.f)applyField(el,el.tagName==='SELECT'||el.type==='checkbox'?true:false)});
+panel.addEventListener('toggle',e=>{const d=e.target;if(d.classList?.contains('catg')){UI.catOpen=UI.catOpen||{};UI.catOpen[d.dataset.g]=d.open}},true);
 panel.addEventListener('change',e=>{const el=e.target;if(el.dataset.f&&el.tagName!=='SELECT'&&el.type!=='checkbox')applyField(el,true)});
 panel.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='dlen'){e.preventDefault();e.target.blur();return}if(e.target.dataset.f)e.target.blur()});
 document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b.dataset.view;UI.chain=null;UI.cur=null;validateSel();commit();updBar();renderPanel();render()});
@@ -1542,10 +1586,10 @@ document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INP
   else if(e.key==='Escape'){if(UI.measOn)toggleMeas();else if(UI.chain)endChain();else if(UI.tool==='draw')setTool('sel');else select(null)}
   else if(e.key.toLowerCase()==='w'&&!e.ctrlKey&&!e.metaKey)setTool(UI.tool==='draw'?'sel':'draw')});
 let rz;new ResizeObserver(()=>{clearTimeout(rz);rz=setTimeout(render,50)}).observe(stage);
-$('#sync').onclick=syncMenu;$('#probs').onclick=probsMenu;if(IN_ART)$('#sync').hidden=true;
+$('#sync').onclick=syncMenu;$('#projBtn').onclick=projectsMenu;$('#probs').onclick=probsMenu;if(IN_ART)$('#sync').hidden=true;
 document.addEventListener('visibilitychange',()=>{if(!sync)return;if(document.visibilityState==='hidden'){if(SY.timer)push()}else syncNow()});
 window.__EP={get S(){return S},mkRoom,act,UI,G,floor,commit,renderAll,fit,addWall,addNode,drawTo,snapDraw,setThickness,setLen,select};
-renderAll();requestAnimationFrame(fit);
+idxTouch();renderAll();requestAnimationFrame(fit);try{const lv=localStorage.getItem('elektroplaner.ver');if(lv&&lv!==APP_VERSION)setTimeout(()=>flash(`Aktualisiert auf Version ${APP_VERSION}. Was neu ist, steht im Menü unten.`),600);localStorage.setItem('elektroplaner.ver',APP_VERSION)}catch(e){}
 if(sync){setSync('busy','Lädt aus GitHub …');syncNow()}else setSync('off','Nur auf diesem Gerät gespeichert');
 if(/^https?:$/.test(location.protocol)&&!/claude\.ai|claudeusercontent/.test(location.host)){
   try{navigator.storage?.persist?.()}catch(e){}
