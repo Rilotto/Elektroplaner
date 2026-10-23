@@ -42,6 +42,11 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Taster-Schaltungen mit Eltako-Aktor im Verteiler (Stromstoß, Treppenlicht, Dimmer, Zeitrelais), Schaltbild, Leitung 5-adrig oder zwei Leitungen nach Vorgabe
 - Außen: FI-Pflicht und NYY-Hinweis für Erdkabel
 
+## Stand: Phase 6 – Pläne und Ausgaben
+- Menü → „Pläne und Listen ausgeben“: Installationsplan oder Grundriss für beliebige Etagen, Ist/Soll/Umbau, Schaltzeichen schwarz oder nach Stromkreis, mit Legende und Plankopf
+- PNG je Etage, PDF mit einer Seite je Etage über den Druckdialog
+- CSV: Stromkreisliste, Verteilerbelegung, Materialliste, Netzwerk-Belegung
+
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
 - Optional: GitHub-Sync über das Wolken-Symbol. Der Stand liegt als `daten.json` im **privaten** Repo `Rilotto/Elektroplaner-daten`. Dafür einen eigenen Token mit Zugriff nur auf dieses Repo anlegen (Contents: Read and write).

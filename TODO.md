@@ -10,5 +10,5 @@
 - [x] 3. Verteiler und Stromkreise, erste Fassung
 - [x] 4. Leitungen und Mengen, erste Fassung
 - [x] 5. Netzwerk, Klingel, Außen, Eltako, erste Fassung
-- [ ] 6. Pläne und Ausgaben
+- [x] 6. Pläne und Ausgaben, erste Fassung
 - [ ] 7. Automatische Verdrahtung (vorerst nicht geplant)

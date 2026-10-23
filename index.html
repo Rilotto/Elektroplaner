@@ -668,7 +668,7 @@ function ciRoute(c){const z=zoneOf(c),its=ciItems(c),dv=distBy(c.dist),segs=[],g
 const fmtM=m=>m.toFixed(1).replace('.',',')+' m';
 function routeSvg(f,s,C,exp){let h='';const px=n=>n/s;
   for(const c of circuits()){const R=ciRoute(c),on=UI.selC===c.id||UI.assign===c.id;for(const sg of R.segs){if(sg.f!==f||sg.kind!=='feed')continue;
-    h+=`<polyline points="${pts(sg.P)}" fill="none" stroke="${c.color}" stroke-width="${on?4.5:2.6}" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity="${UI.selC&&!on?.3:.9}"${sg.cross?' stroke-dasharray="2 5"':''} pointer-events="none"/>`;
+    h+=`<polyline points="${pts(sg.P)}" fill="none" stroke="${exp&&S.settings.ciColor===false?'#22282C':c.color}" stroke-width="${on?4.5:2.6}" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity="${UI.selC&&!on?.3:.9}"${sg.cross?' stroke-dasharray="2 5"':''} pointer-events="none"/>`;
     if(on&&!exp){let best=0,bi=0;for(let i=0;i+1<sg.P.length;i++){const L=dist(sg.P[i],sg.P[i+1]);if(L>best){best=L;bi=i}}if(best*s>50){const m={x:(sg.P[bi].x+sg.P[bi+1].x)/2,y:(sg.P[bi].y+sg.P[bi+1].y)/2},lbl=fmtM(sg.len/100)+(sg.cross?' · '+sg.cross:''),bw=px(lbl.length*6.4+10);
       h+=`<rect x="${m.x-bw/2}" y="${m.y-px(9)}" width="${bw}" height="${px(18)}" rx="${px(9)}" fill="${c.color}" pointer-events="none"/><text x="${m.x}" y="${m.y}" font-size="${px(11.5)}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="600" pointer-events="none">${esc(lbl)}</text>`}}}}
   return h}
@@ -1333,25 +1333,54 @@ function mainMenu(){const st=S.settings,H=S.settings.heights,row=(id,t,sub,cls='
   <h3>Darstellung</h3><div class="grid2">${sel('sg','Raster',[[1,'1 cm'],[5,'5 cm'],[10,'10 cm'],[25,'25 cm']],st.grid)}${sel('ss','Einrasten',[[1,'An'],[0,'Aus']],st.snap?1:0)}
     ${sel('sd','Maße im Plan',[['inner','Innenmaß je Raum'],['raw','Rohbaumaß außen']],st.dims)}${sel('su','Etage darunter',[[1,'Einblenden'],[0,'Ausblenden']],st.underlay?1:0)}${sel('sy','Schaltzeichen',[[1,'Klein'],[1.5,'Mittel'],[2.2,'Groß']],st.sym||1.5)}${sel('scc','Elemente färben',[[1,'Nach Stromkreis'],[0,'Schwarz']],st.ciColor===false?0:1)}</div>
   <h3>Vorlagen</h3><div class="mlist">${row('wty','Wandtypen und Bauarten',`${types().length} Wandtypen`)}${row('clc','Rechenvorgaben',`Reserve ${calc().res} cm, Verschnitt ${calc().cut} %, Ringe ${esc(calc().rings)} m`)}${row('cab','Leitungen und Schutzorgane',`${cables().length} Leitungstypen, ${prots().length} Schutzorgane`)}${row('hgt','Standardhöhen',`Schalter ${fmt(heightOf('switch'))} cm, Steckdosen ${fmt(heightOf('socket'))} cm, Arbeitsplatte ${fmt(heightOf('work'))} cm`)}</div>
-  <h3>Teilen</h3><div class="mlist">${row('eimg','Als Bild speichern',`${esc(floor().name)}, ${UI.mode==='elec'?'Elektro, '+esc(layout().name):'Grundriss'}, ${esc(VIEWS[UI.view])}`)}${IN_ART?'':row('epdf','Als PDF drucken','Gleicher Plan über den Druckdialog')}</div>
+  <h3>Teilen</h3><div class="mlist">${row('eout','Pläne und Listen ausgeben','Installationspläne je Etage mit Plankopf, PDF, PNG und alle Listen als CSV')}${row('eimg','Schnell als Bild',`${esc(floor().name)}, ${UI.mode==='elec'?'Elektro, '+esc(layout().name):'Grundriss'}, ${esc(VIEWS[UI.view])}`)}</div>
   <h3>Daten</h3><div class="mlist">${IN_ART?'':row('gsy','GitHub-Sync',esc(SY.msg))}${row('exp','Sicherung speichern','Als Datei, z. B. in OneDrive')}${row('imp','Sicherung wiederherstellen','Datei „elektroplaner-…json“ wählen')}${row('rst','Alles zurücksetzen','Löscht alle Etagen, Wände und Elemente','danger')}</div>
   <p class="hint" style="margin-top:14px">${IN_ART?'Testversion: Die Daten bleiben in diesem Browser auf diesem Gerät. ':''}Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p>`);
   const on=(id,ev,fn)=>{const x=el.querySelector('#'+id);if(x)x.addEventListener(ev,fn)},go=fn=>()=>{close();fn()};
   on('sg','change',e=>{st.grid=+e.target.value;commit()});on('ss','change',e=>{st.snap=e.target.value==='1';commit()});
   on('sd','change',e=>{st.dims=e.target.value;commit();render()});on('su','change',e=>{st.underlay=e.target.value==='1';commit();render()});on('sy','change',e=>{st.sym=+e.target.value;commit();render()});on('scc','change',e=>{st.ciColor=e.target.value==='1';commit();render()});on('cab','click',go(cabForm));on('clc','click',go(calcForm));
   on('prj','click',go(projectForm));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
-  on('eimg','click',go(exportImage));on('epdf','click',go(printPlan));on('gsy','click',go(syncMenu));on('exp','click',go(exportData));on('imp','click',go(()=>$('#fileIn').click()));
+  on('eimg','click',go(exportImage));on('eout','click',go(outputsForm));on('epdf','click',go(printPlan));on('gsy','click',go(syncMenu));on('exp','click',go(exportData));on('imp','click',go(()=>$('#fileIn').click()));
   on('rst','click',go(()=>confirmBox('Alle Etagen, Wände und Elemente zurücksetzen?','Zurücksetzen',()=>{S=defaultState();UI.sel=null;UI.chain=null;commit();renderAll();fit()})))}
 
 /* ---------- Export ---------- */
 function exportCss(){const t=document.querySelector('style').textContent;return t.slice(t.indexOf('/* svg */')).replace(/var\(--([\w-]+)\)/g,(m,k)=>LIGHT[k]||'#000')}
+function withCtx(o,fn){const s0={f:S.activeFloor,m:UI.mode,v:UI.view,cc:S.settings.ciColor,sel:UI.sel,sr:UI.showRoutes};
+  try{if(o.f)S.activeFloor=o.f;if(o.mode)UI.mode=o.mode;if(o.view)UI.view=o.view;if(o.black)S.settings.ciColor=false;if(o.routes!==undefined)UI.showRoutes=o.routes;UI.sel=null;return fn()}
+  finally{S.activeFloor=s0.f;UI.mode=s0.m;UI.view=s0.v;S.settings.ciColor=s0.cc;UI.sel=s0.sel;UI.showRoutes=s0.sr}}
+function plankopf(W,H,f,view,elx){const pr=S.project,F=LIGHT.f,w=520,h=128,x=W-70-w,y=H-h-24,ln=LIGHT.ink,c1=x+10,c2=x+w/2+10;
+  const cell=(cx,cy,l,v)=>`<text x="${cx}" y="${cy}" font-family="${F}" font-size="11" fill="${LIGHT.muted}">${esc(l)}</text><text x="${cx}" y="${cy+18}" font-family="${F}" font-size="15" fill="${ln}">${esc(v||'–')}</text>`;
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" stroke="${ln}" stroke-width="1.6"/><line x1="${x}" y1="${y+40}" x2="${x+w}" y2="${y+40}" stroke="${ln}"/><line x1="${x}" y1="${y+80}" x2="${x+w}" y2="${y+80}" stroke="${ln}"/><line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+80}" stroke="${ln}"/><line x1="${x+w/3}" y1="${y+80}" x2="${x+w/3}" y2="${y+h}" stroke="${ln}"/><line x1="${x+2*w/3}" y1="${y+80}" x2="${x+2*w/3}" y2="${y+h}" stroke="${ln}"/>`+
+    cell(c1,y+14,'Projekt',pr.name||'Elektroplaner')+cell(c2,y+14,'Plan',(elx?'Installationsplan ':'Grundriss ')+f.name)+cell(c1,y+54,'Adresse',pr.address)+cell(c2,y+54,'Ansicht',VIEWS[view]+(elx?', '+layout(f).name:''))+
+    cell(c1,y+94,'Bearbeiter',pr.author)+cell(x+w/3+10,y+94,'Planstand',pr.stand)+cell(x+2*w/3+10,y+94,'Datum',new Date().toLocaleDateString('de-DE'))+
+    `<text x="${x}" y="${y+h+16}" font-family="${F}" font-size="11" fill="${LIGHT.muted}">Planungshilfe. Querschnitte, Absicherung und Ausführung prüft eine Elektrofachkraft nach VDE.</text></g>`}
+function outputsForm(){const fl=S.floors;const {el}=modal(`<h2>Pläne und Listen</h2>
+  <h3 style="margin-top:4px">Pläne</h3><div class="stack">${fl.map(f=>`<label class="chk"><input type="checkbox" name="of" value="${f.id}" ${f.id===S.activeFloor?'checked':''}>${esc(f.name)}</label>`).join('')}</div>
+  <div class="grid2" style="margin-top:8px"><label class="f">Inhalt<select name="om"><option value="elec"${UI.mode!=='plan'?' selected':''}>Installationsplan</option><option value="plan"${UI.mode==='plan'?' selected':''}>Grundriss</option></select></label>
+  <label class="f">Ansicht<select name="ov">${Object.entries(VIEWS).map(([k,v])=>`<option value="${k}"${k===UI.view?' selected':''}>${v}</option>`).join('')}</select></label>
+  <label class="f">Schaltzeichen<select name="oc"><option value="0">Schwarz</option><option value="1">Nach Stromkreis</option></select></label>
+  <label class="f">Leitungswege<select name="or"><option value="1">Zeigen</option><option value="0">Ausblenden</option></select></label></div>
+  <div class="stack" style="margin-top:12px"><button class="btn primary" id="opng">Als Bild speichern (je Etage ein PNG)</button>${IN_ART?'':'<button class="btn" id="opdf">Als PDF drucken (je Etage eine Seite)</button>'}</div>
+  <h3>Listen als CSV (Excel)</h3><div class="stack"><button class="btn" id="oci">Stromkreisliste</button><button class="btn" id="obo">Verteilerbelegung</button><button class="btn" id="oma">Materialliste</button><button class="btn" id="one">Netzwerk-Belegung</button></div>
+  <p class="hint" style="margin-top:10px">Verteilerbelegung als Bild gibt es in der Ebene „Verteiler“ unter Stromkreisliste.</p>`);
+  const opts=()=>{const q=n=>el.querySelector(`[name=${n}]`).value;return {fs:[...el.querySelectorAll('[name=of]:checked')].map(i=>i.value),mode:q('om'),view:q('ov'),black:q('oc')==='0',routes:q('or')==='1'}};
+  el.querySelector('#opng').onclick=async()=>{const o=opts();for(const id of o.fs){const f=S.floors.find(x=>x.id===id);try{const png=await planPng({...o,f:id});await saveFile(png,`elektroplaner-${(f.name+'-'+(o.mode==='elec'?'installation':'grundriss')+'-'+o.view).replace(/[^\wäöüÄÖÜß-]+/g,'-')}.png`,'Plan '+f.name)}catch(e){flash('Bild konnte nicht erstellt werden.')}}};
+  el.querySelector('#opdf')?.addEventListener('click',async()=>{const o=opts();$('#modal').classList.remove('open');await printPlans(o)});
+  el.querySelector('#oci').onclick=()=>exportCsv();el.querySelector('#obo').onclick=()=>exportBoardCsv();el.querySelector('#oma').onclick=()=>exportMat();el.querySelector('#one').onclick=()=>exportNet()}
+async function printPlans(o){const pa=$('#printArea'),urls=[];try{for(const id of o.fs){const png=await planPng({...o,f:id});urls.push(URL.createObjectURL(png))}
+  pa.innerHTML=urls.map((u,i)=>`<img alt="" src="${u}" style="${i<urls.length-1?'break-after:page;page-break-after:always;':''}">`).join('');for(const im of pa.querySelectorAll('img'))await im.decode();
+  const done=()=>{pa.innerHTML='';urls.forEach(u=>URL.revokeObjectURL(u));window.removeEventListener('afterprint',done)};window.addEventListener('afterprint',done);window.print()}catch(e){pa.innerHTML='';modal('<h2>Drucken nicht möglich</h2><p class="hint">Speichere die Pläne stattdessen als Bild.</p>')}}
+async function exportBoardCsv(){const q=v=>`"${String(v??'').replace(/"/g,'""')}"`,rows=[['Verteiler','Reihe','ab TE','TE','Gerät','Bezeichnung','Stromkreis','Schutz','FI/RCD']];
+  for(const dv of dists())boardRows(dv).forEach((r,ri)=>{let te=1;for(const e of r.cells){const dn=e.kind==='ls'?'Leitungsschutzschalter':e.kind==='feed'?'LS Zuleitung':e.kind==='eltako'?'Eltako-Aktor':(DEV[e.kind]?.n||e.kind),rc=e.c?dv.it.devs?.find(d=>d.id===e.c.rcd):null;
+    rows.push([distName(dv),ri+1,te,e.te,dn,e.c?e.c.name:e.x?'Zuleitung '+distName(e.x):devLabel(e.d||{}),e.c?e.c.no:'',e.c?e.c.prot:e.x?e.x.it.feedProt:'',rc?devLabel(rc):'']);te+=e.te}});
+  await saveFile(new Blob(['﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv'}),`verteilerbelegung-${new Date().toISOString().slice(0,10)}.csv`,'Verteilerbelegung')}
 function planSvg(){const f=floor(),view=UI.view,g=G(f,view),P=g.walls.flatMap(x=>x.poly),bb=P.length?bbox(P):{minX:0,minY:0,maxX:100,maxY:100},bw=Math.max(bb.maxX-bb.minX,1),bh=Math.max(bb.maxY-bb.minY,1);
   const sc=Math.min(1500/bw,1100/bh,4),pad=70,top=110,W=Math.max(Math.round(bw*sc+2*pad),1100),PH=bh*sc+2*pad;
   const v={s:sc,tx:(W-bw*sc)/2-bb.minX*sc,ty:top+pad-bb.minY*sc},F=LIGHT.f,pr=S.project,area=g.rooms.reduce((s,x)=>s+x.area,0)/1e4;
   const usedT=types().filter(t=>g.walls.some(x=>x.w.type===t.id)),leg=[...usedT.map(t=>({fill:t.shade==='hatch'?'url(#hT)':LIGHT['w-'+t.shade],txt:`${t.name}  ${fmt(t.t)} cm`}))];
   const elx=UI.mode==='elec';if(elx){leg.length=0;for(const {it,n} of usedLegend(f,view))leg.push({sym:it,txt:`${kindName(it)}  (${n})`});for(const c of circuits())if(items(f).some(i=>i.ci===c.id&&VIS[view](i)))leg.push({fill:c.color,txt:`Stromkreis ${c.no} ${c.name}`})}
   if(view==='umbau')leg.push({fill:LIGHT['w-dark'],txt:'Bestand bleibt'},{fill:'url(#hDel)',txt:'Bestand entfällt'},{fill:LIGHT.new,txt:'Neu'});
-  const cols=W>=1400?3:2,cw=(W-2*pad)/cols,LH=leg.length?Math.ceil(leg.length/cols)*36+60:0,H=Math.round(top+PH+LH+30);
+  const cols=W>=1400?3:2,cw=(W-2*pad)/cols,LH=leg.length?Math.ceil(leg.length/cols)*36+60:0,H=Math.round(top+PH+LH+180);
   let lg='';if(leg.length){const y0=top+PH+14;lg+=`<text x="${pad}" y="${y0+16}" font-family="${F}" font-size="20" font-weight="600" fill="${LIGHT.ink}">Legende</text>`;
     leg.forEach((l,i)=>{const x=pad+(i%cols)*cw,y=y0+38+Math.floor(i/cols)*36;lg+=(l.sym?`<g class="sy" transform="translate(${x+17} ${y+10-symCenter(l.sym).y*(KINDS[l.sym.k].sym==='dist'?.55:1.5)}) scale(${KINDS[l.sym.k].sym==='dist'?.55:1.5})" fill="none" stroke="${LIGHT.ink}" stroke-width="1.5">${symSvg({...l.sym,st:'keep'},LIGHT.ink,0)}</g>`:`<rect x="${x}" y="${y}" width="34" height="20" fill="${l.fill}" stroke="${LIGHT.wall}" stroke-width="1"/>`)+`<text x="${x+46}" y="${y+16}" font-family="${F}" font-size="18" fill="${LIGHT.ink}">${esc(l.txt)}</text>`})}
   const right=[pr.address,[pr.author,pr.stand].filter(Boolean).join(' · '),new Date().toLocaleDateString('de-DE')].filter(Boolean);
@@ -1361,9 +1390,9 @@ function planSvg(){const f=floor(),view=UI.view,g=G(f,view),P=g.walls.flatMap(x=
     `<text x="${pad}" y="82" font-family="${F}" font-size="18" fill="${LIGHT.muted}">${elx?'Elektroinstallation, '+esc(layout(f).name)+', ':''}${esc(VIEWS[view])}, ${g.rooms.length} Räume, ${fmtA(area)} m² Innenfläche, Maße in cm</text>`+
     right.map((t,i)=>`<text x="${W-pad}" y="${44+i*24}" text-anchor="end" font-family="${F}" font-size="17" fill="${LIGHT.muted}">${esc(t)}</text>`).join('')+
     `<line x1="${pad}" y1="${top-8}" x2="${W-pad}" y2="${top-8}" stroke="${LIGHT.line}" stroke-width="1.5"/>`+
-    `<g transform="translate(${v.tx} ${v.ty}) scale(${v.s})">${sceneSvg(v,W,H,true,view)}</g>${lg}</svg>`;
+    `<g transform="translate(${v.tx} ${v.ty}) scale(${v.s})">${sceneSvg(v,W,H,true,view)}</g>${lg}${plankopf(W,H,f,view,elx)}</svg>`;
   return {svg,W,H}}
-async function planPng(){const {svg,W,H}=planSvg(),url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),img=new Image();
+async function planPng(o={}){const {svg,W,H}=withCtx(o,planSvg),url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),img=new Image();
   try{await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});const k=1.5,c=document.createElement('canvas');c.width=Math.round(W*k);c.height=Math.round(H*k);
     const x=c.getContext('2d');x.scale(k,k);x.drawImage(img,0,0,W,H);return await new Promise(r=>c.toBlob(r,'image/png'))}finally{URL.revokeObjectURL(url)}}
 const fileBase=()=>(floor().name+'-'+UI.view).replace(/[^\wäöüÄÖÜß-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||'plan';
