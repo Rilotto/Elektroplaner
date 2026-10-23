@@ -18,7 +18,10 @@ Seite in Chrome öffnen → Menü → „Zum Startbildschirm hinzufügen“. Dan
 - Ebene „Elektro“ mit Katalog: Steckdosen, Schalter, Taster, Leuchten, Außen (inkl. Vorlage Hauseingang), Klingel, Netzwerk, Verteiler, Rauchwarnmelder u. a.
 - Schaltzeichen in Anlehnung an DIN EN 60617, Wanddosen rasten an der Wandseite ein und wandern mit der Wand
 - Status bleibt/entfällt/neu, Montagehöhe (Standardhöhen in den Einstellungen), Montageart nach Bauart, Fachzahl
-- Schalter ordnen ihre Leuchten zu, Legende mit Stückzahlen, Varianten je Etage
+- Schalter ordnen ihre Leuchten und schaltbaren Steckdosen zu; Wechsel- und Kreuzschaltungen entstehen aus mehreren Schaltstellen
+- Verbindungen immer im Plan, rechtwinklig entlang der Wände, farbig nach Leitungsart
+- Schaltbild je Schaltung mit Klemmen und Aderfarben, verdrahtet in den Schalterdosen ohne Abzweigdosen
+- Reiter für Elemente, Schaltungen, Legende und Etagen-Übersicht; Varianten je Etage
 
 ## Daten
 - Jedes Gerät speichert seinen Stand lokal im Browser (eigener Speichername, kommt dem Raumplaner nicht in die Quere).
