@@ -19,7 +19,8 @@
 - [ ] Teilen: Link auf GitHub Pages, Daten bleiben lokal auf dem Gerät des Freundes; Sicherung als Datei zum Weitergeben
 
 ## Bedienung und Design
-- [ ] Bedienkonzept überarbeiten: gesamte Steuerung durchgehen, vereinfachen, einheitliche Designsprache (Ergebnis und Testversion siehe Projektdoku „Elektroplaner-Designkonzept“)
+- [x] Bedienkonzept überarbeiten: Designkonzept in der Projektdoku „Elektroplaner-Designkonzept“, Testversion im Branch `design` (Artifact „Elektroplaner Design-Test“)
+- [ ] Nach Rückmeldung: `design` in `main` übernehmen (als 0.7.1), danach die offenen Punkte aus dem Designkonzept (Auswahlfeld mit „Mehr“, feste Aktionsleiste unten im Seitenfeld, Meldungen unten, Raumränder nur bei gewähltem Stromkreis)
 
 ## Fahrplan (mehrere kleine Zwischenschritte)
 
