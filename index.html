@@ -182,6 +182,7 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1';
+const IN_ART=/claude\.ai|claudeusercontent/.test(location.host);
 const round=(v,g)=>Math.round(v/g)*g;
 const r1=v=>Math.round(v*10)/10;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -691,14 +692,14 @@ function mainMenu(){const st=S.settings;const {el,close}=modal(`<h2>Einstellunge
   <label class="f">Etage darunter<select id="su"><option value="1"${st.underlay?' selected':''}>Einblenden</option><option value="0"${!st.underlay?' selected':''}>Ausblenden</option></select></label></div>
   <div class="stack" style="margin-top:12px"><button class="btn" id="wty">Wandtypen und Bauarten</button><button class="btn" id="prj">Projekt und Plankopf</button></div>
   <h3>Plan teilen</h3><p class="hint">Zeigt die aktuelle Etage in der gewählten Ansicht (${esc(VIEWS[UI.view])}).</p>
-  <div class="stack" style="margin-bottom:6px"><button class="btn" id="eimg">Als Bild speichern</button><button class="btn" id="epdf">Als PDF drucken</button></div>
-  <h3>Daten</h3><p class="hint">${sync?"Wird automatisch in GitHub gesichert. Eine Sicherung in OneDrive ist ein zusätzliches Extra.":"Alles wird automatisch auf diesem Gerät gespeichert. Mit dem GitHub-Sync hast du denselben Stand auf allen Geräten."}</p>
-  <div class="stack"><button class="btn" id="gsy">GitHub-Sync</button><button class="btn" id="exp">Sicherung speichern, z. B. in OneDrive</button><button class="btn" id="imp">Sicherung wiederherstellen</button><button class="btn danger" id="rst">Alles zurücksetzen</button></div>
+  <div class="stack" style="margin-bottom:6px"><button class="btn" id="eimg">Als Bild speichern</button>${IN_ART?'':'<button class="btn" id="epdf">Als PDF drucken</button>'}</div>
+  <h3>Daten</h3><p class="hint">${IN_ART?'Testversion: Alles bleibt in diesem Browser auf diesem Gerät. Der GitHub-Sync gibt es in der Version auf GitHub Pages.':sync?"Wird automatisch in GitHub gesichert. Eine Sicherung in OneDrive ist ein zusätzliches Extra.":"Alles wird automatisch auf diesem Gerät gespeichert. Mit dem GitHub-Sync hast du denselben Stand auf allen Geräten."}</p>
+  <div class="stack">${IN_ART?'':'<button class="btn" id="gsy">GitHub-Sync</button>'}<button class="btn" id="exp">Sicherung speichern, z. B. in OneDrive</button><button class="btn" id="imp">Sicherung wiederherstellen</button><button class="btn danger" id="rst">Alles zurücksetzen</button></div>
   <p class="hint" style="margin-top:14px">Planungshilfe. Querschnitte, Absicherung und Regeln prüft eine Elektrofachkraft nach VDE.</p>`);
   el.querySelector('#sg').onchange=e=>{st.grid=+e.target.value;commit()};el.querySelector('#ss').onchange=e=>{st.snap=e.target.value==='1';commit()};
   el.querySelector('#sd').onchange=e=>{st.dims=e.target.value;commit();render()};el.querySelector('#su').onchange=e=>{st.underlay=e.target.value==='1';commit();render()};
   el.querySelector('#wty').onclick=()=>{close();typesMenu()};el.querySelector('#prj').onclick=()=>{close();projectForm()};
-  el.querySelector('#eimg').onclick=()=>{close();exportImage()};el.querySelector('#epdf').onclick=()=>{close();printPlan()};el.querySelector('#gsy').onclick=()=>{close();syncMenu()};el.querySelector('#exp').onclick=()=>{close();exportData()};el.querySelector('#imp').onclick=()=>{close();$('#fileIn').click()};
+  el.querySelector('#eimg').onclick=()=>{close();exportImage()};el.querySelector('#epdf')?.addEventListener('click',()=>{close();printPlan()});el.querySelector('#gsy')?.addEventListener('click',()=>{close();syncMenu()});if(0)el.querySelector('#gsy').onclick=()=>{close();syncMenu()};el.querySelector('#exp').onclick=()=>{close();exportData()};el.querySelector('#imp').onclick=()=>{close();$('#fileIn').click()};
   el.querySelector('#rst').onclick=()=>{close();confirmBox('Alle Etagen und Wände zurücksetzen?','Zurücksetzen',()=>{S=defaultState();UI.sel=null;UI.chain=null;commit();renderAll();fit()})}}
 
 /* ---------- Export ---------- */
@@ -810,7 +811,7 @@ document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INP
   else if(e.key==='Escape'){if(UI.measOn)toggleMeas();else if(UI.chain)endChain();else if(UI.tool==='draw')setTool('sel');else select(null)}
   else if(e.key.toLowerCase()==='w'&&!e.ctrlKey&&!e.metaKey)setTool(UI.tool==='draw'?'sel':'draw')});
 let rz;new ResizeObserver(()=>{clearTimeout(rz);rz=setTimeout(render,50)}).observe(stage);
-$('#sync').onclick=syncMenu;
+$('#sync').onclick=syncMenu;if(IN_ART)$('#sync').hidden=true;
 document.addEventListener('visibilitychange',()=>{if(!sync)return;if(document.visibilityState==='hidden'){if(SY.timer)push()}else syncNow()});
 window.__EP={get S(){return S},UI,G,floor,commit,renderAll,fit,addWall,addNode,drawTo,snapDraw,setThickness,setLen,select};
 renderAll();requestAnimationFrame(fit);
