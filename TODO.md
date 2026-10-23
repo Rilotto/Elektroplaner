@@ -13,6 +13,10 @@
 - [x] „Schaltet“-Liste nach Räumen gegliedert
 - [ ] Später: einfache Möbel im Grundriss für bessere Orientierung
 
+## Nächste Version
+- [ ] Treppen im Grundriss, mit automatischem Treppenauge/Aufgang in der Etage darüber
+- [ ] Fenster (und Öffnungen) duplizieren
+
 ## Phasen
 - [x] 1. Grundriss und Etagen
 - [x] 2. Elemente und Ist-Aufnahme (Schaltzeichen, Höhen, Montageart, Legende, Ebene Elektro, Varianten), erste Fassung
