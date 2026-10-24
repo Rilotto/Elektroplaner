@@ -292,8 +292,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.7.4',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
+const APP_VERSION='0.7.5',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -320,8 +320,8 @@ const VIS={ist:x=>x.st!=='new',soll:x=>x.st!=='del',umbau:()=>true};
 const SHADES={dark:'Dunkel',mid:'Mittel',light:'Hell',hatch:'Schraffiert'};
 const OPT={door:'Tür',window:'Fenster',pass:'Durchgang',cable:'Kabeldurchlass'};
 /* ---------- Elektro: Elementarten und Schaltzeichen ---------- */
-const HCLS={switch:'Schalter und Taster',socket:'Steckdosen',work:'Über Arbeitsplatte',net:'Netzwerkdosen',wlight:'Wandleuchten und Melder',bell:'Klingel und Sprechanlage',dist:'Verteiler (Unterkante)',other:'Sonstige Anschlüsse',rl:'Rollladentaster',motor:'Rollladenmotor (Anschluss)'};
-const DEF_H={switch:105,socket:30,work:115,net:30,wlight:200,bell:140,dist:110,other:30,rl:105,motor:240};
+const HCLS={switch:'Schalter und Taster',socket:'Steckdosen',work:'Über Arbeitsplatte',net:'Netzwerkdosen',wlight:'Wandleuchten und Melder',bell:'Klingel und Sprechanlage',dist:'Verteiler (Unterkante)',other:'Sonstige Anschlüsse',abz:'Abzweigdosen',rl:'Rollladentaster',motor:'Rollladenmotor (Anschluss)'};
+const DEF_H={switch:105,socket:30,work:115,net:30,wlight:200,bell:140,dist:110,other:30,abz:230,rl:105,motor:240};
 const MOUNT={UP:'Unterputz',HW:'Hohlwand',AP:'Aufputz',IP44:'Außen IP44',IP65:'Außen IP65'};
 const LIGHTS=['l_deck','l_wand','l_spot','l_led','l_spieg','a_l'];
 const CAT=[
@@ -334,7 +334,7 @@ const CAT=[
   {g:'Rollladen',l:[['rl_t','Rollladentaster'],['rl_m','Rollladenmotor (Anschluss)']]},
   {g:'Netzwerk',l:[['n_d','Netzwerkdose',1],['n_d','Netzwerkdose 2-fach',2],['n_ap','WLAN-Access-Point'],['n_r','Router'],['n_sw','Switch'],['n_hak','Hausanschluss Telefon/Glasfaser/Kabel']]},
   {g:'Verteiler',l:[['v_hv','Hauptverteiler (Zählerschrank)'],['v_uv','Unterverteiler'],['v_dv','Datenverteiler mit Patchpanel']]},
-  {g:'Sonstiges',l:[['tv','TV/SAT-Antennendose'],['leer','Leerdose mit Leerrohr'],['s_rm','Rauchwarnmelder'],['s_herd','Herd-/Backofenauslass'],['s_hz','Heizungsanschluss'],['s_pa','Potentialausgleich']]}];
+  {g:'Sonstiges',l:[['abz','Abzweigdose'],['tv','TV/SAT-Antennendose'],['leer','Leerdose mit Leerrohr'],['s_rm','Rauchwarnmelder'],['s_herd','Herd-/Backofenauslass'],['s_hz','Heizungsanschluss'],['s_pa','Potentialausgleich']]}];
 const KD=(name,place,sym,hc,o={})=>({name,place,sym,hc,...o});
 const KINDS={
   sd:KD('Schuko-Steckdose','wall','sock','socket',{cnt:true}),sdk:KD('Steckdose mit Klappdeckel','wall','sock','socket',{tag:'K'}),sd400:KD('Kraftsteckdose 400 V','wall','sock','socket',{tag:'3~'}),
@@ -346,7 +346,7 @@ const KINDS={
   a_l:KD('Außenleuchte','wall','lamp','wlight',{tag:'A',mount:'IP44'}),a_bwm:KD('Bewegungsmelder','wall','bwm','wlight',{mount:'IP44'}),a_dae:KD('Dämmerungsschalter','wall','box','wlight',{tag:'DS',mount:'IP44'}),
   a_sd:KD('Außensteckdose','wall','sock','socket',{tag:'IP',mount:'IP44'}),a_gar:KD('Gartenanschluss','ceil','box','other',{tag:'GS',mount:'IP65'}),
   k_t:KD('Klingeltaster','wall','ta','bell',{tag:'K'}),k_g:KD('Gong','wall','gong','bell'),k_ts:KD('Türsprechanlage','wall','box','bell',{tag:'TS'}),k_vi:KD('Video-Innenstation','wall','box','bell',{tag:'VI'}),
-  rl_t:KD('Rollladentaster','wall','rl','rl'),rl_m:KD('Rollladenmotor','wall','mot','motor'),tv:KD('TV/SAT-Antennendose','wall','box','other',{tag:'TV'}),leer:KD('Leerdose','wall','box','other',{tag:'LD'}),
+  rl_t:KD('Rollladentaster','wall','rl','rl'),rl_m:KD('Rollladenmotor','wall','mot','motor'),tv:KD('TV/SAT-Antennendose','wall','box','other',{tag:'TV'}),abz:KD('Abzweigdose','wall','abz','abz'),leer:KD('Leerdose','wall','box','other',{tag:'LD'}),
   n_d:KD('Netzwerkdose','wall','box','net',{tag:'RJ',cnt:true}),n_ap:KD('WLAN-Access-Point','ceil','ap'),n_r:KD('Router','wall','box','other',{tag:'R'}),n_sw:KD('Switch','wall','box','other',{tag:'SW'}),
   n_hak:KD('Hausanschluss','wall','box','other',{tag:'HA',hak:true}),
   v_hv:KD('Hauptverteiler','wall','dist','dist',{tag:'HV',w:55}),v_uv:KD('Unterverteiler','wall','dist','dist',{tag:'UV',w:55}),v_dv:KD('Datenverteiler','wall','dist','dist',{tag:'DV',w:40}),
@@ -366,6 +366,7 @@ function symSvg(it,c,rot){const d=KINDS[it.k]||KINDS.ga,L=(a,b,x,y)=>`<line x1="
     case 'sw':s=L(0,0,0,5.5)+O(0,9,3.5)+(d.lev===4?lever(1,1)+lever(-1,1)+`<g transform="rotate(180 0 9)">${lever(1,1)+lever(-1,1)}</g>`:d.lev===3?lever(1,1)+`<g transform="rotate(180 0 9)">${lever(1,1)}</g>`:lever(1,d.lev))+
       (d.kon?L(-2.4,6.6,2.4,11.4)+L(-2.4,11.4,2.4,6.6):'')+(d.dim?T('D',-7,13,5):'');break;
     case 'rl':s=L(0,0,0,3)+O(0,10,6.5)+`<path d="M-3 8.6l3-3.6 3 3.6zM-3 11.4l3 3.6 3-3.6z"/>`;break;
+    case 'abz':s=L(0,0,0,4)+O(0,8.5,4.5)+O(0,8.5,1.6,c);break;
     case 'mot':s=L(0,0,0,2)+O(0,9.5,7)+T('M',0,9.5,7.5);break;
     case 'ta':s=L(0,0,0,5.5)+O(0,9,3.5)+O(0,9,1.3,c)+(d.tag?T(d.tag,7.5,9,5):'');break;
     case 'ta2':s=L(0,0,0,2)+L(-4.5,2,4.5,2)+L(-4.5,2,-4.5,5.5)+L(4.5,2,4.5,5.5)+O(-4.5,9,3.5)+O(-4.5,9,1.3,c)+O(4.5,9,3.5)+O(4.5,9,1.3,c);break;
@@ -440,6 +441,8 @@ function itemPanel(f,it){const d=KINDS[it.k],gs=G(f,'soll'),r=itemRoom(f,gs,it),
       const row=(l,lbl)=>{const on=(it.ctl||[]).includes(l.id);return `<div class="row" style="margin:0;flex-wrap:nowrap;align-items:center"><label class="chk" style="flex:1;min-width:0"><input type="checkbox" data-f="ctl" data-v="${l.id}" data-scope="item" ${on?'checked':''}><span>${esc(lbl)}</span></label>${ser&&on?`<select class="btn" data-f="kreis" data-v="${l.id}" data-scope="item"><option value="1">Wippe 1</option><option value="2"${(it.ctl2||[]).includes(l.id)?' selected':''}>Wippe 2</option></select>`:''}</div>`};
       const block=(rn,arr)=>{const cnt=new Map(),tot=new Map();for(const l of arr){const k=l.name||kindName(l);tot.set(k,(tot.get(k)||0)+1)}return arr.map(l=>{const k=l.name||kindName(l),n=(cnt.get(k)||0)+1;cnt.set(k,n);return row(l,tot.get(k)>1?`${k} ${n}`:k)}).join('')};
       return [...by].sort((a,b)=>(b[0]===myR)-(a[0]===myR)).map(([rn,arr])=>{const anyOn=arr.some(l=>(it.ctl||[]).includes(l.id));return rn===myR?`<div class="lgrp"><b>${esc(rn)}</b>${block(rn,arr)}</div>`:`<details class="lgrp"${anyOn?' open':''}><summary>${esc(rn)} <span class="tag">${arr.length}</span>${anyOn?' <span class="tag on">gewählt</span>':''}</summary>${block(rn,arr)}</details>`}).join('')+'<p class="hint" style="margin-top:6px">Schneller: den ⊕-Punkt am Schalter auf eine Leuchte ziehen. Für mehrere Schaltstellen dieselbe Leuchte auch beim anderen Schalter anhaken. Das Schaltbild steht im Reiter „Schaltungen“.</p>'})():'<p class="hint">Auf dieser Etage gibt es noch keine Leuchte oder schaltbare Steckdose.</p>'}`:''}
+    ${it.k==='abz'?(()=>{const gs_=groupsOf(f,UI.view);return `<div class="row" style="margin-top:10px"><label class="f">Schaltung über diese Dose<select data-f="serves" data-scope="item"><option value="">keine (nur Klemmstelle)</option>${gs_.filter(g_=>!g_.taster).map(g_=>`<option value="${g_.sw[0].id}"${g_.sw.some(x=>x.id===it.serves)?' selected':''}>${esc(grpTitle(f,g_).t)}</option>`).join('')}</select></label></div><p class="hint" style="margin:2px 0 6px">Abzweigdosen müssen zugänglich bleiben.</p>`})():''}
+    ${clampHtml(f,it)}
     ${it.k==='rl_t'?(()=>{const ms=items(f).filter(o=>o.k==='rl_m'&&VIS[UI.view](o));return `<div class="row" style="margin-top:10px"><label class="f">Motor<select data-f="motor" data-scope="item"><option value="">kein Motor</option>${ms.map(m=>`<option value="${m.id}"${m.id===it.motor?' selected':''}>${esc((m.name||'Rollladenmotor')+' · '+(itemRoom(f,gs,m)?.name||'ohne Raum'))}</option>`).join('')}</select></label></div><p class="hint" style="margin:2px 0 6px">Oder den ⊕-Punkt am Taster auf den Motor ziehen. Leitung zum Motor: NYM-J 4×1,5 (auf, ab, N, PE).</p>`})():''}
     ${it.frame?`<div class="note" style="margin-top:10px">Mehrfachkombination: ${frameMembers(f,it).map(o=>esc(kindName(o))).join(' + ')} in einem ${frameMembers(f,it).reduce((s_,q)=>s_+frameUnits(q),0)}-fach-Rahmen. Verschieben bewegt alle.</div><div class="row"><button class="btn" data-act="frameoff">Aus der Kombination lösen</button></div>`:''}
     ${it.k==='sw_ser'&&(it.ctl2||[]).length?`<div class="row"><button class="btn" data-act="serSplit">In zwei Ausschalter teilen</button></div>`:''}
@@ -448,7 +451,7 @@ function itemPanel(f,it){const d=KINDS[it.k],gs=G(f,'soll'),r=itemRoom(f,gs,it),
     <div class="row" style="margin-top:10px"><label class="f">Bezeichnung (optional)<input data-f="name" data-scope="item" value="${esc(it.name||'')}" placeholder="z. B. Bett links"></label></div>
     <div class="row"><button class="btn" data-act="idup">Duplizieren</button><button class="btn danger" data-act="idel">${delLbl}</button></div>
     <div class="row end"><button class="btn primary" data-act="done">Fertig</button></div>`}
-const CAT_SYN={sd:'schuko dose',sdk:'bad außen feucht',sd400:'kraft cee drehstrom 400',ga:'anschluss geschirrspüler spülmaschine dunstabzug',wm:'waschmaschine trockner',kombi:'schalter steckdose kombination',sw_aus:'licht',sw_ser:'zwei wippen doppel licht',sw_wech:'zwei stellen licht',sw_kreuz:'drei stellen licht',sw_kon:'kontrolle licht',sw_dim:'dimmen licht',ta:'stromstoß eltako licht',ta2:'stromstoß eltako licht',l_deck:'licht lampe leuchte decke',l_wand:'licht lampe leuchte wand',l_spot:'licht lampe spot downlight',l_led:'licht streifen',l_spieg:'licht bad',entry:'haustür eingang klingel',a_l:'licht lampe außen',a_bwm:'pir sensor licht',a_dae:'licht sensor',a_sd:'außen garten terrasse',a_gar:'garten erdkabel',k_t:'klingel tür',k_g:'klingel',k_ts:'klingel video gegensprechanlage',n_d:'lan rj45 cat netzwerk internet',n_ap:'wlan wifi',n_r:'internet fritzbox',n_sw:'netzwerk lan',n_hak:'internet glasfaser telefon kabel',v_hv:'sicherung zählerschrank verteiler',v_uv:'sicherung verteiler',v_dv:'patchpanel netzwerk lan',s_rm:'brand rauch',s_herd:'herd backofen kochfeld',s_hz:'heizung therme',tv:'antenne sat fernseher koax kabel',leer:'leerrohr reserve später',rl_t:'rollladen jalousie rolladen taster',rl_m:'rollladen jalousie rolladen motor',k_vi:'video klingel monitor innenstation sprechanlage',s_pa:'erdung pa schiene'};
+const CAT_SYN={sd:'schuko dose',sdk:'bad außen feucht',sd400:'kraft cee drehstrom 400',ga:'anschluss geschirrspüler spülmaschine dunstabzug',wm:'waschmaschine trockner',kombi:'schalter steckdose kombination',sw_aus:'licht',sw_ser:'zwei wippen doppel licht',sw_wech:'zwei stellen licht',sw_kreuz:'drei stellen licht',sw_kon:'kontrolle licht',sw_dim:'dimmen licht',ta:'stromstoß eltako licht',ta2:'stromstoß eltako licht',l_deck:'licht lampe leuchte decke',l_wand:'licht lampe leuchte wand',l_spot:'licht lampe spot downlight',l_led:'licht streifen',l_spieg:'licht bad',entry:'haustür eingang klingel',a_l:'licht lampe außen',a_bwm:'pir sensor licht',a_dae:'licht sensor',a_sd:'außen garten terrasse',a_gar:'garten erdkabel',k_t:'klingel tür',k_g:'klingel',k_ts:'klingel video gegensprechanlage',n_d:'lan rj45 cat netzwerk internet',n_ap:'wlan wifi',n_r:'internet fritzbox',n_sw:'netzwerk lan',n_hak:'internet glasfaser telefon kabel',v_hv:'sicherung zählerschrank verteiler',v_uv:'sicherung verteiler',v_dv:'patchpanel netzwerk lan',s_rm:'brand rauch',s_herd:'herd backofen kochfeld',s_hz:'heizung therme',tv:'antenne sat fernseher koax kabel',abz:'verteilerdose klemmdose abzweig',leer:'leerrohr reserve später',rl_t:'rollladen jalousie rolladen taster',rl_m:'rollladen jalousie rolladen motor',k_vi:'video klingel monitor innenstation sprechanlage',s_pa:'erdung pa schiene'};
 function catList(q){const pl=UI.place,btn=(k,lbl,cnt,g)=>`<button class="btn" data-act="pick" data-k="${k}" data-c="${cnt||1}" aria-pressed="${!!(pl&&pl.k===k&&(pl.cnt||1)===(cnt||1))}">${k==='entry'?symIcon('k_t'):k==='kombi'?symIcon('sw_aus'):symIcon(k,cnt)}<span>${esc(lbl)}${g?`<small>${esc(g)}</small>`:''}</span></button>`;
   q=(q||'').trim().toLowerCase();
   if(q){const ws=q.split(/\s+/),hits=CAT.flatMap(c=>c.l.map(e=>({c,e}))).filter(({c,e})=>{const hay=(e[1]+' '+c.g+' '+(KINDS[e[0]]?.name||'')+' '+(KINDS[e[0]]?.tag||'')+' '+(CAT_SYN[e[0]]||'')).toLowerCase();return ws.every(w=>hay.includes(w))});
@@ -516,6 +519,7 @@ function posFields(f,it){const g=G(f,UI.view);
     return `<div class="grid2" style="margin-top:8px">${inp('Abstand links','offL',W.L,'item')}${inp('Abstand rechts','offR',W.R,'item')}</div><p class="hint" style="margin:2px 0 6px">Mit Blick auf die Wand, bis Dosenmitte. Links bis ${W.kL}, rechts bis ${W.kR}.</p>`}
   const c=ceilSpan(g,it);return `<div class="row" style="margin-top:8px"><button class="btn" data-act="irot">Um 90° drehen</button></div>`+(c?`<p class="hint" style="margin:2px 0 6px">Abstand zu den Wänden: links ${fmt(c.l)}, rechts ${fmt(c.r)}, oben ${fmt(c.o)}, unten ${fmt(c.u)} cm.</p>`:'')}
 function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
+  if(UI.vjb&&!pl){const vp=vjbPanel(f);if(vp)return vp}
   if(UI.wseg&&UI.wseg.f===f.id&&!pl){const wp=wsegPanel(f);if(wp)return wp}
   if(UI.bundle&&UI.bundle.f===f.id&&!pl){const bp=bundlePanel(f);if(bp)return bp}
   let h=`<h2>Elektro ${esc(f.name)}</h2>`;
@@ -541,6 +545,7 @@ function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks
   if(!plan&&!exp){if(!UI.guides&&si&&KINDS[si.k]?.place==='ceil'){const A=alignGuides(f,g,si,si,0.6);UI._tg={it:si,gx:A.gx,gy:A.gy,x:A.gx.length?si.x:null,y:A.gy.length?si.y:null};const k_=UI.guides;UI.guides=UI._tg;h+=guidesSvg(f,g,s);UI.guides=k_}else h+=guidesSvg(f,g,s)}
   h+=frH;
   if(!plan)h+=grpLines(f,g,view,s,C,ks,sel);
+  if(!plan&&!exp)h+=jbSvg(f,g,s,C,ks);
   if(!plan&&!exp&&si)h+=selDimsSvg(f,g,si,s,C,view);
   if(!plan&&!exp&&si&&!UI.guides)h+=linkSvg(f,g,si,pos,s,C,ks);
   const pm=its.some(i=>i.k==='n_d'||i.k==='n_ap')?portsOfItem(netPlan()):new Map();
@@ -582,8 +587,9 @@ function grpLines(f,g,view,s,C,ks,sel){const px=n=>n/s,grs=groupsOf(f,view);let 
   for(const t of items(f)){if(t.k!=='rl_t'||!t.motor||!VIS[view](t))continue;const m=items(f).find(o=>o.id===t.motor);if(!m||!VIS[view](m))continue;const on=sel?.id===t.id||sel?.id===m.id;h+=`<polyline points="${pts(segBetween(f,t,f,m,'top','','x').P)}" fill="none" stroke="${LC.last}" stroke-width="${on?3.6:2.4}" stroke-dasharray="2 4" stroke-linecap="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`}const selG=sel?.kind==='item'?grs.find(x=>x.sw.some(i=>i.id===sel.id)||x.loads.some(i=>i.id===sel.id)):null;
   const cen=it=>{const p=itemPos(g,it);return p.d?{x:p.x+p.d.x*9*ks,y:p.y+p.d.y*9*ks,d:p.d}:{x:p.x,y:p.y}};
   for(const gr of grs){const on=selG===gr,w=on?3.6:2.4,segs=[];
+    const jb_=jbOf(f,gr);if(jb_){for(const s_ of gr.sw)segs.push([jb_,s_,'zul']);let prev=jb_;for(const l of gr.loads){segs.push([prev,l,'last']);prev=l}}else{
     for(let i=0;i+1<gr.sw.length;i++)segs.push([gr.sw[i],gr.sw[i+1],gr.taster?'steuer':'korr']);
-    let prev=gr.sw[gr.sw.length-1];for(const l of gr.loads){segs.push([prev,l,gr.taster?'steuer':'last']);prev=l}
+    let prev=gr.sw[gr.sw.length-1];for(const l of gr.loads){segs.push([prev,l,gr.taster?'steuer':'last']);prev=l}}
     const zz=gr.sw.some(x=>x.ceil)?'ceil':'top';
     for(const [a,b,t] of segs){const SG=segBetween(f,a,f,b,zz,'','x'),P=SG.P,dash=t==='steuer'?' stroke-dasharray="7 5"':'';
       const hlo=UI.selC&&!gr.loads.concat(gr.sw).some(x=>x.ci===UI.selC),key=a.id+'>'+b.id,ed=UI.wseg&&UI.wseg.key===key;
@@ -637,7 +643,7 @@ function grpTitle(f,gr){const gs=G(f,'soll'),rooms=[...new Set([...gr.sw,...gr.l
 function schHtml(f){const grs=groupsOf(f,UI.view),sel=UI.sel?.kind==='item'?UI.sel.id:null;
   let cur=grs.find(g=>sel&&(g.sw.some(i=>i.id===sel)||g.loads.some(i=>i.id===sel)))||grs.find(g=>g.id===UI.grp)||grs[0];
   if(!grs.length)return bellHtml()+`<h2>Schaltungen</h2><p class="hint">Noch keine Schaltung. Tippe im Reiter „Elemente“ einen Schalter an und hake unter „Schaltet“ die Leuchten oder schaltbaren Steckdosen an.</p><div class="note">Mehrere Schaltstellen für dieselbe Leuchte: Hake die Leuchte bei jedem dieser Schalter an. Der Planer bildet daraus eine Wechsel- oder Kreuzschaltung.</div>`;
-  let h=`<h2>Schaltungen</h2><p class="hint">Antippen zeigt das Schaltbild. Verdrahtet wird in den Schalterdosen, ohne Abzweigdosen.</p><ul class="lst">`;
+  let h=`<h2>Schaltungen</h2><p class="hint">Antippen zeigt das Schaltbild. Verdrahtung: ${WIRING[wiring()]} (Menü → Rechenvorgaben).</p><ul class="lst">`;
   for(const g of grs){const t=grpTitle(f,g),pr=grpProblem(g);h+=`<li><button class="nm" data-act="grp" data-id="${g.id}"><b>${g===cur?'▸ ':''}${esc(t.t)}</b><small>${esc(t.chain)}${t.sub?' · '+esc(t.sub):''}</small>${pr?`<small style="color:var(--warn)">${esc(pr)}</small>`:''}</button></li>`}
   h+=`</ul>`;if(cur){const pr=grpProblem(cur);h+=`<h3>Schaltbild</h3>${pr?`<div class="warnbox">${esc(pr)}</div><div class="row"><button class="btn" data-act="grpfix" data-id="${cur.id}">Schalterarten passend setzen</button></div>`:''}
     ${cur.sw.length>1?`<div class="row"><button class="btn" data-act="grprev" data-id="${cur.id}">Zuleitung ans andere Ende</button></div>`:''}${schSvg(f,cur)}
@@ -861,18 +867,19 @@ function segBetween(fa,a,fb,b,z,cable,kind){const res=calc().res;
   if(z!=='ceil'){const np=netPath(fa,pa,pb);if(np)return {f:fa,P:np.P,len:np.len+st,cable,kind,cross:null,keys:np.keys,head:np.head,tail:np.tail}
     if(Fa&&Fa===Fb){const pp=perimPath(Fa.poly,pa,pb);return {f:fa,P:pp.path,len:pp.len+st,cable,kind,cross:null}}}
   const P=mroute(pa,pb,g),plan=P.reduce((s,p,i)=>i?s+dist(P[i-1],p):0,0);return {f:fa,P,len:plan+st,cable,kind,cross:Fa&&Fa===Fb?null:'Raum'}}
-function ciRoute(c){const z=zoneOf(c),its=ciItems(c),dv=distBy(c.dist),segs=[],gs=new Map();
+function ciRoute(c){const sbx=(fa,a,fb,b,z_,cb,k)=>{const r=segBetween(fa,a,fb,b,z_,cb,k);r.a=a.id;r.b=b.id;return r},z=zoneOf(c),its=ciItems(c),dv=distBy(c.dist),segs=[],gs=new Map();
   for(const f of S.floors)for(const gr of groupsOf(f,'soll'))if(gr.loads.some(l=>l.ci===c.id)||gr.sw.some(s=>s.ci===c.id))gs.set(gr,f);
   const inG=new Set([...gs.keys()].flatMap(g=>[...g.sw,...g.loads].map(i=>i.id)));
-  const nodes=its.filter(x=>!inG.has(x.it.id)&&!isSw(x.it)&&needsCi(x.it)).map(x=>({it:x.it,f:x.f}));for(const [g,f] of gs)if(!g.taster)nodes.push({it:g.sw[0],f,g});
+  const nodes=its.filter(x=>!inG.has(x.it.id)&&!isSw(x.it)&&needsCi(x.it)).map(x=>({it:x.it,f:x.f}));for(const [g,f] of gs)if(!g.taster)nodes.push({it:jbOf(f,g)||g.sw[0],f,g});
   let cur=dv?{it:dv.it,f:dv.f}:null;const rest=[...nodes];
   const key=n=>cur?(n.f===cur.f?0:1e7*Math.abs(n.f.level-cur.f.level))+dist(n.it,cur.it):0;
-  while(rest.length){rest.sort((a,b)=>key(a)-key(b));const n=rest.shift();if(cur)segs.push(segBetween(cur.f,cur.it,n.f,n.it,z,c.cable,'feed'));cur=n}
-  for(const [g,f] of gs){if(g.taster){const m5=eltMode()==='5',cb=m5?'NYM-J 5×1,5':'NYM-J 3×1,5';if(dv)segs.push(segBetween(dv.f,dv.it,f,g.sw[0],z,cb,'feed'));for(let i=0;i+1<g.sw.length;i++)segs.push(segBetween(f,g.sw[i],f,g.sw[i+1],z,cb,'korr'));
-      let p=m5?g.sw[g.sw.length-1]:null;for(const l of g.loads){if(p)segs.push(segBetween(f,p,f,l,z,'NYM-J 3×1,5','last'));else if(dv)segs.push(segBetween(dv.f,dv.it,f,l,z,'NYM-J 3×1,5','feed'));p=l}continue}
-    const zg=g.sw.some(x=>x.ceil)?'ceil':z;for(let i=0;i+1<g.sw.length;i++)segs.push(segBetween(f,g.sw[i],f,g.sw[i+1],zg,'NYM-J 5×1,5','korr'));let p=g.sw[g.sw.length-1];
-    for(const l of g.loads){segs.push(segBetween(f,p,f,l,zg,g.sw.length===1&&g.sw[0].k==='sw_ser'?'NYM-J 5×1,5':'NYM-J 3×1,5','last'));p=l}}
-  for(const x of its){if(x.it.k!=='rl_t'||!x.it.motor)continue;const m=items(x.f).find(o=>o.id===x.it.motor);if(m)segs.push(segBetween(x.f,x.it,x.f,m,z,'NYM-J 4×1,5','last'))}
+  while(rest.length){rest.sort((a,b)=>key(a)-key(b));const n=rest.shift();if(cur)segs.push(sbx(cur.f,cur.it,n.f,n.it,z,c.cable,'feed'));cur=n}
+  for(const [g,f] of gs){if(g.taster){const m5=eltMode()==='5',cb=m5?'NYM-J 5×1,5':'NYM-J 3×1,5';if(dv)segs.push(sbx(dv.f,dv.it,f,g.sw[0],z,cb,'feed'));for(let i=0;i+1<g.sw.length;i++)segs.push(sbx(f,g.sw[i],f,g.sw[i+1],z,cb,'korr'));
+      let p=m5?g.sw[g.sw.length-1]:null;for(const l of g.loads){if(p)segs.push(sbx(f,p,f,l,z,'NYM-J 3×1,5','last'));else if(dv)segs.push(sbx(dv.f,dv.it,f,l,z,'NYM-J 3×1,5','feed'));p=l}continue}
+    const zg=g.sw.some(x=>x.ceil)?'ceil':z,jb=jbOf(f,g);if(jb){const multi=g.sw.length>1||g.sw[0].k==='sw_ser';for(const s_ of g.sw)segs.push(sbx(f,jb,f,s_,z,multi?'NYM-J 5×1,5':'NYM-J 3×1,5','swd'));let p=jb;for(const l of g.loads){segs.push(sbx(f,p,f,l,zg,g.sw.length===1&&g.sw[0].k==='sw_ser'?'NYM-J 5×1,5':'NYM-J 3×1,5','last'));p=l}continue}
+    for(let i=0;i+1<g.sw.length;i++)segs.push(sbx(f,g.sw[i],f,g.sw[i+1],zg,'NYM-J 5×1,5','korr'));let p=g.sw[g.sw.length-1];
+    for(const l of g.loads){segs.push(sbx(f,p,f,l,zg,g.sw.length===1&&g.sw[0].k==='sw_ser'?'NYM-J 5×1,5':'NYM-J 3×1,5','last'));p=l}}
+  for(const x of its){if(x.it.k!=='rl_t'||!x.it.motor)continue;const m=items(x.f).find(o=>o.id===x.it.motor);if(m)segs.push(sbx(x.f,x.it,x.f,m,z,'NYM-J 4×1,5','last'))}
   const k=1+calc().cut/100,by=new Map();for(const s of segs)by.set(s.cable,(by.get(s.cable)||0)+s.len*k/100);
   return {segs,by,total:[...by.values()].reduce((a,b)=>a+b,0),z}}
 const fmtM=m=>m.toFixed(1).replace('.',',')+' m';
@@ -899,6 +906,7 @@ function material(onlyNew){const ok=it=>it.st!=='del'&&(!onlyNew||it.st==='new')
   for(const f of S.floors)for(const g of groupsOf(f,'soll'))if(g.taster)add('Verteiler','Eltako '+AKT[aktOf(g)],1);
   for(const [k,m] of [...cab].sort())rows.push({grp:'Leitungen',name:k,n:Math.ceil(m),u:'m',note:ringPlan(Math.ceil(m))});
   for(const {it} of allItems()){if(!ok(it))continue;const d=KINDS[it.k];if(!d)continue;const mt=MOUNT[it.mount]||it.mount||'';
+    if(it.k==='abz'){add('Dosen',it.mount==='HW'?'Abzweigdose Hohlwand':'Abzweigdose UP',1);add('Geräte','Verbindungsklemmen-Satz je Abzweigdose',1);continue}
     if(d.place==='wall'&&d.sym!=='dist'&&it.k!=='s_pa'){const n=d.hc==='socket'||it.k==='n_d'?(it.cnt||1):it.k==='ta2'?1:1,deep=S.settings.deepBox&&(isSw(it)||it.k==='rl_t')&&!/IP|AP/.test(it.mount||'');add('Dosen',(it.mount==='HW'?(deep?'Hohlwand-Elektronikdose tief':'Hohlwanddose'):it.mount==='AP'||/IP/.test(it.mount)?'Aufputzgehäuse/Feuchtraum':deep?'Unterputz-Elektronikdose tief':'Unterputz-Gerätedose')+' ('+mt+')',n);if(it.k==='leer')add('Dosen','Leerrohr M20 (je Leerdose bis Decke/Verteiler)',1)}
     if(d.place==='ceil'&&LIGHTS.includes(it.k))add('Dosen','Deckendose/Leuchtenauslass',1);
     if(d.hc==='socket')add('Geräte',kindName({...it,cnt:1,sw:false})+' (Einsatz)',it.cnt||1);
@@ -908,6 +916,7 @@ function material(onlyNew){const ok=it=>it.st!=='del'&&(!onlyNew||it.st==='new')
     else if(d.sym!=='dist')add('Geräte',kindName(it),1);
     if(!it.frame&&d.place==='wall'&&(d.hc==='socket'||isSw(it)||['n_d','tv','rl_t'].includes(it.k))&&!/IP/.test(it.mount||''))add('Rahmen',`Rahmen ${d.hc==='socket'?(it.cnt||1):1}-fach`,1);
     if(it.k==='n_d'||it.k==='n_ap')add('Netzwerk','Patchpanel-Ports',it.k==='n_ap'?1:(it.cnt||1))}
+  {let nv=0;for(const f of S.floors)for(const g of groupsOf(f,'soll')){const j=jbOf(f,g);if(j&&j.virt)nv++}if(nv){add('Dosen','Abzweigdose UP (Deckenzone, automatisch)',nv);add('Geräte','Verbindungsklemmen-Satz je Abzweigdose',nv)}}
   {const seen=new Set();for(const {it} of allItems()){if(!it.frame||!ok(it)||seen.has(it.frame))continue;seen.add(it.frame);const m=allItems().filter(y=>y.it.frame===it.frame&&ok(y.it)).map(y=>y.it);if(m.length<2){add('Rahmen',`Rahmen ${frameUnits(it)}-fach`,1);continue}add('Rahmen',`Rahmen ${Math.min(5,m.reduce((s_,q)=>s_+frameUnits(q),0))}-fach (Mehrfachkombination)`,1)}}
   for(const x of dists()){for(const dv of x.it.devs||[])add('Verteiler',dv.t==='other'?devLabel(dv):DEV[dv.t].n,1);add('Verteiler',`Verteilergehäuse ${x.it.rows}-reihig (${KINDS[x.it.k].tag})`,1)}
   for(const c of circuits())add('Verteiler','LS '+c.prot,1);for(const x of dists())if(x.it.feedFrom&&x.it.feedProt)add('Verteiler','LS '+x.it.feedProt+' (Zuleitung)',1);
@@ -915,7 +924,7 @@ function material(onlyNew){const ok=it=>it.st!=='del'&&(!onlyNew||it.st==='new')
 function matWide(){const R=material(UI.matNew);let last='';
   return `<div class="bhead"><h2>Materialliste</h2><span class="tag on">${UI.matNew?'nur neue Elemente':'gesamter Soll-Stand'}, alle Etagen</span></div>
     ${R.length?`<div class="bwrap"><table class="sum ci"><thead><tr><th>Gruppe</th><th>Artikel</th><th>Menge</th><th>Hinweis</th></tr></thead><tbody>${R.map(r=>{const g=r.grp!==last?r.grp:'';last=r.grp;return `<tr><td><b>${esc(g)}</b></td><td>${esc(r.name)}</td><td>${r.n} ${r.u}</td><td>${esc(r.note||'')}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="hint">Noch nichts zu zählen.</p>'}
-    <p class="hint">Leitungslängen inklusive ${calc().res} cm Reserve je Anschluss und ${calc().cut} % Verschnitt, aufgerundet. Dosen ohne Abzweigdosen, weil in den Schalterdosen verdrahtet wird; N und PE werden dort durchgeklemmt.${S.settings.deepBox?' Schalterdosen als tiefe Elektronikdosen.':''}</p>`}
+    <p class="hint">Leitungslängen inklusive ${calc().res} cm Reserve je Anschluss und ${calc().cut} % Verschnitt, aufgerundet. ${wiring()==='abz'?'Verdrahtung mit Abzweigdosen über den Schaltern in der Deckenzone.':wiring()==='suggest'?'Verdrahtung in den Schalterdosen, Abzweigdosen nur wo gesetzt; N und PE werden in den Schalterdosen durchgeklemmt.':'Dosen ohne Abzweigdosen, weil in den Schalterdosen verdrahtet wird; N und PE werden dort durchgeklemmt.'}${S.settings.deepBox?' Schalterdosen als tiefe Elektronikdosen.':''}</p>`}
 function matHtml(){return `<h2>Materialliste</h2><p class="hint">Für Einkauf und Angebot. Die Tabelle steht in der Mitte.</p>
   <div class="seg full" style="margin-bottom:12px"><button data-act="matnew" data-v="0" aria-pressed="${!UI.matNew}">Gesamter Soll-Stand</button><button data-act="matnew" data-v="1" aria-pressed="${!!UI.matNew}">Nur Neues</button></div>
   <div class="stack"><button class="btn" data-act="matcsv">Als CSV speichern (Excel)</button><button class="btn" data-act="calcform">Rechenvorgaben ändern</button></div>
@@ -926,10 +935,11 @@ function calcForm(){const c=calc();modal(`<h2>Rechenvorgaben</h2><p class="hint"
   <div class="grid2"><label class="f unit" data-u="cm">Reserve je Anschluss<input type="number" step="any" name="res" value="${c.res}"></label><label class="f unit" data-u="%">Verschnitt<input type="number" step="any" name="cut" value="${c.cut}"></label></div>
   <div class="row" style="margin-top:8px"><label class="f">Ringgrößen in m<input name="rings" value="${esc(c.rings)}" placeholder="z. B. 50, 100"></label></div>
   <div class="row" style="margin-top:8px"><label class="f">Leitung zu Tastern mit Eltako<select name="elt"><option value="5"${eltMode()==='5'?' selected':''}>Eine 5-adrige Leitung (NYM-J 5×1,5)</option><option value="2"${eltMode()==='2'?' selected':''}>Zwei getrennte Leitungen (2× NYM-J 3×1,5)</option></select></label></div>
+  <div class="row" style="margin-top:8px"><label class="f">Verdrahtung<select name="wir">${Object.entries(WIRING).map(([k,v])=>`<option value="${k}"${k===wiring()?' selected':''}>${v}</option>`).join('')}</select></label></div>
   <label class="chk" style="margin-top:8px"><input type="checkbox" name="sep" ${S.settings.sepData!==false?'checked':''}>Daten- und Klingelleitungen getrennt von Starkstrom führen</label>
   <div class="row" style="margin-top:4px"><label class="f unit" data-u="cm">Abstand Daten zu Starkstrom<input type="number" step="any" name="gap" value="${S.settings.dataGap??10}"></label></div>
   <label class="chk" style="margin-top:8px"><input type="checkbox" name="deep" ${S.settings.deepBox?'checked':''}>Schalterdosen als tiefe Elektronikdosen (Platz für Klemmen und Smart-Home-Aktoren)</label>
-  <p class="hint">Senkrechte Stücke rechnen bis zur Mitte der Zone: Deckenzone 30 cm unter der Decke, Fußbodenzone 30 cm über dem Boden, Arbeitsflächenzone 105 cm.</p>`,m=>{const v=n=>num(m.querySelector(`[name=${n}]`).value);S.settings.calc={res:v('res')>=0?v('res'):30,cut:v('cut')>=0?v('cut'):10,rings:m.querySelector('[name=rings]').value.trim()||'50, 100'};S.settings.eltako=m.querySelector('[name=elt]').value;S.settings.deepBox=m.querySelector('[name=deep]').checked;S.settings.sepData=m.querySelector('[name=sep]').checked;{const g_=v('gap');S.settings.dataGap=g_>=0?g_:10}commit();renderAll()})}
+  <p class="hint">Senkrechte Stücke rechnen bis zur Mitte der Zone: Deckenzone 30 cm unter der Decke, Fußbodenzone 30 cm über dem Boden, Arbeitsflächenzone 105 cm.</p>`,m=>{const v=n=>num(m.querySelector(`[name=${n}]`).value);S.settings.calc={res:v('res')>=0?v('res'):30,cut:v('cut')>=0?v('cut'):10,rings:m.querySelector('[name=rings]').value.trim()||'50, 100'};S.settings.eltako=m.querySelector('[name=elt]').value;S.settings.deepBox=m.querySelector('[name=deep]').checked;S.settings.sepData=m.querySelector('[name=sep]').checked;S.settings.wiring=m.querySelector('[name=wir]').value;{const g_=v('gap');S.settings.dataGap=g_>=0?g_:10}commit();renderAll()})}
 /* ---------- Phase 5: Netzwerk, Klingel, Außen, Eltako ---------- */
 const AKT={ss:'Stromstoßschalter',tl:'Treppenlicht-Zeitschalter',dim:'Universaldimmer',zr:'Zeitrelais'};
 const AKT_S={ss:'ES',tl:'TLZ',dim:'EUD',zr:'ZR'};
@@ -997,6 +1007,7 @@ function problems(){const P=[];
     for(const g of groupsOf(f,'soll')){const pr=grpProblem(g);if(pr)P.push({t:`${nm}, ${grpTitle(f,g).t}: ${pr}`,go:{f:f.id,mode:'elec',tab:'sch',grp:g.id}})}}
   for(const f of S.floors){const its=items(f).filter(i=>i.st!=='del'),rt=its.filter(i=>i.k==='rl_t'&&!its.some(m=>m.id===i.motor));if(rt.length)P.push({t:`${f.name}: ${rt.length} Rollladentaster ohne Motor`,go:{f:f.id,mode:'elec',sel:rt[0].id}});
     const rm=its.filter(m=>m.k==='rl_m'&&!its.some(t=>t.k==='rl_t'&&t.motor===m.id));if(rm.length)P.push({t:`${f.name}: ${rm.length} Rollladenmotor${rm.length===1?'':'en'} ohne Taster`,go:{f:f.id,mode:'elec',sel:rm[0].id}})}
+  for(const f of S.floors){const bl=boxLoad(f),gs_=G(f,'soll');for(const it of items(f)){if(it.st==='del'||KINDS[it.k]?.place!=='wall'||KINDS[it.k].sym==='dist')continue;const n=(bl.get(it.id)||[]).length;if(n>boxMax(it))P.push({t:`${f.name}: ${n} Leitungen in der Dose ${it.name||kindName(it)} (${itemRoom(f,gs_,it)?.name||'ohne Raum'})`,go:{f:f.id,mode:'elec',sel:it.id}})}}
   for(const c of circuits())for(const w of ciWarn(c))if(!/je nach Verlegeart/.test(w))P.push({t:`Stromkreis ${c.no} ${c.name}: ${w}`,go:{mode:'elec',tab:'ci',ci:c.id}});
   for(const m of fiMix())P.push({t:`${m.f.name}, ${m.r.name}: Licht und Steckdosen hängen am selben ${m.fi}. Löst er aus, ist der Raum dunkel.`,go:{mode:'dist'}});
   for(const x of dists())if(boardStats(x).over)P.push({t:`${distName(x)}: zu wenig Platz`,go:{mode:'dist',dv:x.it.vid}});
@@ -1068,7 +1079,7 @@ function slotInfo(ws){const d=ws.map(w=>cabD(w.cable)),n=d.length;if(!n)return n
 function wireMap(f){const Pw=new Map(),Dw=new Map(),loose=[],put=(M,k,w)=>{if(!M.has(k))M.set(k,[]);M.get(k).push(w)},sep=S.settings.sepData!==false;
   const addSeg=(sg,meta)=>{for(const pt of (sg.parts||[{f:sg.f,P:sg.P,keys:sg.keys,head:sg.head,tail:sg.tail,fb:sg.cross}])){if(pt.f!==f)continue;const data=isData(meta.cable),M=data&&sep?Dw:Pw;
     if(pt.keys?.length){for(const k of pt.keys)put(M,k,meta);loose.push({...meta,P:pt.head,data});if(pt.tail)loose.push({...meta,P:pt.tail,data})}else loose.push({...meta,P:pt.P,data,dash:!!pt.fb})}};
-  for(const c of circuits()){const R=ciRoute(c);for(const sg of R.segs)addSeg(sg,{c,cable:sg.cable,kind:sg.kind,lbl:`SK ${c.no} ${sg.kind==='feed'?'Zuleitung':sg.kind==='korr'?'Korrespondierende':'zur Leuchte'}`})}
+  for(const c of circuits()){const R=ciRoute(c);for(const sg of R.segs)addSeg(sg,{c,cable:sg.cable,kind:sg.kind,lbl:`SK ${c.no} ${sg.kind==='feed'?'Zuleitung':sg.kind==='korr'?'Korrespondierende':sg.kind==='swd'?'zum Schalter':'zur Leuchte'}`})}
   for(const v of netPlan().values())for(const p of v.ports)if(p.seg)addSeg(p.seg,{cable:'Cat 7 S/FTP',kind:'net',lbl:'LAN Port '+p.lbl});
   const b=bellPlan();if(b)for(const sg of b.segs)addSeg(sg,{cable:sg.cable,kind:'bell',lbl:'Klingel'});
   return {P:Pw,D:Dw,loose}}
@@ -1089,6 +1100,36 @@ function bundleSvg(f,s,C,exp){const px=n=>n/s,net=netOf(f),W=wireMap(f),black=ex
   edge(W.P,'p:',false);edge(W.D,'d:',true);
   return h+hit+fan}
 
+
+/* ---------- 0.7.5: Abzweigdosen und Dosenbelegung ---------- */
+const wiring=()=>S.settings.wiring||'abz';
+const WIRING={abz:'Mit Abzweigdosen',suggest:'Abzweigdosen vorschlagen',none:'Ohne Abzweigdosen'};
+function vJb(f,g){const s0=g.sw[0];if(!s0||!s0.wall)return null;const x_=G(f,'soll').byId.get(s0.wall),o={id:'vjb-'+s0.id,k:'abz',wall:s0.wall,side:s0.side,off:x_?clamp(s0.off+(s0.off+30<x_.L?25:-25),2,x_.L-2):s0.off,h:heightOf('abz'),virt:true,serves:s0.id,st:'new',mount:'UP'};const p=itemPos(G(f,'soll'),o);o.x=p.x;o.y=p.y;return o}
+function realJb(f,g){return items(f).find(o=>o.k==='abz'&&o.st!=='del'&&g.sw.some(s=>s.id===o.serves))||null}
+function jbOf(f,g){if(g.taster)return null;const r=realJb(f,g);if(r)return r;if(wiring()!=='abz'||g.sw.some(s=>s.noAbz))return null;return vJb(f,g)}
+function boxLoad(f){const m=new Map();for(const c of circuits())for(const s of ciRoute(c).segs){for(const id of [s.a,s.b])if(id){if(!m.has(id))m.set(id,[]);m.get(id).push(s)}}return m}
+const boxMax=it=>it.k==='abz'?8:S.settings.deepBox&&(isSw(it)||it.k==='rl_t')?5:4;
+function abzSuggest(f){if(wiring()!=='suggest')return [];const bl=boxLoad(f),out=[];for(const g of groupsOf(f,'soll')){if(g.taster||realJb(f,g)||g.sw.some(s=>s.noAbz))continue;const s0=g.sw[0],n=(bl.get(s0.id)||[]).length;if(n>boxMax(s0)){const jb=vJb(f,g);if(jb)out.push({g,jb,n,why:`${n} Leitungen in der Schalterdose (${kindName(s0)})`})}}return out}
+function jbSvg(f,g,s,C,ks){const px=n=>n/s;let h='';const add=(jb,sug,gid)=>{const p=itemPos(g,jb),cy=9*ks,q={x:p.x+(p.d?p.d.x*cy:0),y:p.y+(p.d?p.d.y*cy:0)},on=UI.vjb===gid;
+    h+=`<g data-kind="vjb" data-id="${gid}"><circle cx="${q.x}" cy="${q.y}" r="${px(20)}" fill="transparent"/><circle cx="${q.x}" cy="${q.y}" r="${5*ks}" fill="${sug?'none':C('floor')}" stroke="${on?C('accent'):sug?C('hint'):C('ink')}" stroke-width="${on?2.6:1.6}" stroke-dasharray="${sug?'3 2':'2 1.5'}" vector-effect="non-scaling-stroke"/><circle cx="${q.x}" cy="${q.y}" r="${1.6*ks}" fill="${sug?C('hint'):C('ink')}"/>${sug?`<text x="${q.x+7*ks}" y="${q.y-5*ks}" font-size="${7*ks}" fill="${C('hint')}" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="700">?</text>`:''}</g>`};
+  for(const gr of groupsOf(f,UI.view)){const jb=jbOf(f,gr);if(jb&&jb.virt)add(jb,false,gr.sw[0].id)}
+  for(const x of abzSuggest(f))add(x.jb,true,x.g.sw[0].id);return h}
+function clampsOf(f,it){const bl=boxLoad(f),segs=bl.get(it.id)||[],gs=G(f,'soll'),other=s=>{const id=s.a===it.id?s.b:s.a,o=items(f).find(x=>x.id===id)||dists().find(x=>x.it.id===id)?.it;if(!o){if(String(id).startsWith('vjb-'))return 'Abzweigdose';return '?'}return (o.name||kindName(o))+(itemRoom(f,gs,o)?' ('+itemRoom(f,gs,o).name+')':'')};
+  const rows=segs.map(s=>{const out=s.a===it.id,c=circuits().find(c_=>ciRoute(c_).segs.includes(s));let role=s.kind==='feed'?(out?'weiter zu':'Zuleitung von'):s.kind==='korr'?'Korrespondierende zu':s.kind==='swd'?(out?'zum Schalter':'Schalterleitung von'):out?'zur Leuchte':'vom Schalter';return {s,c,role,txt:`${role} ${other(s)}`}});
+  const K={L:[],N:[],PE:[],S:[],K:[]};for(const r of rows){const k=r.s.kind,t=r.txt;K.PE.push(t);
+    if(k==='feed'){K.L.push(t);K.N.push(t)}else if(k==='korr')K.K.push(t);else if(k==='swd'){if(it.k==='abz'){K.L.push(t+' (L hin)');K.S.push(t+' (S zurück)')}else{K.L.push(t+' (L)');K.S.push(t+' (S)')}}else if(k==='last'){K.N.push(t);K.S.push(t)}}
+  if(isSw(it)&&rows.some(r=>r.s.kind==='feed'))K.L.push('Schalter-Eingang');if(isSw(it)&&rows.some(r=>r.s.kind==='last'))K.S.push('Schalter-Ausgang');
+  return {rows,K,n:rows.length,max:boxMax(it)}}
+function clampHtml(f,it){if(KINDS[it.k]?.place!=='wall'||KINDS[it.k].sym==='dist')return '';const cl=clampsOf(f,it);if(!cl.n)return '';
+  return `<h3>Dosenbelegung</h3>${cl.n>cl.max?`<div class="warnbox">${cl.n} Leitungen in einer Dose, das wird eng. ${it.k==='abz'?'':'Tiefe Dose oder Abzweigdose erwägen.'}</div>`:''}<ul class="lst">${cl.rows.map(r=>`<li><span class="chip" style="background:${r.c?.color||'#888'};width:12px;height:12px;border-radius:50%"></span><span class="nm"><b>${esc(r.s.cable)}</b><small>${esc(r.txt)}${r.c?' · SK '+esc(r.c.no):''}</small></span></li>`).join('')}</ul>
+    <table class="sum kv" style="margin-top:6px"><tbody>${Object.entries(cl.K).filter(([,v])=>v.length).map(([k,v])=>`<tr><td><b>${k==='K'?'K1/K2':k}</b></td><td style="text-align:left;white-space:normal;font-family:var(--f);font-size:13px">${esc([...new Set(v)].join(' · '))}</td></tr>`).join('')}</tbody></table>
+    <p class="hint" style="margin-top:6px">Klemmen je Leiter: alles in einer Zeile wird zusammen geklemmt. PE immer durchverbunden.</p>`}
+function vjbPanel(f){const gid=UI.vjb,gr=groupsOf(f,UI.view).find(g=>g.sw[0].id===gid);if(!gr){UI.vjb=null;return ''}const jb=jbOf(f,gr),sug=!jb&&abzSuggest(f).find(x=>x.g===gr),J=jb||sug?.jb;if(!J){UI.vjb=null;return ''}
+  const t=grpTitle(f,gr);return `<h2>Abzweigdose${sug?' (Vorschlag)':' (automatisch)'}</h2><p class="hint">${esc(t.t)} · über ${esc(kindName(gr.sw[0]))} in ${fmt(J.h)} cm Höhe</p>
+    ${sug?`<div class="note">${esc(sug.why)}. Eine Abzweigdose darüber nimmt Zuleitung und Weiterführung auf, in der Schalterdose bleibt nur die Schalterleitung.</div>`:`<div class="note">Gesetzt, weil die Verdrahtung auf „${WIRING[wiring()]}“ steht (Menü → Rechenvorgaben).</div>`}
+    ${clampHtml(f,J)}
+    <div class="stack" style="margin-top:10px"><button class="btn primary" data-act="jbfix" data-id="${gid}">${sug?'Übernehmen':'Festlegen (zum Verschieben)'}</button><button class="btn" data-act="jbno" data-id="${gid}">Hier keine Abzweigdose</button><button class="btn" data-act="jbclose">Schließen</button></div>
+    <p class="hint" style="margin-top:8px">Abzweigdosen müssen zugänglich bleiben, also nicht zuputzen oder zutapezieren.</p>`}
 function wsegPanel(f){const w=UI.wseg,a=items(f).find(x=>x.id===w.a),b=items(f).find(x=>x.id===w.b);if(!a||!b){UI.wseg=null;return ''}
   const gr=groupsOf(f,UI.view).find(g=>[...g.sw,...g.loads].some(x=>x.id===a.id)),ceil=gr&&gr.sw.some(x=>x.ceil),own=!!S.routes?.[w.key],sg=segBetween(f,a,f,b,ceil?'ceil':'top','','x'),gs=G(f,'soll'),nm=x=>`${x.name||kindName(x)} (${itemRoom(f,gs,x)?.name||'ohne Raum'})`;
   return `<h2>Leitungsverlauf</h2><p class="hint">${esc(nm(a))} → ${esc(nm(b))} · ca. ${fmt(Math.round(sg.len))} cm</p>
@@ -1158,10 +1199,10 @@ function defaultWallTypes(){return [
   {id:'vs',name:'Vorsatzschale',t:10,shade:'light',builds:[{name:'Gipskarton auf Unterkonstruktion',hollow:true}]}]}
 function newFloor(name,level=0,height=250,slab=20){return {id:uid(),name,level,height,slab,nodes:[],walls:[],openings:[],rooms:[],layouts:[{id:'la',name:'Variante A',items:[]}],activeLayout:'la'}}
 function defaultState(){const f=newFloor('EG',0);return {v:1,app:'elektroplaner',circuits:[],floors:[f],activeFloor:f.id,hv:f.id,
-  project:{name:'',address:'',author:'',stand:''},settings:{grid:5,snap:true,dims:'inner',underlay:true,sym:1.5,heights:{...DEF_H},wallTypes:defaultWallTypes()}}}
+  project:{name:'',address:'',author:'',stand:''},settings:{wiring:'abz',grid:5,snap:true,dims:'inner',underlay:true,sym:1.5,heights:{...DEF_H},wallTypes:defaultWallTypes()}}}
 function valid(s){return !!(s&&s.app==='elektroplaner'&&Array.isArray(s.floors)&&s.floors.length&&s.settings&&Array.isArray(s.settings.wallTypes)&&s.settings.wallTypes.length&&
   s.floors.every(f=>Array.isArray(f.nodes)&&Array.isArray(f.walls)&&Array.isArray(f.openings)&&Array.isArray(f.rooms)))}
-function upgrade(s){const d=defaultState();if(!s.pid)s.pid=uid();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
+function upgrade(s){if(s.settings&&s.settings.wiring==null)s.settings.wiring=(s.floors||[]).some(f=>(f.layouts||[]).some(l=>(l.items||[]).length))?'none':'abz';const d=defaultState();if(!s.pid)s.pid=uid();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
   s.settings.heights={...DEF_H,...(s.settings.heights||{})};s.circuits=Array.isArray(s.circuits)?s.circuits:[];s.floors.forEach(ensureLayouts);if(!s.floors.some(f=>f.id===s.activeFloor))s.activeFloor=s.floors[0].id;if(!s.floors.some(f=>f.id===s.hv))s.hv=s.floors[0].id;return s}
 function load(){try{const j=localStorage.getItem(KEY);if(!j)return null;const s=JSON.parse(j);return valid(s)?upgrade(s):null}catch(e){return null}}
 const pName=s=>s?.project?.name||'Projekt ohne Namen';
@@ -1582,7 +1623,7 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
   commit();renderPanel();render()}
 
 /* ---------- Aktionen ---------- */
-function select(sel){UI.sel=sel;if(sel){UI.bundle=null;UI.wseg=null}if(sel&&!(UI.mode==='elec'&&UI.tab.elec==='sch'&&sel.kind==='item'))UI.tab[UI.mode]='edit';renderPanel();render()}
+function select(sel){UI.sel=sel;if(sel){UI.bundle=null;UI.wseg=null;UI.vjb=null}if(sel&&!(UI.mode==='elec'&&UI.tab.elec==='sch'&&sel.kind==='item'))UI.tab[UI.mode]='edit';renderPanel();render()}
 function setTool(t){UI.tool=t;UI.chain=null;UI.cur=null;if(t==='draw')UI.sel=null;if(UI.measOn)toggleMeas();commit();updBar();renderPanel();render()}
 function endChain(){UI.chain=null;UI.cur=null;commit();renderPanel();render()}
 function wallProps(){const d=drawDefaults();return {t:d.t,type:d.type,build:d.build,st:newStatus()}}
@@ -1612,6 +1653,9 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'cishow':{const id=b.dataset.id,c=circuits().find(x=>x.id===id),fi=c&&ciItems(c)[0];UI.mode='elec';UI.tab.elec='ci';UI.selC=id;UI.selB=null;UI.sel=null;if(fi)S.activeFloor=fi.f.id;updBar();renderAll();fit()}break;
     case 'bclose':UI.bundle=null;renderPanel();render();break;
     case 'wclose':UI.wseg=null;renderPanel();render();break;
+    case 'jbclose':UI.vjb=null;renderPanel();render();break;
+    case 'jbfix':{const gr=groupsOf(f,UI.view).find(g=>g.sw[0].id===b.dataset.id);if(gr){const v=vJb(f,gr);if(v){const it={...v,id:uid()};delete it.virt;delete it.x;delete it.y;items(f).push(it);for(const s_ of gr.sw)delete s_.noAbz;UI.vjb=null;UI.sel={kind:'item',id:it.id};commit();renderPanel();render();flash('Abzweigdose gesetzt. Zum Verschieben ziehen.')}}}break;
+    case 'jbno':{const gr=groupsOf(f,UI.view).find(g=>g.sw[0].id===b.dataset.id);if(gr){gr.sw[0].noAbz=true;UI.vjb=null;commit();renderPanel();render();flash('Hier keine Abzweigdose. Rückgängig macht das wieder.')}}break;
     case 'wauto':if(UI.wseg&&S.routes){delete S.routes[UI.wseg.key];commit();renderPanel();render()}break;
     case 'gceil':{const gr=UI.wseg?groupsOf(f,UI.view).find(g=>[...g.sw,...g.loads].some(x=>x.id===UI.wseg.a)):groupsOf(f,UI.view).find(g=>g.id===b.dataset.id);if(gr){for(const x of gr.sw){if(b.dataset.v==='1')x.ceil=true;else delete x.ceil}commit();renderPanel();render()}}break;
     case 'lmove':{const gr=groupsOf(f,UI.view).find(g=>g.loads.some(l=>l.id===b.dataset.id));if(gr){const L=[...gr.loads];L.forEach((l,i)=>l.lseq=i);const i=L.findIndex(l=>l.id===b.dataset.id),j=i+(+b.dataset.v);if(j>=0&&j<L.length){L[i].lseq=j;L[j].lseq=i}UI.grp=gr.id;commit();renderPanel();render()}}break;
@@ -1898,6 +1942,7 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   if(!t)return;const k=t.dataset.kind,id=t.dataset.id;
   if(UI.mode==='elec'){if(UI.place){if(k==='item'){UI.place=null;UI.multi=false}else return}if(k==='wseg'){const [ia,ib]=id.split('>');UI.wseg={f:f.id,key:id,a:ia,b:ib};UI.sel=null;UI.bundle=null;UI.tab.elec='edit';drag=null;renderPanel();render();return}
     if((k==='wp'||k==='wpadd')&&UI.wseg){const i=+id,R=(S.routes=S.routes||{}),key=UI.wseg.key;if(k==='wp'){const now=Date.now();if(UI.lastWp&&UI.lastWp.i===i&&now-UI.lastWp.t<400){R[key].splice(i,1);if(!R[key].length)delete R[key];UI.lastWp=null;drag=null;commit();renderPanel();render();return}UI.lastWp={i,t:now}}drag={...base,type:k,i,key};return}
+    if(k==='vjb'){UI.vjb=id;UI.sel=null;UI.bundle=null;UI.wseg=null;UI.tab.elec='edit';drag=null;renderPanel();render();return}
     if(k==='bundle'){UI.bundle={f:f.id,id};UI.sel=null;UI.tab.elec='edit';drag=null;renderPanel();render();return}
     if(k==='item'&&UI.tab.elec==='ci'&&!UI.assign){const it=items(f).find(x=>x.id===id);UI.selC=it?.ci||ciOf(it||{})?.id||null;drag=null;renderFloorSel();renderPanel();render();return}
     if(UI.assign&&k==='item'){const it=items(f).find(x=>x.id===id);if(it){assignCi(f,it,it.ci===UI.assign?null:UI.assign);drag=null;commit();renderPanel();render()}return}if(k==='item'){const it=items(f).find(x=>x.id===id);if(!it)return;UI.place=null;if(UI.sel?.id!==id)select({kind:'item',id});const p=itemPos(G(f,UI.view),it);drag={...base,type:'item',it,ox:w.x-p.x,oy:w.y-p.y,orig:{wall:it.wall,side:it.side,off:it.off},fm:frameMembers(f,it).filter(o=>o!==it).map(o=>({o,rel:o.off-it.off}))}}
@@ -1943,6 +1988,7 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.tab.elec==='ci'&&UI.selC&&!UI.assign){UI.selC=null;renderFloorSel();renderPanel();render();return}
   if(d.type==='pan'&&!d.moved&&UI.bundle){UI.bundle=null;renderPanel();render();return}
   if(d.type==='pan'&&!d.moved&&UI.wseg){UI.wseg=null;renderPanel();render();return}
+  if(d.type==='pan'&&!d.moved&&UI.vjb){UI.vjb=null;renderPanel();render();return}
   if(d.type==='pan'&&!d.moved){const F=faceAt(G(floor(),UI.view),d.w),r=F&&floor().rooms.find(r=>inside(r,F.poly));select(r?{kind:'room',id:r.id}:null);return}
   UI.guides=null;UI.wg=null;
   if(d.type==='link'){const t=d.moved?linkDrop(floor(),d.it,toWorld(e.clientX,e.clientY)):null;UI.link=null;if(t)linkApply(floor(),d.it,t);else{render();if(d.moved)flash('Zum Verbinden auf eine Leuchte ziehen.');else flash('⊕ auf eine Leuchte ziehen, um sie zu verbinden oder zu trennen.')}return}

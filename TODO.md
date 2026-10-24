@@ -62,13 +62,13 @@
 - [x] Materialliste als Reiter in ④ Ausgabe, Eintrag „Materialliste“ im ☰-Menü
 - [ ] Offen (siehe Fragenliste): Hinweis „Datenleitung zu nah an Strom“ erst mit selbst verlegten Datenleitungen; eigener Verlauf vorerst nur für Schaltungslinien
 
-## 0.7.5 – Dosenbelegung und Abzweigdosen
-- [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
-- [ ] Belegung prüfen: Leitungen und Adern je Dose zählen; Hinweis (ignorierbar), wenn es eng wird, z. B. mehr als 4 Leitungen in einer normalen Dose, mehr als 3 mit Aktor, oder viele Klemmen; Vorschlag: tiefe Dose oder Abzweigdose
-- [ ] Einstellung Verdrahtung (Menü → Vorgaben), Antwort des Nutzers: Standard „mit Abzweigdosen“ (Planer setzt sie selbst, wo sinnvoll, verschieb- und löschbar) · Option „Abzweigdosen vorschlagen“ (nur Vorschläge) · Option „ohne Abzweigdosen“ (nur in Schalterdosen, bisheriges Verhalten). Bestehende Projekte behalten zunächst „ohne“, damit sich nichts ungefragt ändert (Annahme, in Fragenliste)
-- [ ] Vorschläge im Plan (Schalter im Menü „Ebenen“): gestrichelte Punkte, wo eine Abzweigdose sinnvoll ist, z. B. überfüllte Schalterdose, Verzweigung zu mehreren Leuchten in verschiedene Richtungen, langer Rückweg Schalter → Leuchte, der sich mit Abzweigdose deutlich verkürzt; Antippen zeigt den Grund und die Ersparnis (m Leitung, Leitungen je Dose), „Übernehmen“ setzt eine echte Abzweigdose und führt die Schaltung darüber
-- [ ] Abzweigdose als Element (Katalog, Suchwörter „Verteilerdose, Klemmdose“), manuell setzbar, Schaltung zuordnen; Hinweis, dass Abzweigdosen zugänglich bleiben müssen (nicht zuputzen/zutapezieren)
-- [ ] Hängt am Leitungsverlauf aus 0.7.4 (eigene Wege, Reihenfolge der Leuchten)
+## 0.7.5 – Dosenbelegung und Abzweigdosen (im Branch `vorschau`, wartet auf Okay)
+- [x] Einstellung Verdrahtung (Menü → Rechenvorgaben): „Mit Abzweigdosen“ (Standard für neue Projekte), „Abzweigdosen vorschlagen“, „Ohne Abzweigdosen“; bestehende Projekte mit Elementen starten mit „Ohne“ (`S.settings.wiring`)
+- [x] Mit Abzweigdosen: je Schaltung automatisch eine Abzweigdose in der Deckenzone neben dem ersten Schalter (Zuleitung → Abzweigdose → Schalter und Leuchten); antippen → „Festlegen (zum Verschieben)“ macht daraus ein echtes Element, „Hier keine Abzweigdose“ (`noAbz`)
+- [x] Vorschlagen: gestrichelte Punkte mit ? an Schalterdosen mit zu vielen Leitungen, „Übernehmen“ setzt die Abzweigdose
+- [x] Abzweigdose als Element im Katalog (Suchwörter Verteilerdose, Klemmdose), Feld „Schaltung über diese Dose“ (`serves`), Hinweis zur Zugänglichkeit
+- [x] Dosenbelegung im Seitenfeld jeder Wanddose: ankommende Leitungen mit Stromkreis, Klemmen je Leiter (L, N, PE, S, K1/K2)
+- [x] Hinweis bei vollen Dosen (mehr als 4 Leitungen, tiefe Dose 5, Abzweigdose 8); Material zählt Abzweigdosen und Klemmen-Sätze
 
 ## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
 - [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume, übernommene Elemente bleiben mit dem Ist-Element verknüpft); bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
