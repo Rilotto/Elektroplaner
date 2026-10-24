@@ -69,6 +69,7 @@
 - [ ] Im Setz-Modus wählt ein Tipp auf ein vorhandenes Element dieses aus und beendet den Setz-Modus (statt nichts zu tun)
 - [ ] Schwebende Anzeige unten am Plan „Setzen: Ausschalter ✕“, solange der Modus aktiv ist; ✕ oder Esc beendet ihn
 - [ ] Ausgabe (PNG/PDF/Vorschau): Raumflächen weiß wie in einem echten Übersichtsplan, Wände dunkel, keine graue Fläche; gilt für Grundriss und Installationsplan
+- [ ] Materialliste aus ③ Verteiler herausnehmen und als eigenen Reiter „Material“ in ④ Ausgabe legen (Tabelle in der Mitte, Gesamt/Nur Neues, CSV, Rechenvorgaben im Seitenfeld); zusätzlich Eintrag „Materialliste“ im ☰-Menü, der direkt dorthin springt (Wunsch des Nutzers: sonst zu versteckt)
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
