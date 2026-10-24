@@ -49,27 +49,18 @@
 - [x] Grundausstattung: TV/SAT-Antennendose, Leerdose mit Leerrohr, Rollladentaster + Rollladenmotor (Leitung NYM-J 4×1,5, Hinweise bei fehlender Zuordnung), Video-Innenstation (an der Klingelleitung)
 - [x] Einstellung „Schalterdosen als tiefe Elektronikdosen“ (Menü → Rechenvorgaben), Material passt sich an; N und PE in jeder Schalterdose stehen schon im Schaltbild („N, PE geklemmt“) und jetzt auch im Hinweis der Materialliste
 
-## 0.7.4 – Leitungen: Bündel aufklappen und Verlauf selbst anpassen
-- [ ] Bündel antippen → fächert sich auf: alle Leitungen dieser Strecke einzeln nebeneinander gezeichnet, jede mit Farbe und Beschriftung (Leitungstyp, Stromkreis-Nr., Ziel/Raum); klappt wieder zu, sobald woanders getippt wird
-- [ ] Alle Leitungsarten bündeln, nicht nur Stromkreis-Zuleitungen: auch Schalter→Leuchte, Klingel, Netzwerk, Bus, damit die Zahl im Bündel stimmt
-- [ ] Datenleitungen (CAT, Telefon, Koax) getrennt von Starkstrom führen: eigenes Wegenetz-Bündel, eigener Schlitz; beim automatischen Verlauf parallel mit einstellbarem Mindestabstand (Standard z. B. 10 cm, vgl. DIN EN 50174-2) statt in derselben Strecke; Kreuzungen möglichst rechtwinklig; Hinweis, wenn eine Datenleitung (auch selbst verschoben) zu nah an einer Stromleitung liegt. Klingel und Bus (Kleinspannung) ebenfalls getrennt, als Einstellung
-- [ ] Infokasten zum Bündel: Anzahl je Leitungstyp (z. B. 3× NYM-J 3×1,5, 2× NYM-J 5×1,5; Datenleitungen haben eigene Bündel), Summe der Außendurchmesser (Tabelle mit ca.-Werten je Typ, in den Einstellungen anpassbar), daraus empfohlene Schlitzbreite/-tiefe bei Verlegung nebeneinander bzw. Leerrohrgröße; Hinweis bei zu breitem Schlitz (Statik, ggf. zwei Schlitze oder Leerrohr)
-- [ ] Schlitzliste je Raum/Wand als Tabelle und CSV (für die Baustelle), später auch in der Wandansicht
-- [ ] Verlauf selbst anpassen: Leitung antippen → Ziehpunkte erscheinen; Strecke ziehen erzeugt einen Knick (rastet auf 90° und an Wänden/anderen Leitungen ein, damit Bündel entstehen); Knickpunkt doppelt antippen löscht ihn; „Automatisch“ setzt die Strecke zurück
-- [ ] Gespeichert je Teilstück (von Element zu Element), Längen und Material rechnen mit dem eigenen Verlauf; eigene Strecken werden leicht anders markiert
-- [ ] Verlegeart je Strecke: „an der Wand“ (heute) oder „über die Decke direkt“ (z. B. Leuchte zu Leuchte in einer Reihe, ohne Abstecher zur Wand); auch als Voreinstellung je Stromkreis/Schaltung
-- [ ] Reihenfolge der Leuchten in einer Schaltung festlegen (wer an wem hängt), damit Ketten Leuchte→Leuchte sinnvoll laufen
-- [ ] Stromkreis hervorheben: Stromkreis antippen (Reiter „Stromkreise“ in ② Elektro, Stromkreisliste/Belegung in ③ Verteiler) → im Plan werden seine Elemente mit farbigem Ring markiert, seine Leitungen kräftig in der Stromkreisfarbe gezeichnet (auch innerhalb von Bündeln), alles andere tritt blass zurück; die Räume des Stromkreises bekommen einen leichten Farbton
-- [ ] Dazu: Etagen-Leiste zeigt einen Farbpunkt an Etagen, auf denen der Stromkreis ebenfalls liegt; Infozeile unten rechts „Stromkreis 4 · 6 Elemente · 23 m“; Antippen eines Elements im Plan wählt dessen Stromkreis, wenn der Reiter „Stromkreise“ offen ist; Antippen ins Leere hebt die Hervorhebung auf
-- [ ] Im Verteiler: LS antippen → „Im Plan zeigen“ springt zu ② Elektro mit hervorgehobenem Stromkreis
-- [ ] Raumränder nach Stromkreis nur noch bei gewähltem Stromkreis (Punkt aus dem Designkonzept, hier mit erledigt)
-- [ ] Mehrfachkombination im Plan hintereinander statt nebeneinander zeichnen (wie Schalter + Steckdose seit 0.6.2): Glieder senkrecht zur Wand gestaffelt in den Raum hinein, Rahmen-Umriss entsprechend; Reihenfolge nach Lage im Rahmen
-- [ ] Setzen einfacher beenden: Ein Element wird standardmäßig einmal gesetzt, danach ist der Setz-Modus vorbei und das neue Element ist ausgewählt (Seitenfeld zeigt es, beim Schalter gleich mit ⊕-Punkt zum Verbinden)
-- [ ] „Mehrere setzen“ als Schalter im Hinweisfeld beim Setzen (Stecknadel), z. B. für Steckdosenreihen; bleibt bis „Fertig“
-- [ ] Im Setz-Modus wählt ein Tipp auf ein vorhandenes Element dieses aus und beendet den Setz-Modus (statt nichts zu tun)
-- [ ] Schwebende Anzeige unten am Plan „Setzen: Ausschalter ✕“, solange der Modus aktiv ist; ✕ oder Esc beendet ihn
-- [ ] Ausgabe (PNG/PDF/Vorschau): Raumflächen weiß wie in einem echten Übersichtsplan, Wände dunkel, keine graue Fläche; gilt für Grundriss und Installationsplan
-- [ ] Materialliste aus ③ Verteiler herausnehmen und als eigenen Reiter „Material“ in ④ Ausgabe legen (Tabelle in der Mitte, Gesamt/Nur Neues, CSV, Rechenvorgaben im Seitenfeld); zusätzlich Eintrag „Materialliste“ im ☰-Menü, der direkt dorthin springt (Wunsch des Nutzers: sonst zu versteckt)
+## 0.7.4 – Leitungen, Hervorheben, Setzen, Ausgabe (im Branch `vorschau`, wartet auf Okay)
+- [x] Bündel antippen → Leitungen einzeln aufgefächert mit Stromkreis und Leitungstyp; Seitenfeld mit Liste, Schlitzbreite/-tiefe und Leerrohrgröße; Hinweis ab 80 mm Breite
+- [x] Alle Starkstromleitungen zählen im Bündel (Zuleitung, zur Leuchte, Korrespondierende, Rollladen); Daten- und Klingelleitungen als eigenes Bündel, im Plan mit Abstand (Standard 10 cm) parallel gezeichnet; Einstellungen in Menü → Rechenvorgaben
+- [x] Schlitzliste in ④ Ausgabe (je Raum zusammengefasst) und als CSV
+- [x] Leitungsverlauf selbst festlegen für Schaltungslinien (Schalter ↔ Leuchte, Korrespondierende): Linie antippen, ⊕ ziehen setzt Knick, Punkte verschieben, doppelt antippen löscht, „Automatisch“ setzt zurück; Längen rechnen mit (`S.routes`)
+- [x] Verlegung je Schaltung „an der Wand entlang“ oder „über die Decke direkt“ (`sw.ceil`), Reihenfolge der Leuchten mit ↑↓ (`lseq`)
+- [x] Stromkreis hervorheben (Ring, kräftige Leitungen, Rest blass, Raumtönung, Farbpunkt an der Etage, Infozeile); im Reiter Stromkreise wählt ein Tipp aufs Element dessen Stromkreis, Tipp ins Leere hebt auf; im Verteiler „Im Plan zeigen“
+- [x] Mehrfachkombination hintereinander gezeichnet
+- [x] Setzen endet nach einem Element, neues Element ist gewählt; „📌 Mehrere setzen“; Tipp auf vorhandenes Element beendet das Setzen; Anzeige unten „Setzen: … ✕“ (auch für Zuordnen), Esc beendet
+- [x] Ausgabe: Räume weiß, Wände kräftiger, Schrift im Bild nicht mehr mit Serifen
+- [x] Materialliste als Reiter in ④ Ausgabe, Eintrag „Materialliste“ im ☰-Menü
+- [ ] Offen (siehe Fragenliste): Hinweis „Datenleitung zu nah an Strom“ erst mit selbst verlegten Datenleitungen; eigener Verlauf vorerst nur für Schaltungslinien
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
