@@ -20,7 +20,7 @@
 
 ## Eigene Linie: Teilen mit Freunden
 - [ ] Tutorial / Einführung für neue Nutzer: geführte Tour beim ersten Start (überspringbar, jederzeit im Menü „Einführung“ wieder startbar), kurze Schritte mit Hervorhebung: Projekt anlegen → Raum zeichnen/andocken → Tür/Fenster → Elektro: Element setzen → Schalter mit Leuchte verbinden → Stromkreis anlegen → Verteiler → Material/Pläne ausgeben
-- [ ] Beispielprojekt „Testwohnung 4 Zimmer“ direkt in der App ladbar (Projekte → „Beispiel öffnen“), damit Freunde ohne Datei loslegen können
+- [ ] Beispielprojekt direkt in der App ladbar (Projekte → „Beispiel öffnen“), damit Freunde ohne Datei loslegen können; Grundlage: die Mini-Testwohnungen aus `beispiele/` bzw. die Testwohnung 4 Zimmer (Idee vom Nutzer bestätigt)
 - [ ] Kurze Hilfe-Seite (Was ist was, Gesten, Symbole) und Hinweis, dass die App keine Elektrofachkraft ersetzt
 - [ ] Teilen: Link auf GitHub Pages, Daten bleiben lokal auf dem Gerät des Freundes; Sicherung als Datei zum Weitergeben
 
@@ -68,19 +68,23 @@
 - [ ] „Mehrere setzen“ als Schalter im Hinweisfeld beim Setzen (Stecknadel), z. B. für Steckdosenreihen; bleibt bis „Fertig“
 - [ ] Im Setz-Modus wählt ein Tipp auf ein vorhandenes Element dieses aus und beendet den Setz-Modus (statt nichts zu tun)
 - [ ] Schwebende Anzeige unten am Plan „Setzen: Ausschalter ✕“, solange der Modus aktiv ist; ✕ oder Esc beendet ihn
+- [ ] Ausgabe (PNG/PDF/Vorschau): Raumflächen weiß wie in einem echten Übersichtsplan, Wände dunkel, keine graue Fläche; gilt für Grundriss und Installationsplan
 
 ## 0.7.5 – Dosenbelegung und Abzweigdosen
 - [ ] Dosenbelegung: jede Schalter-/Geräte-/Abzweigdose antippen → Seitenfeld zeigt, welche Leitungen ankommen (von wo, Typ, Stromkreis) und wie verklemmt wird (L, N, PE, Schaltdraht, Korrespondierende) als kleines Klemmenbild im Stil des Schaltbilds
 - [ ] Belegung prüfen: Leitungen und Adern je Dose zählen; Hinweis (ignorierbar), wenn es eng wird, z. B. mehr als 4 Leitungen in einer normalen Dose, mehr als 3 mit Aktor, oder viele Klemmen; Vorschlag: tiefe Dose oder Abzweigdose
-- [ ] Einstellung Verdrahtung (Menü → Vorgaben): „nur in Schalterdosen“ (Standard) · „Abzweigdosen vorschlagen“ · „Abzweigdosen frei verwenden“
+- [ ] Einstellung Verdrahtung (Menü → Vorgaben), Antwort des Nutzers: Standard „mit Abzweigdosen“ (Planer setzt sie selbst, wo sinnvoll, verschieb- und löschbar) · Option „Abzweigdosen vorschlagen“ (nur Vorschläge) · Option „ohne Abzweigdosen“ (nur in Schalterdosen, bisheriges Verhalten). Bestehende Projekte behalten zunächst „ohne“, damit sich nichts ungefragt ändert (Annahme, in Fragenliste)
 - [ ] Vorschläge im Plan (Schalter im Menü „Ebenen“): gestrichelte Punkte, wo eine Abzweigdose sinnvoll ist, z. B. überfüllte Schalterdose, Verzweigung zu mehreren Leuchten in verschiedene Richtungen, langer Rückweg Schalter → Leuchte, der sich mit Abzweigdose deutlich verkürzt; Antippen zeigt den Grund und die Ersparnis (m Leitung, Leitungen je Dose), „Übernehmen“ setzt eine echte Abzweigdose und führt die Schaltung darüber
 - [ ] Abzweigdose als Element (Katalog, Suchwörter „Verteilerdose, Klemmdose“), manuell setzbar, Schaltung zuordnen; Hinweis, dass Abzweigdosen zugänglich bleiben müssen (nicht zuputzen/zutapezieren)
 - [ ] Hängt am Leitungsverlauf aus 0.7.4 (eigene Wege, Reihenfolge der Leuchten)
 
 ## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
-- [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume); Umbau-Ansicht vergleicht beide; bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
+- [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume, übernommene Elemente bleiben mit dem Ist-Element verknüpft); bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
+  - Antwort des Nutzers: Ist und Soll vollständig getrennt nutzbar, also je Plan eigene Stromkreise, Verteiler, Schaltungen, Hinweise, Material und Ausgaben
+  - Antwort des Nutzers: Umbau-Ansicht vergleicht beide mit Status bleibt · entfällt · neu · **versetzt** (eigener Status, z. B. orange, mit Linie alte → neue Lage)
 - [ ] Treppenformen: gerade, viertelgewendelt (L), halbgewendelt / zweiläufig mit Podest (U), Wendeltreppe; Lauf links/rechts, Podestgröße; Treppenauge in der Etage darüber in derselben Form
 - [ ] Wandansicht: Wand antippen → Ansicht von vorne mit allen Dosen in echter Höhe, Türen/Fenster und Installationszonen nach DIN 18015-3; Hinweis bei Dosen außerhalb der Zonen; als Plan druckbar
+  - Antwort des Nutzers: Dosen dort senkrecht und waagrecht ziehen erlaubt (Höhe und Lage an der Wand)
 
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
