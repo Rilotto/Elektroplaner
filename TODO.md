@@ -70,13 +70,13 @@
 - [x] Dosenbelegung im Seitenfeld jeder Wanddose: ankommende Leitungen mit Stromkreis, Klemmen je Leiter (L, N, PE, S, K1/K2)
 - [x] Hinweis bei vollen Dosen (mehr als 4 Leitungen, tiefe Dose 5, Abzweigdose 8); Material zählt Abzweigdosen und Klemmen-Sätze
 
-## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht
-- [ ] Ist und Soll in Elektro getrennt: Ist-Aufnahme und Soll-Plan als eigene Elementbestände je Etage; Soll startet leer, Knopf „Aus Ist übernehmen“ (alle oder ausgewählte Räume, übernommene Elemente bleiben mit dem Ist-Element verknüpft); bestehende Daten: Bestand+Entfällt → Ist, Bestand+Neu → Soll
-  - Antwort des Nutzers: Ist und Soll vollständig getrennt nutzbar, also je Plan eigene Stromkreise, Verteiler, Schaltungen, Hinweise, Material und Ausgaben
-  - Antwort des Nutzers: Umbau-Ansicht vergleicht beide mit Status bleibt · entfällt · neu · **versetzt** (eigener Status, z. B. orange, mit Linie alte → neue Lage)
-- [ ] Treppenformen: gerade, viertelgewendelt (L), halbgewendelt / zweiläufig mit Podest (U), Wendeltreppe; Lauf links/rechts, Podestgröße; Treppenauge in der Etage darüber in derselben Form
-- [ ] Wandansicht: Wand antippen → Ansicht von vorne mit allen Dosen in echter Höhe, Türen/Fenster und Installationszonen nach DIN 18015-3; Hinweis bei Dosen außerhalb der Zonen; als Plan druckbar
-  - Antwort des Nutzers: Dosen dort senkrecht und waagrecht ziehen erlaubt (Höhe und Lage an der Wand)
+## 0.8 – Ist und Soll getrennt, Treppen, Wandansicht (im Branch `vorschau`, wartet auf Okay)
+- [x] Ist-Aufnahme und Soll-Plan als getrennte Elementlisten je Etage (`f.istLayout`, Soll = Varianten), eigene Stromkreise (`S.istCircuits` / `S.circuits`), Verteiler, Hinweise, Material, Schlitze und Ausgaben je Plan; Plan-Umschalter auch in ③ Verteiler und bei Material/Schlitzen
+- [x] Bestehende Daten: Bestand + Entfällt → Ist (mit eigenen Stromkreis-Kopien), Bestand + Neu → Soll, Bestand im Soll mit dem Ist verknüpft (`src`); einmalig beim Laden (`split08`)
+- [x] „Aus Ist übernehmen …“ im Soll (Räume wählbar, Stromkreise mit übernehmen), übernommene Elemente bleiben verknüpft
+- [x] Umbau-Ansicht vergleicht: bleibt · entfällt · neu · versetzt (orange, gestrichelte Linie von der alten Lage); dort nur ansehen, bearbeiten in Ist oder Soll
+- [x] Treppenformen: gerade, viertelgewendelt (L mit Podest), halbgewendelt (U mit Podest, Treppenauge-Breite), Wendeltreppe; Richtung links/rechts; Treppenauge oben in derselben Form
+- [x] Wandansicht: aus einer gewählten Wanddose („Wandansicht“) oder einer Wand im Grundriss (Seite A/B); Raumbreite × Raumhöhe, Türen/Fenster, Installationszonen nach DIN 18015-3, Dosen außerhalb der Zonen orange mit Hinweis; Dosen waagrecht und senkrecht ziehen; als Bild speichern; andere Wandseite
 
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
