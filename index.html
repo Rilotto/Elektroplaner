@@ -314,8 +314,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.8.4',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[['0.8.4','Wandlänge eingeben verschiebt nur noch die Querwand am Ende der Wand (wie beim Ziehen). Andere Räume und Wände bleiben, wo sie sind. Wählbar, welches Ende sich bewegt'],['0.8.3','Notizen: Knopf „Notizen“ unten am Plan. Notizen als Stecknadel an eine Stelle im Plan heften oder allgemein zum Projekt anlegen, abhaken, verschieben, löschen. Übersicht aller Notizen im Knopf und im Menü, Ein- und Ausblenden unter „Ebenen“'],['0.8.2','Wände: Zug schließt sich zuverlässig an der Startecke, gerade Fluchten haben Vorrang vor dem Raster, Ecke auf Ecke ziehen begradigt leicht schiefe Wände automatisch, neuer Knopf „Raum begradigen“'],['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
+const APP_VERSION='0.8.5',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.8.5','Feste Maße: Eingegebene Wandlängen werden mit Schloss festgehalten und ändern sich nicht mehr, wenn andere Wände geändert oder gezogen werden. Beim Eingeben wird automatisch das passende Ende verschoben. Schloss im Seitenfeld der Wand lösen'],['0.8.4','Wandlänge eingeben verschiebt nur noch die Querwand am Ende der Wand (wie beim Ziehen). Andere Räume und Wände bleiben, wo sie sind. Wählbar, welches Ende sich bewegt'],['0.8.3','Notizen: Knopf „Notizen“ unten am Plan. Notizen als Stecknadel an eine Stelle im Plan heften oder allgemein zum Projekt anlegen, abhaken, verschieben, löschen. Übersicht aller Notizen im Knopf und im Menü, Ein- und Ausblenden unter „Ebenen“'],['0.8.2','Wände: Zug schließt sich zuverlässig an der Startecke, gerade Fluchten haben Vorrang vor dem Raster, Ecke auf Ecke ziehen begradigt leicht schiefe Wände automatisch, neuer Knopf „Raum begradigen“'],['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -1499,6 +1499,14 @@ function dissolveNode(f,id){const ws=f.walls.filter(w=>w.a===id||w.b===id);
   w1.a=x;w1.b=y;f.walls=f.walls.filter(w=>w!==w2);f.nodes=f.nodes.filter(n=>n.id!==id);dedupe(f);return true}
 function clampOpenings(f){f.openings=f.openings.filter(o=>f.walls.some(w=>w.id===o.wall));for(const o of f.openings){const L=wlen(f,f.walls.find(w=>w.id===o.wall));o.w=clamp(o.w,10,Math.max(10,L));o.off=clamp(o.off,0,Math.max(0,L-o.w))}}
 /* 0.8.4: Länge ändern verschiebt nur das gewählte Ende und die Querwand dort (wie beim Ziehen der Querwand). Der Rest des Plans bleibt stehen. */
+/* 0.8.5: feste Maße */
+const nodePos=f=>new Map(f.nodes.map(n=>[n.id,[n.x,n.y]]));
+function restoreNodes(f,m){for(const n of f.nodes){const p=m.get(n.id);if(p){n.x=p[0];n.y=p[1]}}}
+const lockSnap=(f,except)=>new Map(f.walls.filter(w=>w.lock&&w.id!==except).map(w=>[w.id,wlen(f,w)]));
+function lockOk(f,s){for(const [id,L] of s){const w=f.walls.find(x=>x.id===id);if(w&&Math.abs(wlen(f,w)-L)>0.15)return false}return true}
+function setLenLocked(f,w,L){const lk=lockSnap(f,w.id),pos=nodePos(f),pref=UI.lenEnd==='lo'?'lo':'hi',E=lenEnds(f,w);
+  for(const end of [pref,pref==='lo'?'hi':'lo']){setLen(f,w,L,end);if(lockOk(f,lk)){w.lock=true;if(end!==pref)flash(`Ende ${E.lbl[end==='lo'?0:1]} verschoben, damit feste Maße bleiben.`);return true}restoreNodes(f,pos)}
+  flash('Geht nicht: An beiden Enden hängen Wände mit festem Maß. Schloss an einer davon lösen.');return false}
 function lenEnds(f,w){const A=nodeOf(f,w.a),B=nodeOf(f,w.b),h=Math.abs(B.x-A.x)>=Math.abs(B.y-A.y),aLo=h?A.x<=B.x:A.y<=B.y;return {h,lo:aLo?'a':'b',hi:aLo?'b':'a',lbl:h?['links','rechts']:['oben','unten']}}
 function setLen(f,w,L,end){const E=lenEnds(f,w),me=end==='lo'?E.lo:E.hi,P=nodeOf(f,me==='a'?w.a:w.b),Q=nodeOf(f,me==='a'?w.b:w.a),cur=wlen(f,w),d=L-cur;if(Math.abs(d)<0.05||L<1||!cur)return;
   const u={x:(P.x-Q.x)/cur,y:(P.y-Q.y)/cur},mv=new Set([P.id]);
@@ -1584,12 +1592,12 @@ function sceneSvg(vp,VW,VH,exp,view){
   h+=stairSvg(f,s,C,exp,UI.mode==='plan'&&UI.tool==='sel')+riserSvg(f,s,C,exp,UI.mode==='plan'&&UI.tool==='sel');
   if(elec)h+=`</g>`;
   // Maße
-  const dimLbl=(p,q,nn,on)=>{const L=dist(p,q);if(L*s<46)return '';const m={x:(p.x+q.x)/2+nn.x*px(12),y:(p.y+q.y)/2+nn.y*px(12)};let a=Math.atan2(q.y-p.y,q.x-p.x)*180/Math.PI;if(a>90)a-=180;if(a<-90)a+=180;
-    return `<text class="wl${on?' on':''}" font-size="${px(12.5)}" fill="${on?C('accent'):C('muted')}" text-anchor="middle" dominant-baseline="middle" transform="translate(${r1(m.x)} ${r1(m.y)}) rotate(${r1(a)})">${fmt(L)}</text>`};
+  const dimLbl=(p,q,nn,on,lk)=>{const L=dist(p,q);if(L*s<46)return '';const m={x:(p.x+q.x)/2+nn.x*px(12),y:(p.y+q.y)/2+nn.y*px(12)};let a=Math.atan2(q.y-p.y,q.x-p.x)*180/Math.PI;if(a>90)a-=180;if(a<-90)a+=180;
+    return `<text class="wl${on?' on':''}" font-size="${px(12.5)}" fill="${on?C('accent'):C('muted')}" text-anchor="middle" dominant-baseline="middle" transform="translate(${r1(m.x)} ${r1(m.y)}) rotate(${r1(a)})">${fmt(L)}${lk?' 🔒':''}</text>`};
   const selW=sel?.kind==='wall'?sel.id:null;
-  if(elec);else if(S.settings.dims==='inner'){for(const F of g.rooms)for(const e of F.hes){const sd=e.end==='a'?e.g.sP:e.g.sM,nn={x:-e.d.y,y:e.d.x};if(e.g.w.id===selW)continue;h+=dimLbl(sd[0],sd[1],nn,false)}}
-  else for(const x of g.walls){if(x.w.id===selW)continue;const P=x.lP>=x.lM;h+=dimLbl(...(P?x.sP:x.sM),P?x.n:{x:-x.n.x,y:-x.n.y},false)}
-  if(selW){const x=g.byId.get(selW);if(x){h+=dimLbl(x.sP[0],x.sP[1],x.n,true)+dimLbl(x.sM[0],x.sM[1],{x:-x.n.x,y:-x.n.y},true);h+=`<polygon class="wsel" vector-effect="non-scaling-stroke" points="${pts([x.sP[0],x.sP[1],x.sM[1],x.sM[0]])}"/>`}}
+  if(elec);else if(S.settings.dims==='inner'){for(const F of g.rooms)for(const e of F.hes){const sd=e.end==='a'?e.g.sP:e.g.sM,nn={x:-e.d.y,y:e.d.x};if(e.g.w.id===selW)continue;h+=dimLbl(sd[0],sd[1],nn,false,e.g.w.lock)}}
+  else for(const x of g.walls){if(x.w.id===selW)continue;const P=x.lP>=x.lM;h+=dimLbl(...(P?x.sP:x.sM),P?x.n:{x:-x.n.x,y:-x.n.y},false,x.w.lock)}
+  if(selW){const x=g.byId.get(selW);if(x){h+=dimLbl(x.sP[0],x.sP[1],x.n,true,x.w.lock)+dimLbl(x.sM[0],x.sM[1],{x:-x.n.x,y:-x.n.y},true,x.w.lock);h+=`<polygon class="wsel" vector-effect="non-scaling-stroke" points="${pts([x.sP[0],x.sP[1],x.sM[1],x.sM[0]])}"/>`}}
   // Räume
   for(const r of f.rooms){const F=faceAt(g,r);if(!F&&view==='soll')continue;const on=sel?.kind==='room'&&sel.id===r.id,fs=px(14),lbl=esc(r.name),ar=F?fmtA(F.area/1e4)+' m²':'';
     if(on&&F)h+=`<polygon class="rlsel" vector-effect="non-scaling-stroke" points="${pts(F.poly)}"/>`;
@@ -1671,6 +1679,8 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
       <div class="row" style="margin-top:8px">${inp('Achse','len',x.L,'wall')}</div>
       ${(()=>{const E=lenEnds(f,w),lo=UI.lenEnd==='lo';return `<div class="row" style="margin-top:8px;align-items:center;gap:8px"><span class="hint" style="margin:0">Bewegt wird das Ende</span><div class="seg"><button data-act="lenEnd" data-v="lo" aria-pressed="${lo}">${E.lbl[0]}</button><button data-act="lenEnd" data-v="hi" aria-pressed="${!lo}">${E.lbl[1]}</button></div></div>`})()}
       <p class="hint">Nur die Querwand an diesem Ende rückt mit, wie beim Ziehen. Andere Räume bleiben stehen.</p>
+      <div class="row" style="margin-top:8px"><button class="btn" data-act="wlock" aria-pressed="${!!w.lock}">${w.lock?'🔒 Maß ist fest · lösen':'Maß festhalten'}</button></div>
+      <p class="hint">Eingegebene Maße werden automatisch festgehalten. Feste Maße ändern sich nicht, wenn du andere Wände änderst oder ziehst.</p>
       <h3>Einsetzen</h3><div class="grid3"><button class="btn" data-act="addOp" data-v="door">Tür</button><button class="btn" data-act="addOp" data-v="window">Fenster</button><button class="btn" data-act="addOp" data-v="pass">Durchgang</button><button class="btn" data-act="addOp" data-v="cable">Kabeldurchlass</button></div>
       <h3>Wandansicht</h3><div class="grid2"><button class="btn" data-act="wvopen" data-v="1">Seite A</button><button class="btn" data-act="wvopen" data-v="-1">Seite B</button></div>
       <div class="stack" style="margin-top:10px"><button class="btn" data-act="split">Ecke in der Mitte einfügen</button><button class="btn danger" data-act="delWall">${delLbl}</button></div>`}
@@ -1738,8 +1748,7 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
     if(fld==='type'){const t=types().find(t=>t.id===v);for(const c of ch){c.type=v;if(!t.builds.some(b=>b.name===c.build))c.build=t.builds[0]?.name||''}setThickness(f,w,t.t,ch)}
     else if(fld==='build'){for(const c of ch)c.build=v}
     else if(fld==='t')setThickness(f,w,v,ch);
-    else if(fld==='len')setLen(f,w,Math.max(1,v),UI.lenEnd);
-    else if(fld==='sP'||fld==='sM'){const x=G(f,UI.view).byId.get(w.id);if(x)setLen(f,w,Math.max(1,x.L+v-(fld==='sP'?x.lP:x.lM)),UI.lenEnd)}}
+    else if(fld==='len'||fld==='sP'||fld==='sM'){const x=G(f,UI.view).byId.get(w.id),L=fld==='len'?v:x?x.L+v-(fld==='sP'?x.lP:x.lM):null;if(L!=null)setLenLocked(f,w,Math.max(1,L))}}
   else if(sc==='node'){const q=nodeOf(f,s?.id);if(!q)return;q[fld]=r1(v)}
   else if(sc==='op'){const o=f.openings.find(x=>x.id===s?.id);if(!o)return;const L=wlen(f,f.walls.find(w=>w.id===o.wall));
     if(fld==='offE')o.off=L-o.w-Math.max(0,v);else if(fld==='w'){o.w=Math.max(10,v)}else o[fld]=fld==='off'?Math.max(0,v):Math.max(0,v)}
@@ -1852,7 +1861,7 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'boardpng':exportBoard();break;
     case 'pick':pick(b.dataset.k,+b.dataset.c||1);break;
     case 'takeist':takeMenu(f);break;
-    case 'roomStraight':{const r=f.rooms.find(x=>x.id===s?.id),F=r&&faceAt(G(f,UI.view),r);if(F){straightenRoom(f,F);commit();renderPanel();render();flash('Wände begradigt (Abweichungen bis 5°).')}}break;
+    case 'roomStraight':{const r=f.rooms.find(x=>x.id===s?.id),F=r&&faceAt(G(f,UI.view),r);if(F){const lk=lockSnap(f),pos=nodePos(f);straightenRoom(f,F);if(!lockOk(f,lk)){restoreNodes(f,pos);flash('Geht nicht, ohne ein festes Maß zu ändern.');break}commit();renderPanel();render();flash('Wände begradigt (Abweichungen bis 5°).')}}break;
     case 'wvopen':{const it=items(f).find(x=>x.id===s?.id);if(it&&it.wall)openWall(f,it.wall,it.side);else if(s?.kind==='wall')openWall(f,s.id,+b.dataset.v||1)}break;
     case 'wvclose':UI.wv=null;updBar();renderAll();break;
     case 'wvflip':if(UI.wv){UI.wv.side=-(UI.wv.side||1);renderAll()}break;
@@ -1877,6 +1886,7 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'grpfix':case 'grprev':{const gr=groupsOf(f,UI.view).find(x=>x.id===b.dataset.id);if(!gr)break;if(a==='grpfix')fixGroup(gr);else{const n=gr.sw.length;gr.sw.forEach((x,i)=>x.seq=n-1-i)}UI.grp=gr.id;commit();renderPanel();render()}break;
     case 'done':select(null);break;
     case 'lenEnd':UI.lenEnd=b.dataset.v;renderPanel();render();break;
+    case 'wlock':{const w=f.walls.find(x=>x.id===s?.id);if(w){if(w.lock)delete w.lock;else w.lock=true;commit();renderPanel();render();flash(w.lock?'Maß festgehalten.':'Maß wieder frei.')}}break;
     case 'noteClose':clearTimeout(noteT);commit();select(null);break;
     case 'noteDone':{const n=s&&noteOf(s.id);if(n){n.done=b.checked;commit();renderPanel();render();flash(n.done?'Notiz erledigt.':'Notiz wieder offen.')}}break;
     case 'noteDel':{const n=s&&noteOf(s.id);if(n){S.notes=notes().filter(x=>x!==n);UI.sel=null;commit();renderPanel();render();flash('Notiz gelöscht. Rückgängig ist möglich.')}}break;
@@ -2156,11 +2166,15 @@ svg.addEventListener('pointermove',e=>{
   if(drag.type==='draw'){UI.cur=snapDraw(w);drag.moved=true;render();return}
   if(!drag.moved&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<5)return;drag.moved=true;
   const f=floor(),gr=S.settings.snap?S.settings.grid:0;
+  if((drag.type==='node'||drag.type==='wall')&&!drag.lk){drag.lk=lockSnap(f,drag.type==='wall'?drag.id:null);drag.last=nodePos(f)}
   switch(drag.type){
     case 'pan':UI.vp.tx=drag.tx0+e.clientX-drag.sx;UI.vp.ty=drag.ty0+e.clientY-drag.sy;break;
     case 'meas':UI.meas={a:drag.a,b:measSnap(w,drag.a)};break;
     case 'node':{const p={x:w.x-drag.ox,y:w.y-drag.oy};snapNode(p,drag.id);const q=nodeOf(f,drag.id);q.x=r1(p.x);q.y=r1(p.y);break}
     case 'wall':{let t=(w.x-drag.w0.x)*drag.n.x+(w.y-drag.w0.y)*drag.n.y;if(gr)t=round(t,gr);for(const o of drag.p0){o.q.x=r1(o.x+drag.n.x*t);o.q.y=r1(o.y+drag.n.y*t)}break}
+  }
+  if(drag.lk){if(lockOk(f,drag.lk))drag.last=nodePos(f);else{restoreNodes(f,drag.last);if(!drag.lkF){drag.lkF=1;flash('Feste Maße bleiben. Schloss im Seitenfeld der Wand lösen.')}}}
+  switch(drag.type){
     case 'op':{const x=f.walls.find(q=>q.id===drag.o.wall);if(!x)break;const A=nodeOf(f,x.a),u=unitOf(f,x),L=wlen(f,x);let off=(w.x-A.x)*u.x+(w.y-A.y)*u.y-drag.grab;if(gr)off=round(off,gr);drag.o.off=clamp(off,0,L-drag.o.w);break}
     case 'stair':case 'riser':drag.r.x=gr?round(w.x-drag.ox,gr):r1(w.x-drag.ox);drag.r.y=gr?round(w.y-drag.oy,gr):r1(w.y-drag.oy);break
     case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break
@@ -2190,6 +2204,7 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   UI.join=null;
   if(!d.moved||d.type==='pan')return;
   if(d.type==='node')dropNode(d.id);
+  if(d.lk&&!lockOk(floor(),d.lk)){restore();flash('Feste Maße bleiben. Schloss im Seitenfeld der Wand lösen.');return}
   if(d.type==='room'&&!faceAt(G(floor(),'soll'),d.r)){d.r.x=d.x0;d.r.y=d.y0}
   commit();validateSel();renderPanel();render()}
 svg.addEventListener('pointerup',ptrEnd);svg.addEventListener('pointercancel',ptrEnd);
