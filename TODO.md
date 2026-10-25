@@ -93,6 +93,11 @@
 - [x] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
 - [x] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
 
+## 0.8.7 – Fenster und Türen innen bemessen (erledigt)
+- [x] Abstände von der inneren Raumecke (ganze Raumseite) statt von der Wandachse, beschriftet links/rechts bzw. oben/unten; bei Innenwänden wählbar, in welchem Raum gemessen
+- [x] Schloss je Wert: Breite, Höhe, Abstände, Brüstung; feste Abstände bleiben bei Wandänderungen, sind beide Abstände fest, passt sich die Breite an (außer sie ist auch fest)
+- [ ] Später: Schlösser auch für Abstände der Elektro-Elemente
+
 ## 0.8.6 – Raumseiten mit eigenem Maß (erledigt)
 - [x] Innenmaße im Plan je ganzer gerader Raumseite (Abschnitte an T-Stößen werden zusammengefasst)
 - [x] Seitenfeld der Wand: „Seite Raum“ = ganze Raumseite, jede Seite und die Achse mit eigenem Schloss
