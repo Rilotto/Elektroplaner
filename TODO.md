@@ -93,6 +93,10 @@
 - [x] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
 - [x] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
 
+## 0.8.4 – Notfall: Wandlänge eingeben (erledigt)
+- [x] Länge eingeben verschiebt nicht mehr alles rechts/unterhalb im ganzen Plan (verzog andere Räume), sondern nur die Querwand am gewählten Ende, wie beim Ziehen
+- [x] Wählbar im Seitenfeld der Wand: welches Ende sich bewegt (links/rechts bzw. oben/unten)
+
 ## 0.8.3 – Notizen (erledigt)
 - [x] Notizen als Stecknadel im Plan oder allgemein zum Projekt; Knopf „Notizen“ unten am Plan mit Übersicht, Bearbeiten im Seitenfeld, Erledigt, Verschieben, Löschen
 - [x] Ein-/Ausblenden unter „Ebenen“, Eintrag im ☰-Menü für ③/④
