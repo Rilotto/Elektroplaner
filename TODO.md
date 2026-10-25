@@ -93,6 +93,12 @@
 - [x] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
 - [x] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
 
+## 0.8.3 – Notizen (erledigt)
+- [x] Notizen als Stecknadel im Plan oder allgemein zum Projekt; Knopf „Notizen“ unten am Plan mit Übersicht, Bearbeiten im Seitenfeld, Erledigt, Verschieben, Löschen
+- [x] Ein-/Ausblenden unter „Ebenen“, Eintrag im ☰-Menü für ③/④
+- [ ] Später: Notizen in ④ Ausgabe (Liste, optional Nadeln im Plan)
+- [ ] Später: Foto an Notiz (mit den Fotos aus 0.9), Notiz an ein Element hängen
+
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
   - Planung: alles bearbeitbar wie bisher

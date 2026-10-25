@@ -227,6 +227,22 @@ header{gap:12px;padding:6px 10px;overflow:visible;justify-content:space-between;
 .rd{flex:0 0 20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--muted)}
 [aria-pressed="true"]>.rd{box-shadow:inset 0 0 0 6px var(--accent)}
 #layersBtn{white-space:nowrap}
+#notesBtn{position:relative;gap:6px;padding:0 12px}
+@media (max-width:560px){#notesBtn .nlbl{display:none}}
+#notesBtn[aria-expanded="true"]{color:var(--accent)}
+#notesBtn .nbadge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--ink);color:var(--floor);font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+#notesBtn .nbadge:empty{display:none}
+#notesPop{position:absolute;z-index:6;background:var(--floor);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;width:min(340px,calc(100% - 20px));max-height:min(70%,520px);overflow:auto;display:none}
+#notesPop.open{display:block}
+#notesPop h4{margin:6px 8px 4px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+#notesPop .nadd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:2px 0 6px}
+#notesPop .nrow{display:block;width:100%;min-height:48px;padding:6px 10px;border:0;border-radius:10px;background:none;text-align:left}
+#notesPop .nrow:hover,#notesPop .nrow:focus-visible{background:var(--paper)}
+#notesPop .nrow b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#notesPop .nrow small{color:var(--muted);font-size:12px}
+#notesPop .nrow.done b{text-decoration:line-through;color:var(--muted)}
+#notesPop details summary{cursor:pointer;padding:8px;color:var(--muted);font-size:14px}
+textarea.ntxt{width:100%;min-height:150px;border:1px solid var(--line);border-radius:10px;background:var(--field);padding:10px 12px;font:inherit;font-size:16px;line-height:1.4;resize:vertical;color:var(--ink)}
 .grid2 .btn{white-space:normal;line-height:1.2;padding:4px 10px}
 #floors{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3;align-items:stretch}
 #floors button{min-width:64px;max-width:110px;min-height:44px;padding:0 10px;border-radius:12px;border:1px solid var(--line);background:var(--floor);box-shadow:var(--shadow);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -278,8 +294,10 @@ details.igl{margin-top:14px}details.igl>summary{min-height:44px;display:flex;ali
       <div class="float"><div class="seg" role="group" aria-label="Werkzeug" id="toolSeg"><button data-tool="sel">Auswählen</button><button data-tool="draw">Wand zeichnen</button></div></div>
       <div class="float"><button class="btn icon" id="undo" aria-label="Rückgängig" title="Rückgängig"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button class="btn icon" id="redo" aria-label="Wiederholen" title="Wiederholen"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button></div>
       <div class="float"><button class="btn icon" id="meas" aria-label="Maßband" title="Maßband" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 15 15 3l6 6L9 21z"/><path d="m7 11 2 2M10 8l2 2M13 5l2 2"/></svg></button><button class="btn icon" id="fit" aria-label="Plan einpassen" title="Plan einpassen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+      <div class="float"><button class="btn" id="notesBtn" aria-label="Notizen" title="Notizen" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M5 4h14v11l-5 5H5z"/><path d="M14 20v-5h5M8 9h8M8 13h5"/></svg><span class="nlbl">Notizen</span><span class="nbadge"></span></button></div>
     </div>
     <span id="info"></span>
+    <div id="notesPop" role="dialog" aria-label="Notizen"></div>
     <div id="modeBar" class="float" hidden></div>
     <div id="board" hidden></div>
     <div id="toolhint"></div>
@@ -296,8 +314,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.8.2',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[['0.8.2','Wände: Zug schließt sich zuverlässig an der Startecke, gerade Fluchten haben Vorrang vor dem Raster, Ecke auf Ecke ziehen begradigt leicht schiefe Wände automatisch, neuer Knopf „Raum begradigen“'],['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
+const APP_VERSION='0.8.3',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.8.3','Notizen: Knopf „Notizen“ unten am Plan. Notizen als Stecknadel an eine Stelle im Plan heften oder allgemein zum Projekt anlegen, abhaken, verschieben, löschen. Übersicht aller Notizen im Knopf und im Menü, Ein- und Ausblenden unter „Ebenen“'],['0.8.2','Wände: Zug schließt sich zuverlässig an der Startecke, gerade Fluchten haben Vorrang vor dem Raster, Ecke auf Ecke ziehen begradigt leicht schiefe Wände automatisch, neuer Knopf „Raum begradigen“'],['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -748,7 +766,8 @@ function floorPlanHtml(f){const g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,
 function roomsHtml(f){const g=G(f,UI.view),rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
   return `<h2>Räume ${esc(f.name)}</h2>${rs.length?`<ul class="lst">${rs.map(({r,F})=>`<li><button class="nm" data-act="selRoom" data-id="${r.id}"><b>${esc(r.name)}</b><small>${fmtA(F.area/1e4)} m²${r.height?' · '+fmt(r.height)+' cm hoch':''}${r.work?' · Arbeitsflächen':''}</small></button></li>`).join('')}</ul>`:'<p class="hint">Noch keine Räume. Lege im Reiter „Bearbeiten“ einen Raum an.</p>'}`}
 const TABS={plan:[['edit','Bearbeiten'],['rooms','Räume'],['floor','Etage']],elec:[['edit','Elemente'],['sch','Schaltungen'],['ci','Stromkreise'],['leg','Legende'],['floor','Etage']],dist:[['bel','Belegung'],['list','Stromkreisliste'],['net','Netzwerk']],out:[['out','Pläne und Listen'],['mat','Material'],['slots','Schlitze'],['leg','Legende']]};
-function renderPanel(){const p=$('#panel'),m=UI.mode,t=UI.tab[m]||TABS[m][0][0],f=floor();if(UI.wv&&(m==='elec'||m==='plan')){p.innerHTML=wvPanel();p.dataset.shown='wv';return}
+function renderPanel(){const p=$('#panel'),m=UI.mode,t=UI.tab[m]||TABS[m][0][0],f=floor();updNotesBtn();if(UI.wv&&(m==='elec'||m==='plan')){p.innerHTML=wvPanel();p.dataset.shown='wv';return}
+  if(UI.sel?.kind==='note'){const n=noteOf(UI.sel.id);if(n){p.innerHTML=`<div class="tabs" role="tablist">${TABS[m].map(([k,v])=>`<button role="tab" data-tab="${k}" aria-selected="false">${v}</button>`).join('')}</div>`+notePanel(n);p.dataset.shown='note';p.scrollTop=0;if(UI.noteNew===n.id){UI.noteNew=null;const ta=$('#ntxt');if(ta){try{ta.focus({preventScroll:true})}catch(e){ta.focus()}}}return}UI.sel=null}
   let h=`<div class="tabs" role="tablist">${TABS[m].map(([k,v])=>`<button role="tab" data-tab="${k}" aria-selected="${k===t}">${v}</button>`).join('')}</div>`;
   if(m==='dist'||(m==='out'&&(t==='mat'||t==='slots')))h+=`<div class="seg full" style="margin-bottom:12px"><button data-act="pview" data-v="ist" aria-pressed="${UI.view==='ist'}">Ist-Aufnahme</button><button data-act="pview" data-v="soll" aria-pressed="${UI.view!=='ist'}">Soll-Plan</button></div>`;
   h+=t==='out'?'<div id="outBox"></div>':t==='slots'?slotsHtml():t==='net'?netHtml():t==='mat'?matHtml():t==='bel'?belegHtml():t==='list'?ciTableHtml():t==='ci'?ciListHtml(f):t==='rooms'?roomsHtml(f):t==='floor'?(m==='elec'?floorElecHtml(f):floorPlanHtml(f)):t==='sch'?schHtml(f):t==='leg'?legHtml(f):editHtml();
@@ -1505,7 +1524,7 @@ function syncRooms(f){const g=G(f,'soll'),fs=g.rooms,has=F=>f.rooms.some(r=>!r._
   f.rooms=f.rooms.filter(r=>!r._drop);for(const r of f.rooms)delete r._o;
   for(const F of fs)if(!f.rooms.some(r=>inside(r,F.poly))){const c=interiorPoint(F.poly);f.rooms.push({id:uid(),name:nextRoomName(f),x:r1(c.x),y:r1(c.y)})}}
 function normalize(f){dedupe(f);clampOpenings(f);const keep=new Set([UI.chain?.last,UI.chain?.start]);f.nodes=f.nodes.filter(n=>keep.has(n.id)||deg(f,n.id)>0);syncRooms(f);normItems(f);syncCombos(f)}
-function validateSel(){const s=UI.sel,f=floor();if(!s)return;const g=G(f,UI.view);
+function validateSel(){const s=UI.sel,f=floor();if(!s)return;if(s.kind==='note'){if(!noteOf(s.id))UI.sel=null;return}const g=G(f,UI.view);
   if(s.kind==='wall'&&!g.byId.has(s.id))UI.sel=null;
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o||!g.byId.has(o.wall)||!VIS[UI.view](o))UI.sel=null}
   else if(s.kind==='node'&&!g.adj.has(s.id))UI.sel=null;
@@ -1575,6 +1594,7 @@ function sceneSvg(vp,VW,VH,exp,view){
     h+=`<g data-kind="room" data-id="${r.id}" transform="translate(${r1(r.x)} ${r1(r.y-(elec?px(40)+(S.settings.sym||1.5)*8:0))})"${elec?' opacity=".75"':''}><rect class="rlb" x="${-bw/2}" y="${-bh/2}" width="${bw}" height="${bh}" rx="${px(5)}" fill="${C('floor')}" ${on?`stroke="${C('accent')}" stroke-width="${px(1.5)}"`:''}/>`+
       `<text class="rl" fill="${C('ink')}" font-size="${fs}" font-weight="600" text-anchor="middle" y="${-px(2)}">${lbl}</text><text class="rl a" fill="${C('muted')}" font-size="${px(13)}" text-anchor="middle" y="${px(14)}">${ar}</text></g>`}
   h+=itemsSvg(f,g,view,s,C,exp,sel);
+  if(!exp)UI._nh=notesSvg(f,s,sel);
   if(!exp){
     if(UI.tool==='sel'&&!elec){for(const x of g.walls)h+=`<line class="hit" data-kind="wall" data-id="${x.w.id}" vector-effect="non-scaling-stroke" x1="${r1(x.A.x)}" y1="${r1(x.A.y)}" x2="${r1(x.B.x)}" y2="${r1(x.B.y)}"/>`;
       for(const o of f.openings){const x=g.byId.get(o.wall);if(!x||!VIS[view](o))continue;const A={x:x.A.x+x.u.x*o.off,y:x.A.y+x.u.y*o.off},B={x:x.A.x+x.u.x*(o.off+o.w),y:x.A.y+x.u.y*(o.off+o.w)};
@@ -1591,26 +1611,27 @@ function sceneSvg(vp,VW,VH,exp,view){
     const M=UI.meas;if(M){const L=dist(M.a,M.b);if(L>0.5){const m={x:(M.a.x+M.b.x)/2,y:(M.a.y+M.b.y)/2},lbl=fmt(L)+' cm',bw=px(lbl.length*8+12),bh=px(22);
       h+=`<line class="meas" vector-effect="non-scaling-stroke" x1="${M.a.x}" y1="${M.a.y}" x2="${M.b.x}" y2="${M.b.y}"/>`+
         `<circle class="measend" vector-effect="non-scaling-stroke" cx="${M.a.x}" cy="${M.a.y}" r="${px(6)}"/><circle class="measend" vector-effect="non-scaling-stroke" cx="${M.b.x}" cy="${M.b.y}" r="${px(6)}"/>`+
-        `<rect x="${m.x-bw/2}" y="${m.y-bh/2-px(18)}" width="${bw}" height="${bh}" rx="${px(11)}" fill="var(--accent)"/><text class="dimt" style="fill:var(--accent-ink)" font-size="${px(15)}" text-anchor="middle" dominant-baseline="central" x="${m.x}" y="${m.y-px(18)}">${lbl}</text>`}}}
+        `<rect x="${m.x-bw/2}" y="${m.y-bh/2-px(18)}" width="${bw}" height="${bh}" rx="${px(11)}" fill="var(--accent)"/><text class="dimt" style="fill:var(--accent-ink)" font-size="${px(15)}" text-anchor="middle" dominant-baseline="central" x="${m.x}" y="${m.y-px(18)}">${lbl}</text>`}}
+    h+=UI._nh||'';UI._nh=''}
   return h}
 function render(){if(UI.wv&&(UI.mode==='elec'||UI.mode==='plan')){renderWall();updInfo();return}if(UI.mode==='dist'){renderBoard();updInfo();return}if(UI.mode==='out'){$('#floors').hidden=UI.tab.out==='mat'||UI.tab.out==='slots';if(UI.tab.out==='mat'||UI.tab.out==='slots'){const b=$('#board');b.style.paddingRight='';b.innerHTML=UI.tab.out==='mat'?matWide():slotsWide()}else renderOut();updInfo();return}const v=UI.vp;world.innerHTML=sceneSvg(v,stage.clientWidth,stage.clientHeight,false,UI.view);world.setAttribute('transform',`translate(${v.tx} ${v.ty}) scale(${v.s})`);updInfo()}
 function updModeBar(){const b=$('#modeBar');if(!b)return;const pl=UI.place,as=UI.assign&&circuits().find(c=>c.id===UI.assign);let t='';
-  if(pl&&UI.mode==='elec'){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k]?.name||'';t=`${UI.multi?'Mehrere setzen':'Setzen'}: ${esc(nm)}`}else if(as&&UI.mode==='elec')t=`Zuordnen: Stromkreis ${esc(as.no)} ${esc(as.name)}`;
+  if(UI.noteM)t='Notiz anheften';else if(pl&&UI.mode==='elec'){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k]?.name||'';t=`${UI.multi?'Mehrere setzen':'Setzen'}: ${esc(nm)}`}else if(as&&UI.mode==='elec')t=`Zuordnen: Stromkreis ${esc(as.no)} ${esc(as.name)}`;
   b.hidden=!t;if(t)b.innerHTML=`<span class="mbt">${t}</span><button class="btn icon" data-mx="1" aria-label="Beenden">✕</button>`}
 function updInfo(){updModeBar();const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='dist'?`${dists().length} Verteiler, ${circuits().length} Stromkreise`:UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${UI.view==='ist'?'Ist-Aufnahme':UI.view==='umbau'?'Umbau':layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
   const b=$('#badge');let h='';if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--hint)"></i>versetzt</span><span><i style="background:var(--chg)"></i>geändert</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
-  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.dock&&UI.mode==='plan'?'Auf die Wand tippen, an die der neue Raum soll.':UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
+  const th=$('#toolhint'),t=UI.flash?UI.flash:UI.noteM&&planVisible()?'Stelle im Plan antippen, an die die Notiz soll.':UI.dock&&UI.mode==='plan'?'Auf die Wand tippen, an die der neue Raum soll.':UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
 function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
   document.querySelectorAll('#toolSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===UI.tool));
   document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===UI.mode));
   const D=UI.mode==='dist',O=UI.mode==='out',B=D||O||!!UI.wv;$('#toolSeg').parentNode.hidden=UI.mode!=='plan';$('#svg').style.display=B?'none':'';$('#board').hidden=!B;$('#badge').hidden=B;
-  $('#mapTop').hidden=B;$('#mapTools').hidden=B;$('#info').hidden=B;if(!B)$('#board').style.paddingRight='';$('#floors').hidden=D||!!UI.wv;if(B)closeLayers()}
+  if(B){UI.noteM=false;UI.notePin=null}$('#mapTop').hidden=B;$('#mapTools').hidden=B;$('#info').hidden=B;if(!B)$('#board').style.paddingRight='';$('#floors').hidden=D||!!UI.wv;if(B)closeLayers()}
 function infoCi(){if(UI.mode==='elec'&&UI.selC&&!UI.flash){const c=circuits().find(x=>x.id===UI.selC);if(c){const its=ciItems(c).filter(x=>!isSw(x.it));$('#info').textContent=`Stromkreis ${c.no} · ${its.length} ${its.length===1?'Element':'Elemente'} · ${fmt(Math.round(ciRoute(c).total))} m`}}}
-function renderVariants(){infoCi();const v=$('#variants'),f=floor(),lp=$('#layersPop'),lb=$('#layersBtn');let L='';
-  if(UI.mode==='plan'){v.innerHTML='';const lf=lowerFloor(f);if(lf)L=`<h4>${esc(lf.name)} darunter einblenden</h4><button data-ul="all" aria-pressed="${S.settings.underlay&&!S.settings.ulExt}">Alle Wände<span class="rd"></span></button><button data-ul="ext" aria-pressed="${S.settings.underlay&&!!S.settings.ulExt}">Nur Außenwände<span class="rd"></span></button><button data-ul="off" aria-pressed="${!S.settings.underlay}">Aus<span class="rd"></span></button>`}
+function renderVariants(){infoCi();const v=$('#variants'),f=floor(),lp=$('#layersPop'),lb=$('#layersBtn');let L='';const NT=`<h4>Notizen</h4><button data-tog="hideNotes" aria-pressed="${!UI.hideNotes}">Notizen im Plan<span class="sw"></span></button>`;
+  if(UI.mode==='plan'){v.innerHTML='';const lf=lowerFloor(f);if(lf)L=`<h4>${esc(lf.name)} darunter einblenden</h4><button data-ul="all" aria-pressed="${S.settings.underlay&&!S.settings.ulExt}">Alle Wände<span class="rd"></span></button><button data-ul="ext" aria-pressed="${S.settings.underlay&&!!S.settings.ulExt}">Nur Außenwände<span class="rd"></span></button><button data-ul="off" aria-pressed="${!S.settings.underlay}">Aus<span class="rd"></span></button>`;L+=NT}
   else if(UI.mode==='elec'){ensureLayouts(f);v.innerHTML=UI.view!=='soll'?'':f.layouts.map(l=>`<button data-lay="${l.id}" aria-pressed="${l.id===f.activeLayout}">${esc(l.name)}</button>`).join('')+`<button data-lay="+">+ Variante</button>`;
-    L=`<h4>Im Plan zeigen</h4><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege<span class="sw"></span></button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen<span class="sw"></span></button>`}
+    L=`<h4>Im Plan zeigen</h4><button data-tog="showRoutes" aria-pressed="${UI.showRoutes!==false}">Leitungswege<span class="sw"></span></button><button data-tog="showZones" aria-pressed="${!!UI.showZones}">Installationszonen<span class="sw"></span></button>`+NT}
   else v.innerHTML='';
   lp.innerHTML=L;lb.hidden=!L;if(!L)closeLayers()}
 function closeLayers(){$('#layersPop').classList.remove('open');$('#layersBtn').setAttribute('aria-expanded','false')}
@@ -1721,6 +1742,49 @@ function applyField(el,final){const f=floor(),fld=el.dataset.f,sc=el.dataset.sco
   commit();renderPanel();render()}
 
 /* ---------- Aktionen ---------- */
+
+/* ---------- 0.8.3: Notizen ---------- */
+const notes=()=>S.notes||(S.notes=[]);
+const noteOf=id=>notes().find(n=>n.id===id);
+const noteTitle=n=>(n.t||'').trim().split('\n')[0]||'Leere Notiz';
+const noteWhere=n=>{const fl=n.f&&S.floors.find(x=>x.id===n.f);return fl?fl.name:'Allgemein'};
+const noteDate=n=>n.ts?new Date(n.ts).toLocaleDateString('de-DE'):'';
+const planVisible=()=>(UI.mode==='plan'||UI.mode==='elec')&&!UI.wv;
+function notesSvg(f,s,sel){if(!planVisible())return '';const k=1/s;let h='';
+  for(const n of notes()){if(n.f!==f.id||n.x==null)continue;const on=sel?.kind==='note'&&sel.id===n.id;if(UI.hideNotes&&!on)continue;
+    const lbl=n.done?'':noteTitle(n),tl=lbl.length>22?lbl.slice(0,21)+'…':lbl;
+    h+=`<g data-kind="note" data-id="${n.id}" transform="translate(${r1(n.x)} ${r1(n.y)}) scale(${k})"${n.done&&!on?' opacity=".45"':''}${UI.tool==='draw'&&UI.mode==='plan'?' pointer-events="none"':''}>`+
+      `<rect x="-22" y="-48" width="${tl?Math.max(44,30+tl.length*7.4):44}" height="52" fill="transparent"/>`+
+      `<path d="M0 0L-5-9H-13a4 4 0 0 1-4-4V-33a4 4 0 0 1 4-4H13a4 4 0 0 1 4 4V-13a4 4 0 0 1-4 4H5Z" fill="var(--floor)" stroke="${on?'var(--accent)':'var(--ink)'}" stroke-width="${on?2.6:1.6}" stroke-linejoin="round"/>`+
+      `<path d="M-9-29H9M-9-23H9M-9-17H3" stroke="${n.done?'var(--muted)':'var(--ink)'}" stroke-width="1.6" stroke-linecap="round"/>`+
+      (n.done?`<path d="M-8-22l5 5 11-12" stroke="var(--new)" stroke-width="2.4" fill="none" stroke-linecap="round"/>`:'')+
+      (tl?`<text x="22" y="-19" font-size="13" fill="var(--ink)" stroke="var(--paper)" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round" dominant-baseline="middle">${esc(tl)}</text>`:'')+`</g>`}
+  return h}
+function addNote(o){const n={id:uid(),f:null,t:'',done:false,ts:Date.now(),...o};notes().push(n);UI.noteM=false;UI.noteNew=n.id;UI.place=null;UI.multi=false;UI.assign=null;closeNotes();commit();select({kind:'note',id:n.id});return n}
+function addNoteAt(w){const gr=S.settings.snap?S.settings.grid:0,old=UI.notePin&&noteOf(UI.notePin);UI.notePin=null;if(old){old.f=floor().id;old.x=gr?round(w.x,gr):r1(w.x);old.y=gr?round(w.y,gr):r1(w.y);UI.noteM=false;commit();select({kind:'note',id:old.id});flash('Notiz angeheftet.');return}addNote({f:floor().id,x:gr?round(w.x,gr):r1(w.x),y:gr?round(w.y,gr):r1(w.y)});flash('Notiz angeheftet. Text eingeben.')}
+function startNoteM(){closeNotes();if(!planVisible()){UI.mode='plan';UI.wv=null;updBar()}if(UI.tool==='draw')setTool('sel');if(UI.measOn)toggleMeas();UI.place=null;UI.multi=false;UI.assign=null;UI.dock=false;UI.riser=false;UI.stairM=false;UI.noteM=true;renderPanel();render()}
+function gotoNote(id){const n=noteOf(id);if(!n)return;closeNotes();
+  if(n.f&&S.floors.some(x=>x.id===n.f)&&n.x!=null){if(!planVisible()){UI.mode='plan';UI.wv=null;UI.place=null;updBar()}if(n.f!==S.activeFloor)switchFloor(n.f);
+    const v=UI.vp,W=stage.clientWidth,H=stage.clientHeight;if(v.s<0.6)v.s=0.6;v.tx=W/2-n.x*v.s;v.ty=H*0.55-n.y*v.s}
+  select({kind:'note',id})}
+function notePanel(n){const fl=n.f&&S.floors.find(x=>x.id===n.f),pinned=fl&&n.x!=null;
+  return `<h2>Notiz</h2><p class="hint">${pinned?`Angeheftet in ${esc(fl.name)}. Ziehen verschiebt die Nadel.`:'Allgemeine Notiz zum Projekt.'} Angelegt ${esc(noteDate(n))}.</p>
+    <textarea class="ntxt" id="ntxt" data-note="${n.id}" placeholder="Was soll festgehalten werden?">${esc(n.t)}</textarea>
+    <label class="chk"><input type="checkbox" data-act="noteDone" ${n.done?'checked':''}>Erledigt</label>
+    ${!pinned&&planVisible()?`<div class="row" style="margin-top:8px"><button class="btn" data-act="notePin">Im Plan anheften</button></div>`:''}
+    <div class="row" style="margin-top:14px"><button class="btn danger" data-act="noteDel">Löschen</button><button class="btn" data-act="notesAll">Alle Notizen</button><button class="btn primary" data-act="noteClose" style="margin-left:auto">Fertig</button></div>`}
+function notesPopHtml(){const N=notes(),cur=floor().id,open=N.filter(n=>!n.done).sort((a,b)=>((b.f===cur)-(a.f===cur))||(b.ts-a.ts)),done=N.filter(n=>n.done).sort((a,b)=>b.ts-a.ts);
+  const row=n=>`<button class="nrow${n.done?' done':''}" data-nid="${n.id}"><b>${esc(noteTitle(n))}</b><small>${esc(noteWhere(n))} · ${esc(noteDate(n))}</small></button>`;
+  return `<h4>Neue Notiz</h4><div class="nadd">${planVisible()?'<button class="btn primary" data-nadd="pin">Im Plan anheften</button>':''}<button class="btn" data-nadd="gen"${planVisible()?'':' style="grid-column:1/-1"'}>Allgemein</button></div>
+    <h4>Offen (${open.length})</h4>${open.length?open.map(row).join(''):'<p class="hint" style="margin:4px 8px 8px">Keine offenen Notizen.</p>'}
+    ${done.length?`<details><summary>Erledigt (${done.length})</summary>${done.map(row).join('')}</details>`:''}`}
+function openNotes(){const p=$('#notesPop'),b=$('#notesBtn'),sr=stage.getBoundingClientRect();p.innerHTML=notesPopHtml();p.classList.add('open');b.setAttribute('aria-expanded','true');
+  const vis=b.offsetParent!==null&&!$('#mapTools').hidden;
+  if(vis){const br=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.max(10,Math.min(br.left-sr.left,sr.width-pw-10))+'px';p.style.top='';p.style.bottom=(sr.bottom-br.top+8)+'px'}
+  else{p.style.left='10px';p.style.top='10px';p.style.bottom=''}}
+function closeNotes(){const p=$('#notesPop');if(!p)return;p.classList.remove('open');$('#notesBtn')?.setAttribute('aria-expanded','false')}
+function updNotesBtn(){const b=$('#notesBtn');if(!b)return;const c=notes().filter(n=>!n.done).length;b.querySelector('.nbadge').textContent=c||'';b.title=c?`Notizen (${c} offen)`:'Notizen'}
+let noteT=null;
 function select(sel){UI.sel=sel;if(sel){UI.bundle=null;UI.wseg=null;UI.vjb=null}if(sel&&!(UI.mode==='elec'&&UI.tab.elec==='sch'&&sel.kind==='item'))UI.tab[UI.mode]='edit';renderPanel();render()}
 function setTool(t){UI.tool=t;UI.chain=null;UI.cur=null;if(t==='draw')UI.sel=null;if(UI.measOn)toggleMeas();commit();updBar();renderPanel();render()}
 function endChain(){UI.chain=null;UI.cur=null;commit();renderPanel();render()}
@@ -1807,6 +1871,11 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'grp':UI.grp=b.dataset.id;if(UI.sel?.kind==='item')UI.sel=null;renderPanel();render();break;
     case 'grpfix':case 'grprev':{const gr=groupsOf(f,UI.view).find(x=>x.id===b.dataset.id);if(!gr)break;if(a==='grpfix')fixGroup(gr);else{const n=gr.sw.length;gr.sw.forEach((x,i)=>x.seq=n-1-i)}UI.grp=gr.id;commit();renderPanel();render()}break;
     case 'done':select(null);break;
+    case 'noteClose':clearTimeout(noteT);commit();select(null);break;
+    case 'noteDone':{const n=s&&noteOf(s.id);if(n){n.done=b.checked;commit();renderPanel();render();flash(n.done?'Notiz erledigt.':'Notiz wieder offen.')}}break;
+    case 'noteDel':{const n=s&&noteOf(s.id);if(n){S.notes=notes().filter(x=>x!==n);UI.sel=null;commit();renderPanel();render();flash('Notiz gelöscht. Rückgängig ist möglich.')}}break;
+    case 'notePin':{const n=s&&noteOf(s.id);if(n){startNoteM();UI.notePin=n.id;flash('Stelle im Plan antippen.')}}break;
+    case 'notesAll':openNotes();break;
     case 'undo':undo();break;
     case 'endchain':endChain();break;
     case 'dir':{const ch=UI.chain,L=num($('#dlen')?.value);if(!ch||!(L>0))return;const a0=nodeOf(f,ch.last),d={r:[1,0],l:[-1,0],u:[0,-1],d:[0,1]}[b.dataset.v];
@@ -1825,7 +1894,7 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'hinge':case 'side':{const o=f.openings.find(x=>x.id===s?.id);if(o){if(a==='hinge')o.hinge=o.hinge==='b'?'a':'b';else o.side=o.side===-1?1:-1;commit();render()}}break;
     case 'delRoom':{f.rooms=f.rooms.filter(r=>r.id!==s.id);UI.sel=null;commit();renderPanel();render()}break;
   }}
-function deleteSel(){const f=floor(),s=UI.sel;if(!s)return;
+function deleteSel(){const f=floor(),s=UI.sel;if(!s)return;if(s.kind==='note'){S.notes=notes().filter(x=>x.id!==s.id);UI.sel=null;commit();renderPanel();render();return}
   if(s.kind==='item'){const it=items(f).find(x=>x.id===s.id);if(!it)return;if(UI.view==='umbau')return;planList(f).items=items(f).filter(x=>x!==it)}
   else if(s.kind==='wall'){const w=f.walls.find(x=>x.id===s.id);if(!w)return;if(UI.view==='ist'||w.st==='new')deleteWall(f,w);else{w.st=w.st==='del'?'keep':'del'}}
   else if(s.kind==='op'){const o=f.openings.find(x=>x.id===s.id);if(!o)return;if(UI.view==='ist'||o.st==='new')f.openings=f.openings.filter(x=>x!==o);else o.st=o.st==='del'?'keep':'del'}
@@ -1946,7 +2015,7 @@ function cabForm(){modal(`<h2>Leitungen und Schutzorgane</h2><p class="hint">Ein
 function mainMenu(){const st=S.settings,H=S.settings.heights,row=(id,t,sub,cls='')=>`<button class="mrow ${cls}" id="${id}"><span><b>${t}</b>${sub?`<small>${sub}</small>`:''}</span><span class="chev" aria-hidden="true">›</span></button>`,
   sel=(id,lbl,opts,cur)=>`<label class="f">${lbl}<select id="${id}">${opts.map(([v,n])=>`<option value="${v}"${String(v)===String(cur)?' selected':''}>${n}</option>`).join('')}</select></label>`,hvF=S.floors.find(x=>x.id===S.hv);
   const {el,close}=modal(`<h2>Menü</h2>
-  <h3 style="margin-top:4px">Projekt</h3><div class="mlist">${row('pmn','Projekte',`Geöffnet: ${esc(pName(S))} · ${idx().length} Projekt${idx().length===1?'':'e'}`)}${row('prj','Projekt und Plankopf',esc([S.project.name,S.project.address].filter(Boolean).join(', ')||'Name, Adresse, Bearbeiter, Planstand'))}${row('flm','Etagen',`${S.floors.length} ${S.floors.length===1?'Etage':'Etagen'} · Hauptverteiler ${esc(hvF?.name||'–')}`)}</div>
+  <h3 style="margin-top:4px">Projekt</h3><div class="mlist">${row('pmn','Projekte',`Geöffnet: ${esc(pName(S))} · ${idx().length} Projekt${idx().length===1?'':'e'}`)}${row('prj','Projekt und Plankopf',esc([S.project.name,S.project.address].filter(Boolean).join(', ')||'Name, Adresse, Bearbeiter, Planstand'))}${row('nts','Notizen',(()=>{const o=notes().filter(n=>!n.done).length,d=notes().length-o;return `${o} offen${d?` · ${d} erledigt`:''}`})())}${row('flm','Etagen',`${S.floors.length} ${S.floors.length===1?'Etage':'Etagen'} · Hauptverteiler ${esc(hvF?.name||'–')}`)}</div>
   <h3>Darstellung</h3><div class="grid2">${sel('sg','Raster',[[1,'1 cm'],[5,'5 cm'],[10,'10 cm'],[25,'25 cm']],st.grid)}${sel('ss','Einrasten',[[1,'An'],[0,'Aus']],st.snap?1:0)}
     ${sel('sd','Maße im Plan',[['inner','Innenmaß je Raum'],['raw','Rohbaumaß außen']],st.dims)}${sel('su','Etage darunter',[[1,'Einblenden'],[0,'Ausblenden']],st.underlay?1:0)}${sel('sy','Schaltzeichen',[[1,'Klein'],[1.5,'Mittel'],[2.2,'Groß']],st.sym||1.5)}${sel('scc','Elemente färben',[[1,'Nach Stromkreis'],[0,'Schwarz']],st.ciColor===false?0:1)}</div>
   <h3>Vorlagen</h3><div class="mlist">${row('wty','Wandtypen und Bauarten',`${types().length} Wandtypen`)}${row('clc','Rechenvorgaben',`Reserve ${calc().res} cm, Verschnitt ${calc().cut} %, Ringe ${esc(calc().rings)} m`)}${row('cab','Leitungen und Schutzorgane',`${cables().length} Leitungstypen, ${prots().length} Schutzorgane`)}${row('hgt','Standardhöhen',`Schalter ${fmt(heightOf('switch'))} cm, Steckdosen ${fmt(heightOf('socket'))} cm, Arbeitsplatte ${fmt(heightOf('work'))} cm`)}</div>
@@ -1956,7 +2025,7 @@ function mainMenu(){const st=S.settings,H=S.settings.heights,row=(id,t,sub,cls='
   const on=(id,ev,fn)=>{const x=el.querySelector('#'+id);if(x)x.addEventListener(ev,fn)},go=fn=>()=>{close();fn()};
   on('sg','change',e=>{st.grid=+e.target.value;commit()});on('ss','change',e=>{st.snap=e.target.value==='1';commit()});
   on('sd','change',e=>{st.dims=e.target.value;commit();render()});on('su','change',e=>{st.underlay=e.target.value==='1';commit();render()});on('sy','change',e=>{st.sym=+e.target.value;commit();render()});on('scc','change',e=>{st.ciColor=e.target.value==='1';commit();render()});on('cab','click',go(cabForm));on('clc','click',go(calcForm));
-  on('prj','click',go(projectForm));on('pmn','click',go(projectsMenu));on('ver','click',go(versionMenu));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
+  on('prj','click',go(projectForm));on('nts','click',go(openNotes));on('pmn','click',go(projectsMenu));on('ver','click',go(versionMenu));on('flm','click',go(floorMenu));on('wty','click',go(typesMenu));on('hgt','click',go(heightsForm));
   on('emat','click',go(()=>{UI.mode='out';UI.tab.out='mat';UI.sel=null;UI.place=null;updBar();renderAll()}));on('eimg','click',go(exportImage));on('eout','click',go(outputsForm));on('epdf','click',go(printPlan));on('gsy','click',go(syncMenu));on('exp','click',go(exportData));on('v08','click',go(()=>{try{const j=localStorage.getItem('elektroplaner.vor08.'+S.pid);if(j)saveFile(new Blob([j],{type:'application/json'}),`elektroplaner-${pName(S).replace(/[^\wäöüÄÖÜß-]+/g,'-')}-vor-0.8.json`,'Sicherung vor 0.8')}catch(e){}}));on('imp','click',go(()=>$('#fileIn').click()));
   on('rst','click',go(()=>confirmBox('Alle Etagen, Wände und Elemente zurücksetzen?','Zurücksetzen',()=>{const pid=S.pid,pn=S.project.name;S=defaultState();S.pid=pid;S.project.name=pn;UI.sel=null;UI.chain=null;commit();renderAll();fit()})))}
 
@@ -2051,9 +2120,11 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.s
   const t=e.target.closest('[data-kind]'),w=toWorld(e.clientX,e.clientY),f=floor();
   const base={sx:e.clientX,sy:e.clientY,moved:false};drag={...base,type:'pan',tx0:UI.vp.tx,ty0:UI.vp.ty,w};
   if(UI.measOn){const p=measSnap(w);drag={...base,type:'meas',a:p};UI.meas={a:p,b:p};return}
+  if(UI.noteM)return;
   if(UI.tool==='draw'&&UI.mode==='plan'){drag={...base,type:'draw'};UI.cur=snapDraw(w);render();return}
   if((UI.dock||UI.riser||UI.stairM)&&UI.mode==='plan')return;
   if(!t)return;const k=t.dataset.kind,id=t.dataset.id;
+  if(k==='note'){const n=noteOf(id);if(n){UI.place=null;UI.multi=false;if(UI.sel?.id!==id)select({kind:'note',id});drag={...base,type:'note',n,ox:w.x-n.x,oy:w.y-n.y}}return}
   if(UI.mode==='elec'){if(UI.place){if(k==='item'){UI.place=null;UI.multi=false}else return}if(k==='wseg'){const [ia,ib]=id.split('>');UI.wseg={f:f.id,key:id,a:ia,b:ib};UI.sel=null;UI.bundle=null;UI.tab.elec='edit';drag=null;renderPanel();render();return}
     if((k==='wp'||k==='wpadd')&&UI.wseg){const i=+id,R=(S.routes=S.routes||{}),key=UI.wseg.key;if(k==='wp'){const now=Date.now();if(UI.lastWp&&UI.lastWp.i===i&&now-UI.lastWp.t<400){R[key].splice(i,1);if(!R[key].length)delete R[key];UI.lastWp=null;drag=null;commit();renderPanel();render();return}UI.lastWp={i,t:now}}drag={...base,type:k,i,key};return}
     if(k==='vjb'){UI.vjb=id;UI.sel=null;UI.bundle=null;UI.wseg=null;UI.tab.elec='edit';drag=null;renderPanel();render();return}
@@ -2087,6 +2158,7 @@ svg.addEventListener('pointermove',e=>{
     case 'op':{const x=f.walls.find(q=>q.id===drag.o.wall);if(!x)break;const A=nodeOf(f,x.a),u=unitOf(f,x),L=wlen(f,x);let off=(w.x-A.x)*u.x+(w.y-A.y)*u.y-drag.grab;if(gr)off=round(off,gr);drag.o.off=clamp(off,0,L-drag.o.w);break}
     case 'stair':case 'riser':drag.r.x=gr?round(w.x-drag.ox,gr):r1(w.x-drag.ox);drag.r.y=gr?round(w.y-drag.oy,gr):r1(w.y-drag.oy);break
     case 'room':drag.r.x=r1(w.x-drag.ox);drag.r.y=r1(w.y-drag.oy);break
+    case 'note':drag.n.x=gr?round(w.x-drag.ox,gr):r1(w.x-drag.ox);drag.n.y=gr?round(w.y-drag.oy,gr):r1(w.y-drag.oy);break
     case 'link':UI.link={b:w,t:linkDrop(f,drag.it,w)};break
     case 'wpadd':case 'wp':{const R=(S.routes=S.routes||{}),L=(R[drag.key]=R[drag.key]||[]),q={x:gr?round(w.x,gr):r1(w.x),y:gr?round(w.y,gr):r1(w.y)};if(drag.type==='wpadd'){L.splice(drag.i,0,q);drag.type='wp'}else L[drag.i]=q;break}
     case 'item':{const it=drag.it,q={x:w.x-drag.ox,y:w.y-drag.oy};if(KINDS[it.k]?.place==='wall'){const sn=snapWall(G(f,UI.view),{x:w.x,y:w.y},Math.max(60,60/UI.vp.s));if(sn){it.wall=sn.wall;it.side=sn.side;it.off=gr?round(sn.off,gr):sn.off;const pp=comboPartner(f,it);if(pp){pp.wall=it.wall;pp.side=it.side;pp.off=it.off}for(const m of drag.fm||[]){m.o.wall=it.wall;m.o.side=it.side;m.o.off=it.off+m.rel}UI.join=dropTarget(f,it)}}else{let x=gr?round(q.x,gr):r1(q.x),y=gr?round(q.y,gr):r1(q.y);const A=alignGuides(f,null,it,{x,y},12/UI.vp.s);UI.guides={it,gx:A.gx,gy:A.gy};if(A.gx.length){x=A.gx[0].x;UI.guides.x=x}if(A.gy.length){y=A.gy[0].y;UI.guides.y=y}it.x=x;it.y=y}break}}
@@ -2096,6 +2168,7 @@ function ptrEnd(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
   if(!drag)return;const d=drag;drag=null;
   if(d.type==='meas'){if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)<5)UI.meas=null;render();return}
   if(d.type==='draw'){if(e.type==='pointercancel'){UI.cur=null;render();return}const c=UI.cur||snapDraw(toWorld(e.clientX,e.clientY));drawTo(c);return}
+  if(d.type==='pan'&&!d.moved&&UI.noteM){addNoteAt(d.w);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='elec'&&UI.place){placeAt(d.w);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.dock){dockRoom(d.w);return}
   if(d.type==='pan'&&!d.moved&&UI.mode==='plan'&&UI.riser){const gr=S.settings.snap?S.settings.grid:0,f=floor(),r={id:uid(),x:gr?round(d.w.x,gr):r1(d.w.x),y:gr?round(d.w.y,gr):r1(d.w.y)};f.risers.push(r);UI.riser=false;UI.sel={kind:'riser',id:r.id};commit();renderPanel();render();flash('Deckendurchlass gesetzt.');return}
@@ -2119,10 +2192,10 @@ svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,U
 
 /* ---------- Verdrahtung der Oberfläche ---------- */
 const panel=$('#panel');
-panel.addEventListener('click',e=>{const tb=e.target.closest('.tabs [data-tab]');if(tb){UI.tab[UI.mode]=tb.dataset.tab;UI.selB=null;UI.selC=null;if(tb.dataset.tab!=='edit')UI.place=null;renderPanel();render();return}const b=e.target.closest('[data-act]');if(b&&!b.disabled)act(b)});
-panel.addEventListener('input',e=>{const el=e.target;if(el.id==='catq'){UI.catQ=el.value;$('#catRes').innerHTML=catList(UI.catQ);return}if(el.id==='mkt'){const t=types().find(t=>t.id===el.value);if(t)$('#mkd').value=t.t;return}if(el.dataset.f)applyField(el,el.tagName==='SELECT'||el.type==='checkbox'?true:false)});
+panel.addEventListener('click',e=>{const tb=e.target.closest('.tabs [data-tab]');if(tb){if(UI.sel?.kind==='note')UI.sel=null;UI.tab[UI.mode]=tb.dataset.tab;UI.selB=null;UI.selC=null;if(tb.dataset.tab!=='edit')UI.place=null;renderPanel();render();return}const b=e.target.closest('[data-act]');if(b&&!b.disabled)act(b)});
+panel.addEventListener('input',e=>{const el=e.target;if(el.dataset.note){const n=noteOf(el.dataset.note);if(n){n.t=el.value;clearTimeout(noteT);noteT=setTimeout(()=>{commit();render();updNotesBtn()},500)}return}if(el.id==='catq'){UI.catQ=el.value;$('#catRes').innerHTML=catList(UI.catQ);return}if(el.id==='mkt'){const t=types().find(t=>t.id===el.value);if(t)$('#mkd').value=t.t;return}if(el.dataset.f)applyField(el,el.tagName==='SELECT'||el.type==='checkbox'?true:false)});
 panel.addEventListener('toggle',e=>{const d=e.target;if(d.classList?.contains('catg')){UI.catOpen=UI.catOpen||{};UI.catOpen[d.dataset.g]=d.open}},true);
-panel.addEventListener('change',e=>{const el=e.target;if(el.dataset.f&&el.tagName!=='SELECT'&&el.type!=='checkbox')applyField(el,true)});
+panel.addEventListener('change',e=>{const el=e.target;if(el.dataset.note){clearTimeout(noteT);commit();render();return}if(el.dataset.f&&el.tagName!=='SELECT'&&el.type!=='checkbox')applyField(el,true)});
 panel.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='dlen'){e.preventDefault();e.target.blur();return}if(e.target.dataset.f)e.target.blur()});
 document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>{UI.view=b.dataset.view;UMB.clear();UI.selC=null;UI.bundle=null;UI.wseg=null;UI.vjb=null;UI.chain=null;UI.cur=null;validateSel();commit();updBar();renderPanel();render()});
 document.querySelectorAll('#toolSeg button').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
@@ -2132,9 +2205,12 @@ $('#variants').addEventListener('click',e=>{const ul=e.target.closest('[data-ul]
   if(id==='+'){const cur=layout(f),map=new Map(cur.items.map(i=>[i.id,uid()])),n={id:uid(),name:'Variante '+String.fromCharCode(65+f.layouts.length),items:cur.items.map(i=>({...i,id:map.get(i.id),...(i.ctl?{ctl:i.ctl.map(c=>map.get(c))}:{})}))};f.layouts.push(n);f.activeLayout=n.id;UI.sel=null;commit();renderAll()}
   else if(id===f.activeLayout)variantMenu();else{f.activeLayout=id;UI.sel=null;commit();renderAll()}});
 $('#meas').onclick=toggleMeas;
+$('#notesBtn').onclick=e=>{e.stopPropagation();closeLayers();$('#notesPop').classList.contains('open')?closeNotes():openNotes()};
+$('#notesPop').addEventListener('click',e=>{e.stopPropagation();const a=e.target.closest('[data-nadd]');if(a){if(a.dataset.nadd==='pin')startNoteM();else addNote({});return}const r=e.target.closest('[data-nid]');if(r)gotoNote(r.dataset.nid)});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#notesPop,#notesBtn,.mrow'))closeNotes()});
 $('#undo').onclick=undo;$('#redo').onclick=redo;$('#fit').onclick=fit;$('#menu').onclick=mainMenu;$('#floorMenu').onclick=floorMenu;
 $('#floorSel').onchange=e=>switchFloor(e.target.value);
-$('#modeBar').addEventListener('click',e=>{if(!e.target.closest('[data-mx]'))return;UI.place=null;UI.multi=false;UI.assign=null;renderPanel();render()});
+$('#modeBar').addEventListener('click',e=>{if(!e.target.closest('[data-mx]'))return;UI.noteM=false;UI.notePin=null;UI.place=null;UI.multi=false;UI.assign=null;renderPanel();render()});
 $('#floors').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.fm){floorMenu();return}if(b.dataset.floor&&b.dataset.floor!==S.activeFloor){switchFloor(b.dataset.floor);if(UI.mode==='out')renderAll()}});
 $('#layersBtn').onclick=e=>{e.stopPropagation();const p=$('#layersPop'),o=!p.classList.contains('open'),br=$('#layersBtn').getBoundingClientRect(),sr=stage.getBoundingClientRect();p.style.left=Math.max(10,Math.min(br.left-sr.left,sr.width-260))+'px';p.style.top=(br.bottom-sr.top+8)+'px';p.classList.toggle('open',o);$('#layersBtn').setAttribute('aria-expanded',String(o))};
 $('#layersPop').addEventListener('click',e=>{e.stopPropagation();const ul=e.target.closest('[data-ul]');if(ul){const k=ul.dataset.ul;S.settings.underlay=k!=='off';S.settings.ulExt=k==='ext';commit();render();return}const tg=e.target.closest('[data-tog]');if(tg){const k=tg.dataset.tog;UI[k]=k==='showRoutes'?UI[k]===false:!UI[k];render()}});
@@ -2143,7 +2219,7 @@ document.addEventListener('keydown',e=>{const tag=e.target.tagName;if(tag==='INP
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}
   else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo()}
   else if(e.key==='Delete'||e.key==='Backspace')deleteSel();
-  else if(e.key==='Escape'){if(UI.place||UI.assign){UI.place=null;UI.multi=false;UI.assign=null;renderPanel();render()}else if(UI.measOn)toggleMeas();else if(UI.chain)endChain();else if(UI.tool==='draw')setTool('sel');else select(null)}
+  else if(e.key==='Escape'){if($('#notesPop').classList.contains('open'))closeNotes();else if(UI.noteM){UI.noteM=false;UI.notePin=null;renderPanel();render()}else if(UI.place||UI.assign){UI.place=null;UI.multi=false;UI.assign=null;renderPanel();render()}else if(UI.measOn)toggleMeas();else if(UI.chain)endChain();else if(UI.tool==='draw')setTool('sel');else select(null)}
   else if(e.key.toLowerCase()==='w'&&!e.ctrlKey&&!e.metaKey)setTool(UI.tool==='draw'?'sel':'draw')});
 let rz;new ResizeObserver(()=>{clearTimeout(rz);rz=setTimeout(render,50)}).observe(stage);
 $('#sync').onclick=syncMenu;$('#projBtn').onclick=projectsMenu;$('#probs').onclick=probsMenu;if(IN_ART)$('#sync').hidden=true;
