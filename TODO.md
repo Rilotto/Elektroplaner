@@ -87,11 +87,11 @@
 - [x] Treppen viertel- und halbgewendelt ohne Podest (gewendelte Stufen)
 - [ ] Offen: Frage 3 (eigener Verlauf auch für Zuleitungen/LAN) – neu erklärt, Antwort steht aus
 
-## 0.8.2 – Bugfix Wände verknüpfen
-- [ ] Beim Zeichnen schließt sich der Zug zuverlässig: Fangradius für vorhandene Ecken beim Zeichnen größer (bildschirmbezogen, mind. ca. 15 cm), besonders für den Startpunkt des Zugs
-- [ ] Fluchten beim Zeichnen bevorzugen Startpunkt und vorherigen Punkt (gerade Wände), auch wenn das Raster auf einen anderen Wert runden würde
-- [ ] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
-- [ ] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
+## 0.8.2 – Bugfix Wände verknüpfen (erledigt)
+- [x] Beim Zeichnen schließt sich der Zug zuverlässig: Fangradius für vorhandene Ecken beim Zeichnen größer (bildschirmbezogen, mind. ca. 15 cm), besonders für den Startpunkt des Zugs
+- [x] Fluchten beim Zeichnen bevorzugen Startpunkt und vorherigen Punkt (gerade Wände), auch wenn das Raster auf einen anderen Wert runden würde
+- [x] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
+- [x] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
 
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)

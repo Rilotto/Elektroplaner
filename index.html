@@ -296,8 +296,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.8.1',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
+const APP_VERSION='0.8.2',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.8.2','Wände: Zug schließt sich zuverlässig an der Startecke, gerade Fluchten haben Vorrang vor dem Raster, Ecke auf Ecke ziehen begradigt leicht schiefe Wände automatisch, neuer Knopf „Raum begradigen“'],['0.8.1','Vor der Ist/Soll-Umstellung wird der alte Stand automatisch gesichert (Menü → Daten). Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -1669,6 +1669,7 @@ function editHtml(){const f=floor(),s=UI.sel,g=G(f,UI.view);let h='';
       <div class="row">${inp('Raumhöhe','height',r.height??'','room','cm',`placeholder="${f.height} (Etage)"`)}</div>
       <label class="chk"><input type="checkbox" data-f="work" data-scope="room" ${r.work?'checked':''}>Raum mit Arbeitsflächen (Küche, Bad, Werkstatt)</label>
       <p class="hint">Dort gilt später zusätzlich die Installationszone 90 bis 120 cm.</p>
+      <div class="row" style="margin-top:12px"><button class="btn" data-act="roomStraight" ${F?'':'disabled'}>Raum begradigen</button></div>
       <div class="row" style="margin-top:12px"><button class="btn danger" data-act="delRoom" ${multi||!F?'':'disabled'}>Name löschen</button><button class="btn primary" data-act="done" style="margin-left:auto">Fertig</button></div>
       ${multi||!F?'':'<p class="hint">Ein Raum entsteht aus seinen Wänden. Zum Entfernen die Wände löschen.</p>'}${UI.mode==='elec'?roomElec(f,r)+roomCiHtml(f,r):''}`}}
   if(!h){const d={type:(f.walls.length?types().find(t=>!t.ext&&t.t<15)||types().find(t=>!t.ext):null)?.id||(types().find(t=>t.ext)||types()[0]).id},rs=f.rooms.map(r=>({r,F:faceAt(g,r)})).filter(x=>x.F);
@@ -1782,6 +1783,7 @@ function act(b){const a=b.dataset.act,f=floor(),s=UI.sel;
     case 'boardpng':exportBoard();break;
     case 'pick':pick(b.dataset.k,+b.dataset.c||1);break;
     case 'takeist':takeMenu(f);break;
+    case 'roomStraight':{const r=f.rooms.find(x=>x.id===s?.id),F=r&&faceAt(G(f,UI.view),r);if(F){straightenRoom(f,F);commit();renderPanel();render();flash('Wände begradigt (Abweichungen bis 5°).')}}break;
     case 'wvopen':{const it=items(f).find(x=>x.id===s?.id);if(it&&it.wall)openWall(f,it.wall,it.side);else if(s?.kind==='wall')openWall(f,s.id,+b.dataset.v||1)}break;
     case 'wvclose':UI.wv=null;updBar();renderAll();break;
     case 'wvflip':if(UI.wv){UI.wv.side=-(UI.wv.side||1);renderAll()}break;
@@ -1834,8 +1836,9 @@ function deleteSel(){const f=floor(),s=UI.sel;if(!s)return;
   UI.sel=null;commit();validateSel();renderPanel();render()}
 
 /* ---------- Wand zeichnen: Einrasten ---------- */
-function snapDraw(w){const f=floor(),g=G(f,UI.view),thr=14/UI.vp.s,ch=UI.chain,a=ch&&nodeOf(f,ch.last);
-  let best=null,bd=thr;for(const n of visNodes(f,g).concat(a&&!g.adj.has(a.id)?[a]:[])){const d=dist(n,w);if(d<bd){bd=d;best=n}}
+function snapDraw(w){const f=floor(),g=G(f,UI.view),thr=14/UI.vp.s,thrN=Math.max(22/UI.vp.s,12),ch=UI.chain,a=ch&&nodeOf(f,ch.last),st=ch&&ch.n>=2&&ch.start!==ch.last&&nodeOf(f,ch.start);
+  if(st&&dist(st,w)<Math.max(30/UI.vp.s,15))return {x:st.x,y:st.y,node:st.id};
+  let best=null,bd=thrN;for(const n of visNodes(f,g).concat(a&&!g.adj.has(a.id)?[a]:[])){const d=dist(n,w);if(d<bd){bd=d;best=n}}
   if(best)return {x:best.x,y:best.y,node:best.id};
   let bw=null;for(const x of g.walls){const t=(w.x-x.A.x)*x.u.x+(w.y-x.A.y)*x.u.y;if(t<thr||t>x.L-thr)continue;const q={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t},d=dist(q,w);
     if(d<=Math.max(thr,x.h)&&(!bw||d<bw.d))bw={d,x:q.x,y:q.y,wall:x.w.id,t}}
@@ -1844,17 +1847,18 @@ function snapDraw(w){const f=floor(),g=G(f,UI.view),thr=14/UI.vp.s,ch=UI.chain,a
   if(a){const dx=p.x-a.x,dy=p.y-a.y,L=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI,q=((ang%90)+90)%90,dev=Math.min(q,90-q);
     if(dev<8&&L>0){const ax=Math.abs(dx)>=Math.abs(dy);let len=ax?Math.abs(dx):Math.abs(dy);if(gr)len=round(len,gr);
       if(ax){p.x=a.x+Math.sign(dx)*len;p.y=a.y}else{p.y=a.y+Math.sign(dy)*len;p.x=a.x}
-      for(const n of visNodes(f,g)){if(ax&&p.gx==null&&Math.abs(n.x-w.x)<thr){p.x=n.x;p.gx=n.x}if(!ax&&p.gy==null&&Math.abs(n.y-w.y)<thr){p.y=n.y;p.gy=n.y}}
+      for(const n of (st?[st]:[]).concat(visNodes(f,g))){if(ax&&p.gx==null&&Math.abs(n.x-w.x)<thr){p.x=n.x;p.gx=n.x}if(!ax&&p.gy==null&&Math.abs(n.y-w.y)<thr){p.y=n.y;p.gy=n.y}}
+      for(const n of visNodes(f,g).concat(st?[st]:[]))if(n.id!==a.id&&dist(n,p)<Math.max(thrN,12))return {x:n.x,y:n.y,node:n.id};
       return p}}
   if(gr){p.x=round(p.x,gr);p.y=round(p.y,gr)}
-  for(const n of visNodes(f,g)){if(p.gx==null&&Math.abs(n.x-w.x)<thr){p.x=n.x;p.gx=n.x}if(p.gy==null&&Math.abs(n.y-w.y)<thr){p.y=n.y;p.gy=n.y}}
+  for(const n of (st?[st]:[]).concat(a?[a]:[],visNodes(f,g))){if(p.gx==null&&Math.abs(n.x-w.x)<thr*1.4){p.x=n.x;p.gx=n.x}if(p.gy==null&&Math.abs(n.y-w.y)<thr*1.4){p.y=n.y;p.gy=n.y}}
   return p}
 function resolve(f,c){if(c.node&&nodeOf(f,c.node))return {id:c.node,old:true};if(c.wall){const w=f.walls.find(x=>x.id===c.wall);if(w)return {id:splitWall(f,w,c.t),old:true}}return {id:addNode(f,c),old:false}}
 function drawTo(c){const f=floor(),ch=UI.chain;
   if(!ch){const r=resolve(f,c);UI.chain={start:r.id,last:r.id,n:0};UI.cur=null;commit();renderPanel();render();return}
   if(c.node===ch.last){endChain();return}
   const r=resolve(f,c),made=addWall(f,ch.last,r.id,wallProps());ch.n+=made;ch.last=r.id;UI.cur=null;
-  if(r.old&&ch.n>0){UI.chain=null}commit();renderPanel();render()}
+  if(r.old&&ch.n>0){UI.chain=null;straightenFrom(f,r.id)}commit();renderPanel();render()}
 
 /* ---------- Maßband ---------- */
 function measSnap(p,a){const f=floor(),g=G(f,UI.view),thr=12/UI.vp.s;let best=null,bd=thr;
@@ -2031,8 +2035,15 @@ function snapNode(p,id){const f=floor(),g=G(f,UI.view),gr=S.settings.grid,thr=14
   const nb=f.walls.filter(w=>w.a===id||w.b===id).map(w=>nodeOf(f,w.a===id?w.b:w.a)),others=visNodes(f,g).filter(q=>q.id!==id);
   for(const q of [...nb,...others]){if(UI.wg.x==null&&Math.abs(raw.x-q.x)<thr){p.x=q.x;UI.wg.x=q.x}if(UI.wg.y==null&&Math.abs(raw.y-q.y)<thr){p.y=q.y;UI.wg.y=q.y}}
   for(const q of others)if(dist(q,raw)<thr){p.x=q.x;p.y=q.y;UI.wg={}}}
+
+/* ---------- 0.8.2: Wände begradigen ---------- */
+const nearAxis=(A,B,maxDeg=3)=>{const dx=B.x-A.x,dy=B.y-A.y;if(Math.hypot(dx,dy)<1)return null;const ang=Math.abs(Math.atan2(dy,dx)*180/Math.PI)%90,dev=Math.min(ang,90-ang);if(dev<0.01||dev>maxDeg)return null;return Math.abs(dx)>=Math.abs(dy)?'h':'v'};
+function straightenFrom(f,startId){const seen=new Set([startId]),q=[startId];let n=0;
+  while(q.length&&n<200){const id=q.shift(),A=nodeOf(f,id);n++;for(const w of f.walls){if(w.a!==id&&w.b!==id)continue;const oid=w.a===id?w.b:w.a;if(seen.has(oid))continue;const B=nodeOf(f,oid),ax=nearAxis(A,B);
+    if(ax){if(ax==='h')B.y=A.y;else B.x=A.x;seen.add(oid);q.push(oid)}}}}
+function straightenRoom(f,F){const ids=new Set(F.hes.map(e=>e.g.w.id));for(let k=0;k<3;k++)for(const w of f.walls){if(!ids.has(w.id))continue;const A=nodeOf(f,w.a),B=nodeOf(f,w.b),ax=nearAxis(A,B,5);if(!ax)continue;if(ax==='h'){const m=r1((A.y+B.y)/2);A.y=B.y=m}else{const m=r1((A.x+B.x)/2);A.x=B.x=m}}}
 function dropNode(id){const f=floor(),g=G(f,UI.view),p=nodeOf(f,id),thr=14/UI.vp.s;
-  const q=visNodes(f,g).find(n=>n.id!==id&&dist(n,p)<thr);if(q){mergeNodes(f,q.id,id);UI.sel={kind:'node',id:q.id};return}
+  const q=visNodes(f,g).find(n=>n.id!==id&&dist(n,p)<Math.max(thr,22/UI.vp.s));if(q){mergeNodes(f,q.id,id);straightenFrom(f,q.id);UI.sel={kind:'node',id:q.id};flash('Ecken verbunden.');return}
   for(const x of g.walls){if(x.w.a===id||x.w.b===id)continue;const t=(p.x-x.A.x)*x.u.x+(p.y-x.A.y)*x.u.y;if(t<1||t>x.L-1)continue;const qq={x:x.A.x+x.u.x*t,y:x.A.y+x.u.y*t};
     if(dist(qq,p)<Math.max(thr,x.h)){const nid=splitWall(f,x.w,t);mergeNodes(f,nid,id);UI.sel={kind:'node',id:nid};return}}}
 svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
