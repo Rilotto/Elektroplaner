@@ -93,6 +93,11 @@
 - [x] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
 - [x] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
 
+## 0.8.6 – Raumseiten mit eigenem Maß (erledigt)
+- [x] Innenmaße im Plan je ganzer gerader Raumseite (Abschnitte an T-Stößen werden zusammengefasst)
+- [x] Seitenfeld der Wand: „Seite Raum“ = ganze Raumseite, jede Seite und die Achse mit eigenem Schloss
+- [x] Eingabe einer Raumseite verschiebt das Ende der ganzen Seite; die andere Seite derselben Trennwand bleibt unabhängig
+
 ## 0.8.5 – Feste Maße (erledigt)
 - [x] Eingegebene Wandlängen werden automatisch mit Schloss festgehalten (Schloss an der Maßzahl im Plan), Knopf „Maß festhalten / lösen“ im Seitenfeld der Wand
 - [x] Länge eingeben: verschiebt das gewählte Ende; würde das ein festes Maß ändern, automatisch das andere Ende; geht beides nicht, Hinweis
