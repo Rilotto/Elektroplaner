@@ -87,6 +87,12 @@
 - [x] Treppen viertel- und halbgewendelt ohne Podest (gewendelte Stufen)
 - [ ] Offen: Frage 3 (eigener Verlauf auch für Zuleitungen/LAN) – neu erklärt, Antwort steht aus
 
+## 0.8.2 – Bugfix Wände verknüpfen
+- [ ] Beim Zeichnen schließt sich der Zug zuverlässig: Fangradius für vorhandene Ecken beim Zeichnen größer (bildschirmbezogen, mind. ca. 15 cm), besonders für den Startpunkt des Zugs
+- [ ] Fluchten beim Zeichnen bevorzugen Startpunkt und vorherigen Punkt (gerade Wände), auch wenn das Raster auf einen anderen Wert runden würde
+- [ ] Ecke auf Ecke ziehen (Verknüpfen im Nachhinein): Wände, die dadurch nur leicht schief werden (unter ca. 3°), werden automatisch begradigt – die angrenzenden Ecken rücken mit, statt eine schiefe Wand zu lassen (Bild des Nutzers: 5 cm Versatz → schiefe Außenwand)
+- [ ] Zusätzlich Knopf „Raum begradigen“ im Raum-Seitenfeld
+
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
   - Planung: alles bearbeitbar wie bisher
@@ -101,6 +107,15 @@
   - Stufe 1 – Unterlage: Bild (JPG/PNG, Foto vom Plan) oder PDF als Unterlage je Etage laden (Grundriss → Etage → „Grundriss-Unterlage“); Maßstab über zwei angetippte Punkte und ein bekanntes Maß setzen (z. B. Außenwand 10,24 m); drehen, verschieben, Deckkraft; danach Wände mit der vorhandenen Zeichenhilfe nachzeichnen (Einrasten an Linien der Unterlage später); Ablage in IndexedDB wie die Fotos, Sync optional
   - Stufe 2 – CAD-Import: DXF-Datei (vom Architekten) einlesen, Linien/Polylinien eines gewählten Layers als Wände übernehmen (Wanddicke aus parallelen Linien erkennen), Türen/Fenster aus Blöcken soweit möglich
   - Stufe 3 – Assistent: aus der Bild-Unterlage Wände vorschlagen (Linien erkennen), Vorschläge antippen zum Übernehmen
+  - Formate (Wunsch: alle möglichen berücksichtigen):
+    - Bilder: JPG, PNG, WebP, HEIC (Handyfoto), GIF/BMP → Unterlage (Stufe 1, Assistent Stufe 3)
+    - PDF: Raster-PDF → Unterlage; Vektor-PDF (vom Architekten) → Linien direkt auslesen und als Wände vorschlagen (pdf.js)
+    - SVG → Linien/Pfade als Wände vorschlagen
+    - DXF → Wände aus Layern (Stufe 2)
+    - DWG → nicht offen lesbar; Weg über Umwandlung in DXF (Hinweis mit kostenlosem Konverter) oder später eine DWG-Bibliothek
+    - IFC (BIM-Modell) → Wände mit Dicke, Türen, Fenster und Räume direkt übernehmen
+    - Raumplaner (eigene App, JSON) → Wände, Türen, Fenster und Räume 1:1 übernehmen
+    - Exporte anderer Apps (z. B. magicplan, Floorplanner, RoomScan) → meist DXF, PDF oder Bild, damit abgedeckt
   - Bestehende Etage: Unterlage über den gezeichneten Grundriss legen, um Abweichungen zu sehen; Import ersetzt nie ungefragt vorhandene Wände
 
 
