@@ -96,6 +96,13 @@
 - [ ] Baufortschritt pro Element und Stromkreis: „Schlitz gestemmt“, „Dose gesetzt“, „Leitung gezogen“, „angeschlossen“, „geprüft“; Fortschritt je Raum, Etage, Projekt; Plan färbt nach Stand; Liste „Was fehlt noch“
 - [ ] Fotos pro Wand (vor dem Verputzen), Ablage in IndexedDB statt localStorage, optional mit GitHub-Sync; in Wandansicht und Baufortschritt erreichbar
 - [ ] Prüfprotokoll pro Stromkreis: Isolationswiderstand, Schleifenimpedanz / Kurzschlussstrom, FI-Auslösezeit und -strom, Datum, Prüfer; PDF; Stromkreis gilt erst mit Messwerten als „geprüft“
+- [ ] Eigenen Leitungsverlauf auch für Zuleitungen (Verteiler → erstes Element, Element → Element) und LAN-Kabel (Datenverteiler → Netzwerkdose): Linie antippen, Knickpunkte ziehen wie bei Schaltungslinien; Längen, Bündel und Schlitzliste rechnen mit; dann auch Hinweis „Datenleitung zu nah an Starkstrom“ (Antwort des Nutzers auf Frage 3)
+- [ ] Grundriss importieren (Wunsch: Grundriss vom Architekten/Vermieter nachträglich übernehmen), in Stufen:
+  - Stufe 1 – Unterlage: Bild (JPG/PNG, Foto vom Plan) oder PDF als Unterlage je Etage laden (Grundriss → Etage → „Grundriss-Unterlage“); Maßstab über zwei angetippte Punkte und ein bekanntes Maß setzen (z. B. Außenwand 10,24 m); drehen, verschieben, Deckkraft; danach Wände mit der vorhandenen Zeichenhilfe nachzeichnen (Einrasten an Linien der Unterlage später); Ablage in IndexedDB wie die Fotos, Sync optional
+  - Stufe 2 – CAD-Import: DXF-Datei (vom Architekten) einlesen, Linien/Polylinien eines gewählten Layers als Wände übernehmen (Wanddicke aus parallelen Linien erkennen), Türen/Fenster aus Blöcken soweit möglich
+  - Stufe 3 – Assistent: aus der Bild-Unterlage Wände vorschlagen (Linien erkennen), Vorschläge antippen zum Übernehmen
+  - Bestehende Etage: Unterlage über den gezeichneten Grundriss legen, um Abweichungen zu sehen; Import ersetzt nie ungefragt vorhandene Wände
+
 
 ## 0.10 – Planung prüfen und beschleunigen
 - [ ] Ausstattungs-Check pro Raum nach DIN 18015-2 / RAL-RG 678 (Ausstattungswert 1–3): Mindestanzahl Steckdosen, Lichtauslässe, Netzwerk je Raumart und Größe; Raumart pro Raum; Fehlendes als ignorierbarer Hinweis
