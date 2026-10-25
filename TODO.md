@@ -78,6 +78,15 @@
 - [x] Treppenformen: gerade, viertelgewendelt (L mit Podest), halbgewendelt (U mit Podest, Treppenauge-Breite), Wendeltreppe; Richtung links/rechts; Treppenauge oben in derselben Form
 - [x] Wandansicht: aus einer gewählten Wanddose („Wandansicht“) oder einer Wand im Grundriss (Seite A/B); Raumbreite × Raumhöhe, Türen/Fenster, Installationszonen nach DIN 18015-3, Dosen außerhalb der Zonen orange mit Hinweis; Dosen waagrecht und senkrecht ziehen; als Bild speichern; andere Wandseite
 
+## 0.8.1 – Antworten aus dem Nachtlauf (im Branch `vorschau`)
+- [x] Browser darf die App nicht selbst abdunkeln (`color-scheme`), Ausgabe-Vorschau bleibt hell (graue Ausgabe vermutlich durch das automatische Dunkel-Design des Tablet-Browsers)
+- [x] Leitungswege bleiben immer sichtbar (Entscheidung), Hervorhebung blendet nur ab
+- [x] Abzweigdose direkt über dem ersten Schalter (Deckenzone), im Plan hinter dem Schalter gezeichnet; Abzweigdose voll ab 6 Leitungen; K1/K2 in der Dosenbelegung bei Wechsel/Kreuz über Abzweigdose
+- [x] Umstellung bestehender Daten: Bestand kommt nur in die Ist-Aufnahme, der Soll-Plan enthält nur Neues
+- [x] Umbau-Ansicht markiert geänderte Elemente (Art, Anzahl, Höhe, schaltbar, Montage) in Violett
+- [x] Treppen viertel- und halbgewendelt ohne Podest (gewendelte Stufen)
+- [ ] Offen: Frage 3 (eigener Verlauf auch für Zuleitungen/LAN) – neu erklärt, Antwort steht aus
+
 ## 0.9 – Umsetzung auf der Baustelle
 - [ ] Projektstatus: Planung → Umsetzung → Abgeschlossen, jederzeit vor- und zurückschaltbar (Projektmenü und Kopfzeile)
   - Planung: alles bearbeitbar wie bisher

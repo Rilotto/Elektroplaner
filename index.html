@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Elektroplaner</title>
 <meta name="theme-color" content="#F4F6F5">
+<meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -32,6 +33,8 @@
   --panel:#1D2225; --line:#30383C; --field:#161A1C;
   --w-dark:#AEB8BB; --w-mid:#7F8A8E; --w-light:#4E585C; --del:#EE6B58; --new:#5CC08A; --new-soft:#25473A;}
 *{box-sizing:border-box}
+:root{color-scheme:light dark}
+.prev img,#wvsvg{filter:none!important;color-scheme:light}
 html,body{height:100%;margin:0}
 body{background:var(--panel);color:var(--ink);font:15px/1.4 var(--f);display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent}
 button,input,select{font:inherit;color:inherit}
@@ -184,9 +187,9 @@ label.chk input{width:22px;height:22px;accent-color:var(--accent)}
 .measend{fill:var(--accent);stroke:var(--floor);stroke-width:2}
 
 /* ---------- Design-Test: Plan als Arbeitsfläche ---------- */
-:root{--hint:#B86A0C;--shadow:0 2px 10px rgba(20,30,35,.14)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}}
-:root[data-theme="dark"]{--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}
+:root{--chg:#7C4DC4;--hint:#B86A0C;--shadow:0 2px 10px rgba(20,30,35,.14)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--chg:#A98BEA;--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--chg:#A98BEA;--hint:#E9A54B;--shadow:0 2px 12px rgba(0,0,0,.45)}
 header{gap:12px;padding:6px 10px;overflow:visible;justify-content:space-between;background:var(--panel)}
 #projBtn{font-weight:600;font-size:16px;max-width:260px;border:0;background:none;padding:0 6px;overflow:hidden;text-overflow:ellipsis;display:block;line-height:40px}
 #projBtn::after{content:' ▾';color:var(--muted);font-weight:400;font-size:13px}
@@ -293,8 +296,8 @@ const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='elektroplaner.v1',IDX='elektroplaner.projects',PKEY=id=>'elektroplaner.p.'+id;
-const APP_VERSION='0.8',REPO_URL='https://github.com/Rilotto/Elektroplaner';
-const CHANGELOG=[['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
+const APP_VERSION='0.8.1',REPO_URL='https://github.com/Rilotto/Elektroplaner';
+const CHANGELOG=[['0.8.1','Antworten aus dem Nachtlauf: Abzweigdose direkt über dem Schalter, voll ab 6 Leitungen, K1/K2 in der Dosenbelegung; Soll startet ohne Bestand; Umbau markiert geänderte Elemente; gewendelte Treppen ohne Podest; App meldet dem Browser ihr eigenes Dunkel-Design'],['0.8','Ist und Soll getrennt: eigene Elemente, Stromkreise, Verteiler, Hinweise und Material je Plan, „Aus Ist übernehmen“, Umbau-Ansicht mit bleibt/entfällt/neu/versetzt; Treppenformen gerade, L, U mit Podest und Wendel; Wandansicht mit Installationszonen, Ziehen von Dosen in Höhe und Lage, als Bild speichern'],['0.7.5','Abzweigdosen: Einstellung mit Abzweigdosen (Standard für neue Projekte), vorschlagen oder ohne; Abzweigdose als Element; Dose antippen zeigt ankommende Leitungen und Klemmen; Hinweis bei vollen Dosen'],['0.7.4','Leitungsbündel antippen: einzelne Leitungen, Schlitzbreite und Leerrohr; Schlitzliste in der Ausgabe; Daten- und Klingelleitungen getrennt mit Abstand; Leitungsverlauf selbst festlegen (Knickpunkte), Verlegung über die Decke, Reihenfolge der Leuchten; Stromkreis im Plan hervorheben; Mehrfachkombination hintereinander; Setzen endet nach einem Element (Mehrere setzen per 📌); Materialliste in der Ausgabe und im Menü; Ausgabe mit weißen Räumen und lesbarer Schrift'],['0.7.3','Schalter auf Schalter ziehen: Mehrfachkombination in einem Rahmen, Serienschalter oder übereinander; ⊕-Punkt am Schalter auf eine Leuchte ziehen verbindet sie; neue Elemente TV/SAT-Dose, Leerdose, Rollladentaster mit Motor, Video-Innenstation; Einstellung tiefe Elektronikdosen'],['0.7.2.1','Beim Wechsel zu Elektro bleibt die gewählte Ansicht (Ist/Soll/Umbau) erhalten, kein automatischer Wechsel mehr auf Soll'],['0.7.2','Maße beim gewählten Element (Abstand links/rechts im Raum statt ab Wandanfang, Deckenelemente mit Abstand zu den Wänden), Hinweise ignorieren und wieder zeigen, Serienschalter: Wippe 1/2 je Leuchte'],['0.7.1','Neues Bedienkonzept: Arbeitsschritte 1–4 mit neuem Schritt „Ausgabe“ (Druckvorschau), Werkzeuge und Etagen am Plan, Ebenen-Menü, Elementsuche, Ansicht je Schritt gemerkt.'],
  ['0.7.0','Mehrere Projekte (Häuser) anlegen und wechseln, Versionsanzeige mit Änderungen, Fenster und Türen duplizieren, Innenwände der Unterlage ausblendbar, Räume und Art je Stromkreis, FI-Verteilungsprüfung, Andocken neuer Räume, Leitungswege entlang der Wände und durch Türen, Kabeldurchlass, Bündelung, Treppen'],
  ['0.6.2','Kombination Schalter + Steckdose hintereinander dargestellt'],
  ['0.6.1','Hinweis-Anzeige im Kopf, Klingeltrafo automatisch, Kombination Schalter + Steckdose, Fluchtlinien für Deckenleuchten, Klingel- und Netzwerkkabel im Plan, „Schaltet“-Liste nach Räumen'],
@@ -393,7 +396,7 @@ const UMB=new Map();
 const items=(f=floor())=>UI.view==='ist'?istL(f).items:UI.view==='umbau'?umbauItems(f):layout(f).items;
 const planList=(f=floor())=>UI.view==='ist'?istL(f):layout(f);
 function umbauItems(f){if(UMB.has(f.id))return UMB.get(f.id);const I=istL(f).items,Sl=layout(f).items,used=new Set(),out=[];
-  for(const s of Sl){const src=s.src&&I.find(i=>i.id===s.src);if(src){used.add(src.id);const moved=s.wall?(src.wall!==s.wall||src.side!==s.side||Math.abs((src.off??0)-(s.off??0))>2):dist(src,s)>2;out.push({...s,st:moved?'moved':'keep',from:moved?src:null})}else out.push({...s,st:'new'})}
+  for(const s of Sl){const src=s.src&&I.find(i=>i.id===s.src);if(src){used.add(src.id);const moved=s.wall?(src.wall!==s.wall||src.side!==s.side||Math.abs((src.off??0)-(s.off??0))>2):dist(src,s)>2,chg=[];if(src.k!==s.k)chg.push('Art');if((src.cnt||1)!==(s.cnt||1))chg.push('Anzahl');if(Math.abs((src.h??0)-(s.h??0))>2)chg.push('Höhe');if(!!src.sw!==!!s.sw)chg.push('schaltbar');if((src.mount||'')!==(s.mount||''))chg.push('Montage');out.push({...s,st:moved?'moved':chg.length?'chg':'keep',from:moved?src:null,chg})}else out.push({...s,st:'new'})}
   for(const i of I)if(!used.has(i.id))out.push({...i,st:'del'});UMB.set(f.id,out);return out}
 const heightOf=hc=>S.settings.heights?.[hc]??DEF_H[hc]??30;
 function snapWall(g,p,maxD){let best=null;for(const x of g.walls){let t=(p.x-x.A.x)*x.u.x+(p.y-x.A.y)*x.u.y;if(t<-maxD||t>x.L+maxD)continue;t=clamp(t,2,Math.max(2,x.L-2));
@@ -540,8 +543,8 @@ function takeMenu(f){const I=istL(f).items,have=new Set(layout(f).items.map(x=>x
     <label class="chk" style="margin-top:8px"><input type="checkbox" name="tci" checked>Stromkreise mit übernehmen</label>
     <div class="row" style="margin-top:12px"><button class="btn primary" id="tgo" style="flex:1">Übernehmen</button></div>`);
   el.querySelector('#tgo').onclick=()=>{const rs=new Set([...el.querySelectorAll('[name=tr]:checked')].map(x=>x.value)),n=takeFromIst(f,rs,el.querySelector('[name=tci]').checked);close();commit();renderAll();flash(`${n} ${n===1?'Element':'Elemente'} aus dem Ist übernommen.`)}}
-function umbauItemPanel(f,it){const L={keep:'bleibt',new:'neu',del:'entfällt',moved:'versetzt'};return `<div class="row" style="align-items:center;flex-wrap:nowrap;gap:10px">${symIcon(it.k,it.cnt)}<h2 style="margin:0;flex:1;min-width:0">${esc(kindName(it))}</h2></div>
-  <p class="hint">${esc(itemRoom(f,G(f,'soll'),it)?.name||'Keinem Raum zugeordnet')} · <b>${L[it.st]||''}</b>${it.st==='moved'&&it.wall&&it.from?.wall===it.wall?` um ${fmt(Math.abs(it.off-it.from.off))} cm`:''}</p>
+function umbauItemPanel(f,it){const L={keep:'bleibt',new:'neu',del:'entfällt',moved:'versetzt',chg:'geändert'};return `<div class="row" style="align-items:center;flex-wrap:nowrap;gap:10px">${symIcon(it.k,it.cnt)}<h2 style="margin:0;flex:1;min-width:0">${esc(kindName(it))}</h2></div>
+  <p class="hint">${esc(itemRoom(f,G(f,'soll'),it)?.name||'Keinem Raum zugeordnet')} · <b>${L[it.st]||''}</b>${it.st==='moved'&&it.wall&&it.from?.wall===it.wall?` um ${fmt(Math.abs(it.off-it.from.off))} cm`:''}${it.chg?.length?` · geändert: ${esc(it.chg.join(', '))}`:''}</p>
   <div class="note">Die Umbau-Ansicht vergleicht Ist-Aufnahme und Soll-Plan. Zum Bearbeiten oben „Ist“ oder „Soll“ wählen.</div>`}
 
 /* ---------- 0.8: Wandansicht ---------- */
@@ -586,7 +589,7 @@ function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
   if(UI.wseg&&UI.wseg.f===f.id&&!pl){const wp=wsegPanel(f);if(wp)return wp}
   if(UI.bundle&&UI.bundle.f===f.id&&!pl){const bp=bundlePanel(f);if(bp)return bp}
   let h=`<h2>Elektro ${esc(f.name)} · ${UI.view==='ist'?'Ist-Aufnahme':UI.view==='soll'?'Soll-Plan':'Umbau'}</h2>`;
-  if(UI.view==='umbau'){const U=items(f),c=k=>U.filter(i=>i.st===k).length;return h+`<p class="hint">Vergleich von Ist und Soll: ${c('keep')} bleiben, ${c('moved')} versetzt, ${c('del')} entfallen, ${c('new')} neu.</p><div class="note">Elemente antippen zeigt ihren Status. Bearbeiten geht in „Ist“ oder „Soll“.</div>`}
+  if(UI.view==='umbau'){const U=items(f),c=k=>U.filter(i=>i.st===k).length;return h+`<p class="hint">Vergleich von Ist und Soll: ${c('keep')} bleiben, ${c('chg')} geändert, ${c('moved')} versetzt, ${c('del')} entfallen, ${c('new')} neu.</p><div class="note">Elemente antippen zeigt ihren Status. Bearbeiten geht in „Ist“ oder „Soll“.</div>`}
   if(UI.view==='soll'){const have=new Set(layout(f).items.map(x=>x.src).filter(Boolean)),open=istL(f).items.filter(i=>!have.has(i.id)).length;if(open)h+=`<div class="${layout(f).items.length?'note':'warnbox'}" style="${layout(f).items.length?'':'color:var(--ink);border-left-color:var(--accent);background:none'}">${layout(f).items.length?`${open} Elemente aus dem Ist sind noch nicht im Soll.`:'Der Soll-Plan ist noch leer.'}</div><div class="row"><button class="btn${layout(f).items.length?'':' primary'}" data-act="takeist" style="flex:1">Aus Ist übernehmen …</button></div>`}
   if(pl){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k].name;
     h+=`<div class="note"><b>${esc(nm)}</b>: ${pl.k!=='entry'&&pl.k!=='kombi'&&KINDS[pl.k].place!=='wall'?'Stelle im Raum antippen.':'Auf die Wand tippen, an die es soll.'}</div>
@@ -597,7 +600,7 @@ function elecPanel(f){const lg=usedLegend(f,UI.view),pl=UI.place;
 function roomElec(f,r){const gs=G(f,'soll'),m=new Map();for(const it of items(f)){if(!VIS[UI.view](it))continue;const rr=itemRoom(f,gs,it);if(rr?.id!==r.id)continue;const k=legendKey(it);if(!m.has(k))m.set(k,{it,n:0});m.get(k).n++}
   const L=[...m.values()];return `<h3>Elemente im Raum</h3>${L.length?`<ul class="lst">${L.map(({it,n})=>`<li>${symIcon(it.k,it.cnt)}<span class="nm"><b>${esc(kindName(it))}</b></span><span class="tag">${n}×</span></li>`).join('')}</ul>`:'<p class="hint">Noch keine Elemente.</p>'}`}
 function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks=exp?k0:Math.max(k0,15/(14*s)),plan=!exp&&UI.mode==='plan';
-  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc!=='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){p.x+=p.d.x*11*ks;p.y+=p.d.y*11*ks}return [it.id,p]}));
+  const its=items(f).filter(it=>VIS[view](it)),pos=new Map(its.map(it=>{const p=itemPos(g,it);if(it.combo&&p.d&&KINDS[it.k].hc!=='socket'&&its.some(o=>o!==it&&o.combo===it.combo)){p.x+=p.d.x*11*ks;p.y+=p.d.y*11*ks}if(it.k==='abz'&&p.d&&its.some(o=>o!==it&&o.wall===it.wall&&o.side===it.side&&Math.abs((o.off??0)-(it.off??0))<15&&o.k!=='abz')){p.x+=p.d.x*18*ks;p.y+=p.d.y*18*ks}return [it.id,p]}));
   const fr=new Map();for(const it of its)if(it.frame&&it.wall){if(!fr.has(it.frame))fr.set(it.frame,[]);fr.get(it.frame).push(it)}let frH='';
   for(const [,m] of fr){if(m.length<2)continue;m.sort((a,b)=>a.off-b.off);const x=g.byId.get(m[0].wall);if(!x)continue;const P0=m.map(o=>pos.get(o.id)),c={x:P0.reduce((s,q)=>s+q.x,0)/m.length,y:P0.reduce((s,q)=>s+q.y,0)/m.length},S_=21*ks,n=m.length,d=P0[0].d;
     const dd0=P0[0].x*d.x+P0[0].y*d.y,cu=c.x*x.u.x+c.y*x.u.y,b0={x:c.x+d.x*(dd0-(c.x*d.x+c.y*d.y)),y:c.y+d.y*(dd0-(c.x*d.x+c.y*d.y))};
@@ -615,7 +618,7 @@ function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks
   if(!plan&&!exp&&si)h+=selDimsSvg(f,g,si,s,C,view);
   if(!plan&&!exp&&si&&!UI.guides)h+=linkSvg(f,g,si,pos,s,C,ks);
   const pm=its.some(i=>i.k==='n_d'||i.k==='n_ap')?portsOfItem(netPlan()):new Map();
-  for(const it of its){const p=pos.get(it.id),cc_=ciOf(it),col=view==='umbau'&&it.st==='new'?C('new'):view==='umbau'&&it.st==='del'?C('del'):view==='umbau'&&it.st==='moved'?C('hint'):cc_&&S.settings.ciColor!==false?cc_.color:C('ink'),cc=symCenter(it),on=si&&si.id===it.id;
+  for(const it of its){const p=pos.get(it.id),cc_=ciOf(it),col=view==='umbau'&&it.st==='new'?C('new'):view==='umbau'&&it.st==='del'?C('del'):view==='umbau'&&it.st==='moved'?C('hint'):view==='umbau'&&it.st==='chg'?C('chg'):cc_&&S.settings.ciColor!==false?cc_.color:C('ink'),cc=symCenter(it),on=si&&si.id===it.id;
     const hlc=!exp&&!plan&&UI.selC?circuits().find(c=>c.id===UI.selC):null,inC=hlc&&(it.ci===hlc.id||ciOf(it)?.id===hlc.id);h+=`<g class="sy" transform="translate(${r1(p.x)} ${r1(p.y)}) rotate(${r1(p.rot)}) scale(${r1(ks*100)/100})" fill="none" stroke="${col}" stroke-width="1.5"${plan?' opacity=".3" pointer-events="none"':hlc&&!inC?' opacity=".25"':''}>`+(inC?`<circle cx="${cc.x}" cy="${cc.y}" r="15" stroke="${hlc.color}" stroke-width="3" fill="${hlc.color}" fill-opacity=".12"/>`:'')+`${symSvg(it,col,p.rot)}`+(cc_&&!plan?`<text x="-12" y="${cc.y-9}" font-size="6" text-anchor="middle" dominant-baseline="central" fill="${col}" stroke="none" font-weight="700" font-family="Barlow Condensed,'Arial Narrow',sans-serif" transform="rotate(${-r1(p.rot)} -12 ${cc.y-9})">${esc(cc_.no)}</text>`:'')+(pm.has(it.id)&&!plan?`<text x="0" y="${cc.y+(it.k==='n_ap'?-9:15)}" font-size="5.5" text-anchor="middle" dominant-baseline="central" fill="${col}" stroke="none" font-weight="700" font-family="Barlow Condensed,'Arial Narrow',sans-serif" transform="rotate(${-r1(p.rot)} 0 ${cc.y+(it.k==='n_ap'?-9:15)})">${esc(pm.get(it.id).map(q=>dvs().length>1?q.lbl:q.lbl.split('-').pop()).join('/'))}</text>`:'')+(UI.assign&&!exp&&!plan&&it.ci===UI.assign?`<circle cx="${cc.x}" cy="${cc.y}" r="13" fill="${col}" fill-opacity=".15" stroke="none"/>`:'')+
       (on?`<circle cx="${cc.x}" cy="${cc.y}" r="14" stroke="${C('accent')}" stroke-width="2" stroke-dasharray="4 3"/>`:'')+(!exp&&UI.join&&UI.join.id===it.id?`<circle cx="${cc.x}" cy="${cc.y}" r="16" fill="${C('accent')}" fill-opacity=".18" stroke="${C('accent')}" stroke-width="2"/>`:'')+
       (!exp&&!plan?`<circle class="ihit" data-kind="item" data-id="${it.id}" cx="${cc.x}" cy="${cc.y}" r="13" fill="transparent" stroke="none"/>`:'')+`</g>`}
@@ -1172,20 +1175,20 @@ function bundleSvg(f,s,C,exp){const px=n=>n/s,net=netOf(f),W=wireMap(f),black=ex
 /* ---------- 0.7.5: Abzweigdosen und Dosenbelegung ---------- */
 const wiring=()=>S.settings.wiring||'abz';
 const WIRING={abz:'Mit Abzweigdosen',suggest:'Abzweigdosen vorschlagen',none:'Ohne Abzweigdosen'};
-function vJb(f,g){const s0=g.sw[0];if(!s0||!s0.wall)return null;const x_=G(f,'soll').byId.get(s0.wall),o={id:'vjb-'+s0.id,k:'abz',wall:s0.wall,side:s0.side,off:x_?clamp(s0.off+(s0.off+30<x_.L?25:-25),2,x_.L-2):s0.off,h:heightOf('abz'),virt:true,serves:s0.id,st:'new',mount:'UP'};const p=itemPos(G(f,'soll'),o);o.x=p.x;o.y=p.y;return o}
+function vJb(f,g){const s0=g.sw[0];if(!s0||!s0.wall)return null;const x_=G(f,'soll').byId.get(s0.wall),o={id:'vjb-'+s0.id,k:'abz',wall:s0.wall,side:s0.side,off:s0.off,h:heightOf('abz'),virt:true,serves:s0.id,st:'new',mount:'UP'};const p=itemPos(G(f,'soll'),o);o.x=p.x;o.y=p.y;return o}
 function realJb(f,g){return items(f).find(o=>o.k==='abz'&&o.st!=='del'&&g.sw.some(s=>s.id===o.serves))||null}
 function jbOf(f,g){if(g.taster)return null;const r=realJb(f,g);if(r)return r;if(wiring()!=='abz'||g.sw.some(s=>s.noAbz))return null;return vJb(f,g)}
 function boxLoad(f){const m=new Map();for(const c of circuits())for(const s of ciRoute(c).segs){for(const id of [s.a,s.b])if(id){if(!m.has(id))m.set(id,[]);m.get(id).push(s)}}return m}
-const boxMax=it=>it.k==='abz'?8:S.settings.deepBox&&(isSw(it)||it.k==='rl_t')?5:4;
+const boxMax=it=>it.k==='abz'?5:S.settings.deepBox&&(isSw(it)||it.k==='rl_t')?5:4;
 function abzSuggest(f){if(wiring()!=='suggest')return [];const bl=boxLoad(f),out=[];for(const g of groupsOf(f,'soll')){if(g.taster||realJb(f,g)||g.sw.some(s=>s.noAbz))continue;const s0=g.sw[0],n=(bl.get(s0.id)||[]).length;if(n>boxMax(s0)){const jb=vJb(f,g);if(jb)out.push({g,jb,n,why:`${n} Leitungen in der Schalterdose (${kindName(s0)})`})}}return out}
-function jbSvg(f,g,s,C,ks){const px=n=>n/s;let h='';const add=(jb,sug,gid)=>{const p=itemPos(g,jb),cy=9*ks,q={x:p.x+(p.d?p.d.x*cy:0),y:p.y+(p.d?p.d.y*cy:0)},on=UI.vjb===gid;
+function jbSvg(f,g,s,C,ks){const px=n=>n/s;let h='';const add=(jb,sug,gid)=>{const p=itemPos(g,jb),cy=27*ks,q={x:p.x+(p.d?p.d.x*cy:0),y:p.y+(p.d?p.d.y*cy:0)},on=UI.vjb===gid;
     h+=`<g data-kind="vjb" data-id="${gid}"><circle cx="${q.x}" cy="${q.y}" r="${px(20)}" fill="transparent"/><circle cx="${q.x}" cy="${q.y}" r="${5*ks}" fill="${sug?'none':C('floor')}" stroke="${on?C('accent'):sug?C('hint'):C('ink')}" stroke-width="${on?2.6:1.6}" stroke-dasharray="${sug?'3 2':'2 1.5'}" vector-effect="non-scaling-stroke"/><circle cx="${q.x}" cy="${q.y}" r="${1.6*ks}" fill="${sug?C('hint'):C('ink')}"/>${sug?`<text x="${q.x+7*ks}" y="${q.y-5*ks}" font-size="${7*ks}" fill="${C('hint')}" font-family="Barlow Condensed,'Arial Narrow',sans-serif" font-weight="700">?</text>`:''}</g>`};
   for(const gr of groupsOf(f,UI.view)){const jb=jbOf(f,gr);if(jb&&jb.virt)add(jb,false,gr.sw[0].id)}
   for(const x of abzSuggest(f))add(x.jb,true,x.g.sw[0].id);return h}
 function clampsOf(f,it){const bl=boxLoad(f),segs=bl.get(it.id)||[],gs=G(f,'soll'),other=s=>{const id=s.a===it.id?s.b:s.a,o=items(f).find(x=>x.id===id)||dists().find(x=>x.it.id===id)?.it;if(!o){if(String(id).startsWith('vjb-'))return 'Abzweigdose';return '?'}return (o.name||kindName(o))+(itemRoom(f,gs,o)?' ('+itemRoom(f,gs,o).name+')':'')};
   const rows=segs.map(s=>{const out=s.a===it.id,c=circuits().find(c_=>ciRoute(c_).segs.includes(s));let role=s.kind==='feed'?(out?'weiter zu':'Zuleitung von'):s.kind==='korr'?'Korrespondierende zu':s.kind==='swd'?(out?'zum Schalter':'Schalterleitung von'):out?'zur Leuchte':'vom Schalter';return {s,c,role,txt:`${role} ${other(s)}`}});
   const K={L:[],N:[],PE:[],S:[],K:[]};for(const r of rows){const k=r.s.kind,t=r.txt;K.PE.push(t);
-    if(k==='feed'){K.L.push(t);K.N.push(t)}else if(k==='korr')K.K.push(t);else if(k==='swd'){if(it.k==='abz'){K.L.push(t+' (L hin)');K.S.push(t+' (S zurück)')}else{K.L.push(t+' (L)');K.S.push(t+' (S)')}}else if(k==='last'){K.N.push(t);K.S.push(t)}}
+    if(k==='feed'){K.L.push(t);K.N.push(t)}else if(k==='korr')K.K.push(t);else if(k==='swd'){if(/5×/.test(r.s.cable||''))K.K.push(t);if(it.k==='abz'){K.L.push(t+' (L hin)');K.S.push(t+' (S zurück)')}else{K.L.push(t+' (L)');K.S.push(t+' (S)')}}else if(k==='last'){K.N.push(t);K.S.push(t)}}
   if(isSw(it)&&rows.some(r=>r.s.kind==='feed'))K.L.push('Schalter-Eingang');if(isSw(it)&&rows.some(r=>r.s.kind==='last'))K.S.push('Schalter-Ausgang');
   return {rows,K,n:rows.length,max:boxMax(it)}}
 function clampHtml(f,it){if(KINDS[it.k]?.place!=='wall'||KINDS[it.k].sym==='dist')return '';const cl=clampsOf(f,it);if(!cl.n)return '';
@@ -1240,24 +1243,26 @@ function riserSvg(f,s,C,exp,plan){const px=n=>n/s;let h='';const sel=UI.sel?.kin
   const lf=lowerFloor(f);if(lf)for(const r of lf.risers||[])h+=`<circle cx="${r.x}" cy="${r.y}" r="9" fill="none" stroke="${C('muted')}" stroke-width="1.2" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
   return h}
 /* ---------- 0.7: Treppen ---------- */
-const STAIR_SHAPES={straight:'Gerade',L:'Viertelgewendelt (L, mit Podest)',U:'Halbgewendelt (U, mit Podest)',spiral:'Wendeltreppe'};
-function stairGeo(t){const w=t.w||100,l=t.l||300,sh=t.shape||'straight',sg=t.turn==='left'?-1:1,n=Math.max(2,t.steps||16);let O,runs=[],path;
-  if(sh==='L'){const l2=t.l2||120;O=[[-w/2,0],[w/2,0],[w/2,-l],[w/2+l2,-l],[w/2+l2,-l-w],[-w/2,-l-w]].map(([x,y])=>[x*sg,y]);const n1=Math.max(1,Math.round(n*l/(l+l2)));
-    runs=[{a:[-w/2,0],b:[w/2,0],d:[0,-l],k:n1},{a:[w/2,-l],b:[w/2,-l-w],d:[l2,0],k:n-n1}];path=[[0,-6],[0,-l-w/2],[w/2+l2-10,-l-w/2]]}
-  else if(sh==='U'){const gp=t.gap??10;O=[[-w/2,0],[w/2+gp+w,0],[w/2+gp+w,-l-w],[-w/2,-l-w]].map(([x,y])=>[x*sg,y]);const n1=Math.ceil(n/2);
-    runs=[{a:[-w/2,0],b:[w/2,0],d:[0,-l],k:n1},{a:[w/2+gp,-l],b:[w/2+gp+w,-l],d:[0,l],k:n-n1}];path=[[0,-6],[0,-l-w/2],[w+gp,-l-w/2],[w+gp,-10]]}
+const STAIR_SHAPES={straight:'Gerade',L:'L mit Podest',Lw:'Viertelgewendelt (L, ohne Podest)',U:'U mit Podest',Uw:'Halbgewendelt (U, ohne Podest)',spiral:'Wendeltreppe'};
+function stairGeo(t){const w=t.w||100,l=t.l||300,sh0=t.shape||'straight',wd=sh0==='Lw'||sh0==='Uw',sh=sh0==='Lw'?'L':sh0==='Uw'?'U':sh0,sg=t.turn==='left'?-1:1,n=Math.max(2,t.steps||16);let O,runs=[],path,wind=null;
+  if(sh==='L'){const l2=t.l2||120;O=[[-w/2,0],[w/2,0],[w/2,-l],[w/2+l2,-l],[w/2+l2,-l-w],[-w/2,-l-w]].map(([x,y])=>[x*sg,y]);const m=wd?3:0,nn=n-m,n1=Math.max(1,Math.round(nn*l/(l+l2)));
+    runs=[{a:[-w/2,0],b:[w/2,0],d:[0,-l],k:n1+(m?0:0)},{a:[w/2,-l],b:[w/2,-l-w],d:[l2,0],k:nn-n1}];if(m)wind={c:[w/2,-l],path:[[-w/2,-l],[-w/2,-l-w],[w/2,-l-w]],m};path=[[0,-6],[0,-l-w/2],[w/2+l2-10,-l-w/2]]}
+  else if(sh==='U'){const gp=t.gap??10;O=[[-w/2,0],[w/2+gp+w,0],[w/2+gp+w,-l-w],[-w/2,-l-w]].map(([x,y])=>[x*sg,y]);const m=wd?6:0,nn=n-m,n1=Math.ceil(nn/2);
+    runs=[{a:[-w/2,0],b:[w/2,0],d:[0,-l],k:n1},{a:[w/2+gp,-l],b:[w/2+gp+w,-l],d:[0,l],k:nn-n1}];if(m)wind={c:[w/2+gp/2,-l],path:[[-w/2,-l],[-w/2,-l-w],[w/2+gp+w,-l-w],[w/2+gp+w,-l]],m};path=[[0,-6],[0,-l-w/2],[w+gp,-l-w/2],[w+gp,-10]]}
   else if(sh==='spiral'){const R=w+12,N=28;O=[];for(let i=0;i<N;i++){const a=2*Math.PI*i/N;O.push([R*Math.cos(a)*sg,-R+R*Math.sin(a)])}runs=[{spiral:true,R,c:[0,-R],k:n}];path=null}
   else{O=[[-w/2,0],[w/2,0],[w/2,-l],[-w/2,-l]];runs=[{a:[-w/2,0],b:[w/2,0],d:[0,-l],k:n}];path=[[0,-6],[0,-l+10]]}
-  if(sh!=='spiral')for(const r of runs){r.a=[r.a[0]*sg,r.a[1]];r.b=[r.b[0]*sg,r.b[1]];r.d=[r.d[0]*sg,r.d[1]]}if(path)path=path.map(([x,y])=>[x*sg,y]);
+  if(sh!=='spiral')for(const r of runs){r.a=[r.a[0]*sg,r.a[1]];r.b=[r.b[0]*sg,r.b[1]];r.d=[r.d[0]*sg,r.d[1]]}if(path)path=path.map(([x,y])=>[x*sg,y]);if(wind){wind.c=[wind.c[0]*sg,wind.c[1]];wind.path=wind.path.map(([x,y])=>[x*sg,y])}
   const xs=O.map(p=>p[0]),ys=O.map(p=>p[1]),cx=(Math.min(...xs)+Math.max(...xs))/2,cy=(Math.min(...ys)+Math.max(...ys))/2,a=(t.rot||0)*Math.PI/180,c=Math.cos(a),s_=Math.sin(a),
     W=([x,y])=>({x:t.x+(x-cx)*c-(y-cy)*s_,y:t.y+(x-cx)*s_+(y-cy)*c});
-  return {O:O.map(W),runs,path:path&&path.map(W),W,sg}}
+  return {O:O.map(W),runs,path:path&&path.map(W),W,sg,wind}}
 function stairPoly(t){return stairGeo(t).O}
 function stairSvg(f,s,C,exp,plan){const px=n=>n/s;let h='';const sel=UI.sel?.kind==='stair'?UI.sel.id:null,up=S.floors.filter(o=>o.level>f.level).sort((a,b)=>a.level-b.level)[0],ln=(A,B,w_=0.8)=>`<line x1="${r1(A.x)}" y1="${r1(A.y)}" x2="${r1(B.x)}" y2="${r1(B.y)}" stroke="${C('wall')}" stroke-width="${w_}" vector-effect="non-scaling-stroke"/>`;
   for(const t of f.stairs||[]){const G_=stairGeo(t),on=sel===t.id,n=Math.max(2,t.steps||16);
     h+=`<g${plan&&!exp?` data-kind="stair" data-id="${t.id}"`:''}><polygon points="${pts(G_.O)}" fill="${C('floor')}" stroke="${on?C('accent'):C('wall')}" stroke-width="${on?2.5:1.4}" vector-effect="non-scaling-stroke"/>`;
     for(const r of G_.runs){if(r.spiral){const [cx,cy]=r.c;h+=`<circle cx="${G_.W([cx,cy]).x}" cy="${G_.W([cx,cy]).y}" r="12" fill="none" stroke="${C('wall')}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;for(let i=0;i<r.k;i++){const a=-Math.PI/2+2*Math.PI*0.92*i/r.k*G_.sg;h+=ln(G_.W([cx+12*Math.cos(a),cy+12*Math.sin(a)]),G_.W([cx+r.R*Math.cos(a),cy+r.R*Math.sin(a)]))}continue}
       for(let i=1;i<=r.k;i++){if(i===r.k&&r!==G_.runs[G_.runs.length-1])continue;const k=i/r.k,A=G_.W([r.a[0]+r.d[0]*k,r.a[1]+r.d[1]*k]),B=G_.W([r.b[0]+r.d[0]*k,r.b[1]+r.d[1]*k]);if(i<r.k)h+=ln(A,B)}}
+    if(G_.wind){const wn=G_.wind,P_=wn.path,segL=[];let tot=0;for(let i=0;i+1<P_.length;i++){const L_=Math.hypot(P_[i+1][0]-P_[i][0],P_[i+1][1]-P_[i][1]);segL.push(L_);tot+=L_}
+      for(let j=0;j<=wn.m;j++){let d_=tot*j/wn.m,i=0;while(i<segL.length-1&&d_>segL[i]){d_-=segL[i];i++}const k_=segL[i]?d_/segL[i]:0,q=[P_[i][0]+(P_[i+1][0]-P_[i][0])*k_,P_[i][1]+(P_[i+1][1]-P_[i][1])*k_];h+=ln(G_.W(wn.c),G_.W(q))}}
     if(G_.path){const P=G_.path,E=P[P.length-1],Pp=P[P.length-2],dx=E.x-Pp.x,dy=E.y-Pp.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,ar1={x:E.x-ux*10-uy*7,y:E.y-uy*10+ux*7},ar2={x:E.x-ux*10+uy*7,y:E.y-uy*10-ux*7};
       h+=`<circle cx="${r1(P[0].x)}" cy="${r1(P[0].y)}" r="4" fill="${C('wall')}"/><polyline points="${pts(P)}" fill="none" stroke="${C('wall')}" stroke-width="1.4" vector-effect="non-scaling-stroke"/><polyline points="${pts([ar1,E,ar2])}" fill="none" stroke="${C('wall')}" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`}
     const bb=bbox(G_.O),lp={x:bb.maxX+px(14),y:(bb.minY+bb.maxY)/2};h+=`<text x="${r1(lp.x)}" y="${r1(lp.y)}" font-size="${px(12)}" fill="${C('muted')}" font-family="Barlow Condensed,'Arial Narrow',sans-serif" dominant-baseline="middle">${up?'↑ '+esc(up.name):'Treppe'} · ${n} Stufen</text></g>`}
@@ -1270,8 +1275,8 @@ function stairPanel(f,t){const up=S.floors.filter(o=>o.level>f.level).sort((a,b)
   return `<h2>Treppe</h2><p class="hint">${up?`Führt nach ${esc(up.name)}. Dort erscheint das Treppenauge automatisch.`:'Über dieser Etage gibt es noch keine. Lege eine neue Etage an, dann erscheint dort das Treppenauge.'}</p>
     <div class="row"><label class="f">Form<select data-f="shape" data-scope="stair">${Object.entries(STAIR_SHAPES).map(([k,v])=>`<option value="${k}"${k===(t.shape||'straight')?' selected':''}>${v}</option>`).join('')}</select></label></div>
     ${t.shape&&t.shape!=='straight'?`<div class="row"><label class="f">Richtung<select data-f="turn" data-scope="stair"><option value="right"${t.turn!=='left'?' selected':''}>Rechts herum</option><option value="left"${t.turn==='left'?' selected':''}>Links herum</option></select></label></div>`:''}
-    <div class="grid2">${inp(t.shape==='spiral'?'Laufbreite':'Breite','w',t.w,'stair')}${t.shape==='spiral'?'':inp(t.shape==='L'||t.shape==='U'?'Lauf 1':'Länge','l',t.l,'stair')}</div>
-    ${t.shape==='L'?`<div class="grid2" style="margin-top:8px">${inp('Lauf 2','l2',t.l2||120,'stair')}<span></span></div>`:''}${t.shape==='U'?`<div class="grid2" style="margin-top:8px">${inp('Treppenauge','gap',t.gap??10,'stair')}<span></span></div>`:''}
+    <div class="grid2">${inp(t.shape==='spiral'?'Laufbreite':'Breite','w',t.w,'stair')}${t.shape==='spiral'?'':inp(/^[LU]/.test(t.shape||'')?'Lauf 1':'Länge','l',t.l,'stair')}</div>
+    ${t.shape==='L'||t.shape==='Lw'?`<div class="grid2" style="margin-top:8px">${inp('Lauf 2','l2',t.l2||120,'stair')}<span></span></div>`:''}${t.shape==='U'||t.shape==='Uw'?`<div class="grid2" style="margin-top:8px">${inp('Treppenauge','gap',t.gap??10,'stair')}<span></span></div>`:''}
     <div class="grid2" style="margin-top:8px">${inp('Stufen','steps',t.steps||16,'stair','')}<label class="f">Steigung<input disabled value="${fmt(rise)} cm"></label></div>
     <div class="row" style="margin-top:10px"><button class="btn" data-act="stairRot" data-v="-90">−90°</button><button class="btn" data-act="stairRot" data-v="90">+90°</button><button class="btn" data-act="stairRot" data-v="180">Richtung umkehren</button></div>
     <p class="hint">Zum Verschieben ziehen. Der Punkt markiert den Antritt, der Pfeil zeigt nach oben.</p>
@@ -1292,7 +1297,7 @@ function upgrade(s){if(!s.split08){s.split08=1;s.istCircuits=s.istCircuits||[];c
     for(const it of act.items||[])if(it.st==='keep'||it.st==='del'){const c=JSON.parse(JSON.stringify(it));c.id=uid();c.st='keep';idm.set(it.id,c.id);ist.push(c)}
     for(const c of ist){for(const k of ['ctl','ctl2'])if(c[k])c[k]=c[k].map(i=>idm.get(i)).filter(Boolean);if(c.motor)c.motor=idm.get(c.motor);if(c.serves)c.serves=idm.get(c.serves);
       if(c.ci){if(!cmap.has(c.ci)){const oc=(s.circuits||[]).find(x=>x.id===c.ci);if(oc){const nc=JSON.parse(JSON.stringify(oc));nc.id=uid();s.istCircuits.push(nc);cmap.set(c.ci,nc.id)}}if(cmap.has(c.ci))c.ci=cmap.get(c.ci);else delete c.ci}}
-    f.istLayout={id:'ist',name:'Ist-Aufnahme',items:ist};for(const l of L){l.items=(l.items||[]).filter(i=>i.st!=='del');if(l===act)for(const i of l.items)if(idm.has(i.id))i.src=idm.get(i.id)}}}
+    f.istLayout={id:'ist',name:'Ist-Aufnahme',items:ist};for(const l of L){const keepIds=new Set((l.items||[]).filter(i=>i.st==='keep'||i.st==='del').map(i=>i.id));l.items=(l.items||[]).filter(i=>!keepIds.has(i.id));for(const i of l.items){for(const k of ['ctl','ctl2'])if(i[k])i[k]=i[k].filter(x=>!keepIds.has(x));if(keepIds.has(i.motor))delete i.motor;if(keepIds.has(i.serves))delete i.serves}}}}
 if(s.settings&&s.settings.wiring==null)s.settings.wiring=(s.floors||[]).some(f=>(f.layouts||[]).some(l=>(l.items||[]).length))?'none':'abz';const d=defaultState();if(!s.pid)s.pid=uid();s.settings={...d.settings,...s.settings};s.project={...d.project,...(s.project||{})};
   s.settings.heights={...DEF_H,...(s.settings.heights||{})};s.circuits=Array.isArray(s.circuits)?s.circuits:[];s.floors.forEach(ensureLayouts);if(!s.floors.some(f=>f.id===s.activeFloor))s.activeFloor=s.floors[0].id;if(!s.floors.some(f=>f.id===s.hv))s.hv=s.floors[0].id;return s}
 function load(){try{const j=localStorage.getItem(KEY);if(!j)return null;const s=JSON.parse(j);return valid(s)?upgrade(s):null}catch(e){return null}}
@@ -1519,7 +1524,7 @@ function toWorld(cx,cy){const b=svg.getBoundingClientRect(),v=UI.vp;return {x:(c
 function zoomAt(cx,cy,ns){const b=svg.getBoundingClientRect(),v=UI.vp;ns=clamp(ns,0.05,20);const w=toWorld(cx,cy);v.s=ns;v.tx=cx-b.left-w.x*ns;v.ty=cy-b.top-w.y*ns;render()}
 
 /* ---------- Zeichnen ---------- */
-const LIGHT={f:"Barlow,Arial,Helvetica,sans-serif",fc:"'Barlow Condensed','Arial Narrow',Arial,sans-serif",paper:'#FFFFFF',floor:'#FFFFFF',ink:'#22282C',muted:'#5E6A6F',wall:'#22282C',grid:'#CED6D4',grid2:'#B5C0BD',accent:'#1F5FBF','accent-ink':'#FFFFFF',warn:'#C8412F',
+const LIGHT={chg:"#7C4DC4",hint:"#B86A0C",f:"Barlow,Arial,Helvetica,sans-serif",fc:"'Barlow Condensed','Arial Narrow',Arial,sans-serif",paper:'#FFFFFF',floor:'#FFFFFF',ink:'#22282C',muted:'#5E6A6F',wall:'#22282C',grid:'#CED6D4',grid2:'#B5C0BD',accent:'#1F5FBF','accent-ink':'#FFFFFF',warn:'#C8412F',
   panel:'#F4F6F5',line:'#D5DCDA',field:'#FFFFFF','w-dark':'#5A6469','w-mid':'#9AA4A8','w-light':'#CDD3D5',del:'#C8412F',new:'#2E8B57','new-soft':'#BFE0CC',f:"Barlow,Roboto,Arial,sans-serif",fc:"'Barlow Condensed','Roboto Condensed',Arial,sans-serif"};
 const pts=P=>P.map(p=>r1(p.x)+','+r1(p.y)).join(' ');
 function wallFill(w,view,C){const t=typeOf(w);if(view==='umbau'&&w.st==='del')return 'url(#hDel)';if(view==='umbau'&&w.st==='new')return C('new');return t.shade==='hatch'?'url(#hT)':C('w-'+(t.shade||'dark'))}
@@ -1593,7 +1598,7 @@ function updModeBar(){const b=$('#modeBar');if(!b)return;const pl=UI.place,as=UI
   if(pl&&UI.mode==='elec'){const nm=pl.k==='entry'?'Vorlage Hauseingang':CAT.flatMap(c=>c.l).find(e=>e[0]===pl.k&&(e[2]||1)===(pl.cnt||1))?.[1]||KINDS[pl.k]?.name||'';t=`${UI.multi?'Mehrere setzen':'Setzen'}: ${esc(nm)}`}else if(as&&UI.mode==='elec')t=`Zuordnen: Stromkreis ${esc(as.no)} ${esc(as.name)}`;
   b.hidden=!t;if(t)b.innerHTML=`<span class="mbt">${t}</span><button class="btn icon" data-mx="1" aria-label="Beenden">✕</button>`}
 function updInfo(){updModeBar();const f=floor(),g=G(f,UI.view),a=g.rooms.reduce((s,F)=>s+F.area,0)/1e4;$('#info').textContent=UI.mode==='dist'?`${dists().length} Verteiler, ${circuits().length} Stromkreise`:UI.mode==='elec'?`${items(f).filter(i=>VIS[UI.view](i)).length} Elemente, ${UI.view==='ist'?'Ist-Aufnahme':UI.view==='umbau'?'Umbau':layout(f).name}`:`${g.rooms.length} ${g.rooms.length===1?'Raum':'Räume'}, ${fmtA(a)} m²`;renderVariants();
-  const b=$('#badge');let h='';if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--hint)"></i>versetzt</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
+  const b=$('#badge');let h='';if(UI.view==='umbau')h+=`<span><i style="background:var(--w-dark)"></i>bleibt</span><span><i style="background:var(--del)"></i>entfällt</span><span><i style="background:var(--hint)"></i>versetzt</span><span><i style="background:var(--chg)"></i>geändert</span><span><i style="background:var(--new)"></i>neu</span>`;b.innerHTML=h;
   const th=$('#toolhint'),t=UI.flash?UI.flash:UI.dock&&UI.mode==='plan'?'Auf die Wand tippen, an die der neue Raum soll.':UI.mode==='dist'?'':UI.assign&&UI.mode==='elec'?`Elemente antippen: Stromkreis ${ciLabel(circuits().find(c=>c.id===UI.assign))}`:UI.measOn?'Linie ziehen, um zu messen. Kurz tippen löscht sie.':UI.mode==='elec'?(UI.place?(UI.place.k==='entry'||UI.place.k==='kombi'||KINDS[UI.place.k].place==='wall'?'Auf die Wand tippen.':'Stelle im Raum antippen.'):''):UI.tool==='draw'?(UI.chain?'Nächsten Punkt antippen. Auf einer Wand oder Ecke endet der Zug.':'Startpunkt antippen, auch auf einer Wand oder Ecke.'):'';th.textContent=t;th.classList.toggle('on',!!t)}
 function updBar(){updProbs();$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1;
   document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
