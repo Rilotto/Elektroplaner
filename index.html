@@ -613,8 +613,8 @@ function itemsSvg(f,g,view,s,C,exp,sel){let h='';const k0=S.settings.sym||1.5,ks
   if(!plan&&UI.showRoutes!==false&&view!=='umbau')h+=bundleSvg(f,s,C,exp);
   if(!plan&&!exp){if(!UI.guides&&si&&KINDS[si.k]?.place==='ceil'){const A=alignGuides(f,g,si,si,0.6);UI._tg={it:si,gx:A.gx,gy:A.gy,x:A.gx.length?si.x:null,y:A.gy.length?si.y:null};const k_=UI.guides;UI.guides=UI._tg;h+=guidesSvg(f,g,s);UI.guides=k_}else h+=guidesSvg(f,g,s)}
   h+=frH;
-  if(!plan&&!exp&&view!=='umbau')h+=jbSvg(f,g,s,C,ks);
   if(!plan&&view!=='umbau')h+=grpLines(f,g,view,s,C,ks,sel);
+  if(!plan&&!exp&&view!=='umbau')h+=jbSvg(f,g,s,C,ks);
   if(!plan&&!exp&&si)h+=selDimsSvg(f,g,si,s,C,view);
   if(!plan&&!exp&&si&&!UI.guides)h+=linkSvg(f,g,si,pos,s,C,ks);
   const pm=its.some(i=>i.k==='n_d'||i.k==='n_ap')?portsOfItem(netPlan()):new Map();
